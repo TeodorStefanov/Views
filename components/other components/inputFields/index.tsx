@@ -1,10 +1,15 @@
 import Props from "../../../types/props";
+import styles from "./index.module.css";
 export default function InputFiled(props: Props) {
   return (
-    <div>
+    <div className={styles.container}>
       <label htmlFor={props.name}>
-        {props.label}
-        <input id={props.name}></input>
+        <input
+          id={props.name}
+          type={props.type}
+          className={styles.field}
+          placeholder={props.placeHolder}
+        />
       </label>
     </div>
   );
