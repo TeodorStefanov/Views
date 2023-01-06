@@ -3,4 +3,5 @@ export default interface Props {
   label: string;
   value: string;
   type: string;
+  placeHolder: string;
 }
