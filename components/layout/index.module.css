@@ -1,0 +1,9 @@
+.container{
+    width: 100%;
+    height: 100%;
+}
+.main{
+    display: block;
+    width: 100%;
+    min-height: 540px;
+}

@@ -1,0 +1,32 @@
+.container {
+  width: 100%;
+  height: 78px;
+  position: relative;
+  background-color: #1d9bf0;
+}
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-decoration: none;
+}
+.windows {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 88%;
+  transform: translate(-50%, -50%);
+  gap: 20px;
+}
+.windowLogin {
+  text-decoration: none;
+  color: white;
+}
+.windowRegister {
+  text-decoration: none;
+  color: white;
+}

@@ -1,9 +1,8 @@
-import Link from "next/link";
-import { useState } from "react";
-import Layout from "../components/layout/Layout";
-import InputFiled from "../components/other components/inputFields";
+import React, { useState } from "react";
+import Layout from "../../components/layout/Layout";
+import InputFiled from "../../components/other components/inputFields";
 import styles from "./index.module.css";
-export default function Home() {
+const LoginPage = () => {
   const [loginPress, setLoginPress] = useState<boolean>(false);
   return (
     <Layout>
@@ -57,4 +56,5 @@ export default function Home() {
       )}
     </Layout>
   );
-}
+};
+export default LoginPage;
