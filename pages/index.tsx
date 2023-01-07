@@ -1,10 +1,24 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import InputFiled from "../components/other components/inputFields";
 import styles from "./index.module.css";
 export default function Home() {
   const [loginPress, setLoginPress] = useState<boolean>(false);
+  const router = useRouter();
+  const message = router.query;
+  const getQueryMessage = () => {
+    console.log(message.login)
+    if (message.login) {
+      setLoginPress(true);
+    } else if (message.registration) {
+      setLoginPress(true);
+    }
+  };
+  useEffect(() => {
+    getQueryMessage();
+  }, [message]);
   return (
     <Layout>
       <div className={styles.container}>
