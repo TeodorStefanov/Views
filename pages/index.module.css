@@ -2,6 +2,10 @@
   position: relative;
   width: 100%;
   height: 100%;
+  align-items: center;
+}
+.information {
+  text-align: center;
 }
 .name {
   font-size: 28px;
@@ -14,6 +18,15 @@
   left: 0;
   width: 100%;
   height: 100%;
+}
+.markButton {
+  position: absolute;
+  padding: 8px;
+}
+.markButton:hover {
+  background-color: rgb(226, 226, 218);
+  border: solid 1px rgb(226, 226, 218);
+  border-radius: 28px;
 }
 .fields {
   width: 400px;
