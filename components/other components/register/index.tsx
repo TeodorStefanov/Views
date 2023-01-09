@@ -4,7 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
-const Login = () => {
+const Registration = () => {
   const router = useRouter();
   const handleCloseButton = (): void => {
     router.push({ pathname: "/", query: "" });
@@ -17,7 +17,7 @@ const Login = () => {
         onClick={handleCloseButton}
       />
 
-      <h1 className={styles.name}>Login Views</h1>
+      <h1 className={styles.name}>Register Views</h1>
 
       <InputFiled
         name="Username"
@@ -33,25 +33,31 @@ const Login = () => {
         type="password"
         placeHolder="Enter your Password"
       />
+      <InputFiled
+        name="RePassword"
+        label="RePassword"
+        value="RePassword"
+        type="password"
+        placeHolder="Confirm your Password"
+      />
+      <InputFiled
+        name="Email"
+        label="Email"
+        value="Email"
+        type="email"
+        placeHolder="Enter your email"
+      />
       <button type="submit" className={styles.submitButton}>
         Proceed
       </button>
-      <div className={styles.forgotYourPassword}>
-        <button className={styles.forgotYourPasswordButton}>
-          Forgot Your Password?
-        </button>
-      </div>
       <div>
-        <p className={styles.registerAccount}>You dont have an account?</p>
-        <Link
-          href="/?registration=true"
-          className={styles.registerAccountButton}
-        >
-          Registration
+        <p className={styles.registerAccount}>You already have an account?</p>
+        <Link href="/?login=true" className={styles.registerAccountButton}>
+          Sign in
         </Link>
       </div>
     </form>
   );
 };
 
-export default Login;
+export default Registration;
