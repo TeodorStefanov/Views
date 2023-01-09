@@ -13,7 +13,7 @@
 }
 .fields {
   width: 400px;
-  height: 400px;
+  height: auto;
   border: solid 1px;
   border-radius: 10px;
   position: absolute;
@@ -39,23 +39,6 @@
 .submitButton:hover {
   color: white;
   background-color: rgb(55, 55, 54);
-}
-.forgotYourPassword {
-  margin-top: 20px;
-}
-.forgotYourPasswordButton {
-  font-weight: bold;
-  font-family: inherit;
-  font: inherit;
-  width: 200px;
-  height: 32px;
-  border: solid 1px;
-  border-radius: 10px;
-  color: rgb(30, 30, 28);
-  background-color: white;
-}
-.forgotYourPasswordButton:hover {
-  background-color: rgb(240, 215, 215);
 }
 .registrationButton {
   border: solid 1px;

@@ -1,17 +1,14 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import Layout from "../components/layout/Layout";
-import InputFiled from "../components/other components/inputFields";
 import styles from "./index.module.css";
 import Login from "../components/other components/login";
+import Registration from "../components/other components/register";
 export default function Home() {
   const [loginPress, setLoginPress] = useState<boolean>(false);
   const router = useRouter();
   const message = router.query;
   const getQueryMessage = (): void => {
-    console.log(message.login);
     if (message.login) {
       setLoginPress(true);
     } else if (message.registration) {
@@ -33,7 +30,7 @@ export default function Home() {
       </div>
       {loginPress ? (
         <div className={styles.modal}>
-          <Login />
+          {message.login ? <Login /> : <Registration />}
           <div className={styles.overlay}></div>
         </div>
       ) : (
