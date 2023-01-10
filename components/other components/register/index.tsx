@@ -14,8 +14,26 @@ const Registration = () => {
   const handleCloseButton = (): void => {
     router.push({ pathname: "/", query: "" });
   };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (
+      username &&
+      password &&
+      rePassword &&
+      email &&
+      password === rePassword
+    ) {
+      const promise = await fetch("/api/controllers/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password, rePassword, email }),
+      });
+    }
+  };
   return (
-    <form className={styles.fields}>
+    <form className={styles.fields} onSubmit={handleSubmit}>
       <FontAwesomeIcon
         className={styles.markButton}
         icon={faXmark}
