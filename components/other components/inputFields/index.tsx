@@ -9,6 +9,7 @@ export default function InputFiled(props: Props) {
           type={props.type}
           className={styles.field}
           placeholder={props.placeHolder}
+          onChange={props.onChange}
         />
       </label>
     </div>
