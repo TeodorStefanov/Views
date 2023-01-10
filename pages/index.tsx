@@ -4,7 +4,10 @@ import Layout from "../components/layout/Layout";
 import styles from "./index.module.css";
 import Login from "../components/other components/login";
 import Registration from "../components/other components/register";
-export default function Home() {
+import Connect from "../utils/mongoDBMongooseConnection";
+import Test from "../models/user";
+import { userProps } from "../types/props";
+export default function Home({ user }: { user: userProps }) {
   const [loginPress, setLoginPress] = useState<boolean>(false);
   const router = useRouter();
   const message = router.query;
@@ -39,3 +42,12 @@ export default function Home() {
     </Layout>
   );
 }
+export const getServerSideProps = async () => {
+  await Connect();
+  const user: userProps[] = await Test.find();
+  return {
+    props: {
+      user: JSON.parse(JSON.stringify(user)),
+    },
+  };
+};
