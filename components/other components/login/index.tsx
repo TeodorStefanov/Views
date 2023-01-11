@@ -3,17 +3,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import React, { useState } from "react";
+interface IFormInputs {
+  username: string;
+  password: string;
+}
 const Login = () => {
   const router = useRouter();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const handleCloseButton = (): void => {
     router.push({ pathname: "/", query: "" });
   };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IFormInputs>();
+  const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
+    console.log(data);
+  };
   return (
-    <form className={styles.fields}>
+    <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
       <FontAwesomeIcon
         className={styles.markButton}
         icon={faXmark}
@@ -23,25 +35,42 @@ const Login = () => {
       <h1 className={styles.name}>Login Views</h1>
 
       <InputFiled
+        formHook={register("username", {
+          required: "This field is required",
+          minLength: {
+            value: 8,
+            message: "Username must be at least 8 symbols",
+          },
+        })}
         name="Username"
         label="Username"
-        value={username}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setUsername(e.target.value);
-        }}
         type="text"
         placeHolder="Enter your Username"
+        errorMessage={errors.username ? errors.username.message : ""}
       />
       <InputFiled
+        formHook={register("password", {
+          required: "This field is required",
+          minLength: {
+            value: 8,
+            message:
+              "Password must contain minimum eight characters, at least one letter, one number and one special character!",
+          },
+          validate: (val: string) => {
+            const regEx =
+              /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            if (!val.match(regEx)) {
+              return "Password must contain minimum eight characters, at least one letter, one number and one special character!";
+            }
+          },
+        })}
         name="Password"
         label="Password"
-        value={password}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setPassword(e.target.value);
-        }}
         type="password"
         placeHolder="Enter your Password"
+        errorMessage={errors.password ? errors.password.message : ""}
       />
+      <br />
       <button type="submit" className={styles.submitButton}>
         Proceed
       </button>

@@ -5,27 +5,31 @@ import styles from "./index.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Props } from "../inputFields";
 import { FC } from "react";
+interface IFormInputs {
+  username: string;
+  password: string;
+  rePassword: string;
+  email: string;
+}
 const Registration: FC = () => {
   const router = useRouter();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [rePassword, setRePassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
   const {
     register,
-
+    handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<IFormInputs>();
+
   const handleCloseButton = (): void => {
     router.replace({ pathname: "/", query: "" });
   };
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
+    const { username, password, rePassword, email } = data;
+    console.log(data);
     if (
       username &&
       password &&
@@ -38,7 +42,7 @@ const Registration: FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password, rePassword, email }),
+        body: JSON.stringify(data),
       });
       if (promise.status === 200) {
         router.push("/?login=true");
@@ -49,7 +53,7 @@ const Registration: FC = () => {
     }
   };
   return (
-    <form className={styles.fields} onSubmit={handleSubmit}>
+    <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
       <FontAwesomeIcon
         className={styles.markButton}
         icon={faXmark}
@@ -57,53 +61,74 @@ const Registration: FC = () => {
       />
       <h1 className={styles.name}>Register Views</h1>
       <InputFiled
-        formHook={register("Username", { required: true })}
+        formHook={register("username", {
+          required: "This field is required",
+          minLength: {
+            value: 8,
+            message: "Username must be at least 8 symbols",
+          },
+        })}
         name="Username"
         label="Username"
-        value={username}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setUsername(e.target.value);
-        }}
         type="text"
         placeHolder="Enter your Username"
+        errorMessage={errors.username ? errors.username.message : ""}
       />
-      {errors.Username && <span>This field is required</span>}
       <InputFiled
-        formHook={register("Password", { required: true })}
+        formHook={register("password", {
+          required: "This field is required",
+          minLength: {
+            value: 8,
+            message:
+              "Password must contain minimum eight characters, at least one letter, one number and one special character!",
+          },
+          validate: (val: string) => {
+            const regEx =
+              /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            if (!val.match(regEx)) {
+              return "Password must contain minimum eight characters, at least one letter, one number and one special character!";
+            }
+          },
+        })}
         name="Password"
         label="Password"
-        value={password}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setPassword(e.target.value);
-        }}
         type="password"
         placeHolder="Enter your Password"
+        errorMessage={errors.password ? errors.password.message : ""}
       />
-      {errors.Password && <span>This field is required</span>}
       <InputFiled
-        formHook={register("rePassword", { required: true })}
+        formHook={register("rePassword", {
+          required: "This field is required",
+          validate: (val: string) => {
+            if (watch("password") != val) {
+              return "Both passwords must match!";
+            }
+          },
+        })}
         name="RePassword"
         label="RePassword"
-        value={rePassword}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setRePassword(e.target.value);
-        }}
         type="password"
         placeHolder="Confirm your Password"
+        errorMessage={errors.rePassword ? errors.rePassword.message : ""}
       />
-      {errors.rePassword && <span>This field is required</span>}
       <InputFiled
-        formHook={register("Email", { required: true })}
+        formHook={register("email", {
+          required: "This field is required",
+          validate: (val: string) => {
+            const regEx =
+              /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
+            if (!val.match(regEx)) {
+              return '"Please enter correct email address"';
+            }
+          },
+        })}
         name="Email"
         label="Email"
-        value={email}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-          setEmail(e.target.value);
-        }}
         type="email"
         placeHolder="Enter your email"
+        errorMessage={errors.email ? errors.email.message : ""}
       />
-      {errors.Email && <span>This field is required</span>}
+
       <button type="submit" className={styles.submitButton}>
         Proceed
       </button>

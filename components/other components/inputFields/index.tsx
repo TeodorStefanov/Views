@@ -5,10 +5,9 @@ export interface Props {
   formHook: UseFormRegisterReturn;
   name: string;
   label: string;
-  value: string;
   type: string;
   placeHolder: string;
-  onChange(e: React.ChangeEvent<HTMLInputElement>): void;
+  errorMessage?: string
 }
 export default function InputFiled(props: Props) {
   return (
@@ -20,10 +19,10 @@ export default function InputFiled(props: Props) {
           type={props.type}
           className={styles.field}
           placeholder={props.placeHolder}
-          onChange={props.onChange}
           autoComplete=""
         />
       </label>
+      {props.errorMessage ? <div className={styles.errorMessage}>{props.errorMessage}</div> : ""}
     </div>
   );
 }
