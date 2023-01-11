@@ -6,8 +6,12 @@ import Login from "../components/other components/login";
 import Registration from "../components/other components/register";
 import Connect from "../utils/mongoDBMongooseConnection";
 import Test from "../models/user";
-import { userProps } from "../types/props";
-export default function Home({ user }: { user: userProps }) {
+export type userProps = {
+  username: string;
+  password: string;
+  email: string;
+};
+export default function Home({ user }: { user: userProps[] }) {
   const [loginPress, setLoginPress] = useState<boolean>(false);
   const router = useRouter();
   const message = router.query;
@@ -23,12 +27,13 @@ export default function Home({ user }: { user: userProps }) {
   useEffect(() => {
     getQueryMessage();
   }, [message]);
+
   return (
     <Layout>
       <div className={styles.container}>
         <div className={styles.information}>
           <span>Total users: 1000</span>
-          <p>Total Views: 100</p>
+          <p>Total Views: 100 </p>
         </div>
       </div>
       {loginPress ? (
