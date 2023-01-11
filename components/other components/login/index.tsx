@@ -4,8 +4,11 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import React, { useState } from "react";
 const Login = () => {
   const router = useRouter();
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const handleCloseButton = (): void => {
     router.push({ pathname: "/", query: "" });
   };
@@ -22,14 +25,20 @@ const Login = () => {
       <InputFiled
         name="Username"
         label="Username"
-        value="Username"
+        value={username}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+          setUsername(e.target.value);
+        }}
         type="text"
         placeHolder="Enter your Username"
       />
       <InputFiled
         name="Password"
         label="Password"
-        value="Password"
+        value={password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+          setPassword(e.target.value);
+        }}
         type="password"
         placeHolder="Enter your Password"
       />
