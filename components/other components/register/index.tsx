@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Props } from "../inputFields";
 import { FC } from "react";
 interface IFormInputs {
   username: string;
@@ -37,7 +36,7 @@ const Registration: FC = () => {
       email &&
       password === rePassword
     ) {
-      const promise = await fetch("/api/controllers/user", {
+      const promise = await fetch("/api/routes/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

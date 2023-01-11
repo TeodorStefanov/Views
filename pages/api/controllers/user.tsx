@@ -13,10 +13,10 @@ type responseData = {
   error?: string;
 };
 
-export default async function handler(
+export const saveUser = async (
   req: NextApiRequest,
   res: NextApiResponse<responseData>
-) {
+) => {
   if (req.method === "POST") {
     const { username, password, rePassword, email } = req.body;
     if (
@@ -40,13 +40,13 @@ export default async function handler(
         res.status(200).send({ message: "Successfully" });
       } catch (err: any) {
         if (err.code === 11000 && err.keyValue.email) {
-          return res.status(409).send({ error: "Email already exists" });
+          res.status(409).send({ error: "Email already exists" });
         }
         if (err.code === 11000 && err.keyValue.username) {
-          return res.status(409).send({ error: "Username already exists" });
+          res.status(409).send({ error: "Username already exists" });
         }
         res.status(400).send({ error: "There is an error" });
       }
     }
   }
-}
+};
