@@ -5,12 +5,13 @@ import styles from "./index.module.css";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
+import { FC } from "react";
 interface IFormInputs {
   username: string;
   password: string;
 }
-const Login = () => {
+const Login: FC = () => {
   const router = useRouter();
   const handleCloseButton = (): void => {
     router.push({ pathname: "/", query: "" });
@@ -18,7 +19,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<IFormInputs>();
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
