@@ -22,7 +22,15 @@ const Login: FC = () => {
     formState: { errors },
   } = useForm<IFormInputs>();
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
-    console.log(data);
+    const promise = await fetch("/api/loginUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await promise.json()
+    console.log(result)
   };
   return (
     <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
