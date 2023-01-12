@@ -17,7 +17,7 @@ export const saveUser = async (
   req: NextApiRequest,
   res: NextApiResponse<responseData>
 ) => {
-  if (req.method === "POST") {
+  try {
     const { username, password, rePassword, email } = req.body;
     if (
       username &&
@@ -26,27 +26,32 @@ export const saveUser = async (
       email &&
       password === rePassword
     ) {
-      try {
-        const salt = bcrypt.genSaltSync(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-        const data = {
-          username,
-          password: hashedPassword,
-          email,
-        };
-        await Connect();
-        await User.create<Data>(data);
-        res.status(200).send({ message: "Successfully" });
-      } catch (err: any) {
-        if (err.code === 11000 && err.keyValue.email) {
-          res.status(409).send({ error: "Email already exists" });
-        }
-        if (err.code === 11000 && err.keyValue.username) {
-          res.status(409).send({ error: "Username already exists" });
-        }
-        res.status(400).send({ error: "There is an error" });
-      }
+      const data = {
+        username,
+        password: hashedPassword,
+        email,
+      };
+      await Connect();
+      await User.create<Data>(data);
+      res.status(200).send({ message: "Successfully" });
+      return
+    } else {
+      res.status(400).send({ error: "There is an error" });
+      return
     }
+  } catch (err: any) {
+    if (err.code === 11000 && err.keyValue.email) {
+      res.status(409).send({ error: "Email already exists." });
+      return
+    }
+    if (err.code === 11000 && err.keyValue.username) {
+      res.status(409).send({ error: "Username already exists." });
+      return
+    }
+    res.status(400).send({ error: "There is an error" });
+    return
   }
 };

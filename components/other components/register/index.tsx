@@ -48,6 +48,8 @@ const Registration: FC = () => {
       } else if (promise.status === 409) {
         const result = await promise.json();
         setError(result.error);
+      } else {
+        setError("An error has occurred. Please try again.");
       }
     }
   };

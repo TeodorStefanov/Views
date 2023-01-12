@@ -11,6 +11,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
     minLength: 8,
+    match: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
   },
   email: {
     type: String,
