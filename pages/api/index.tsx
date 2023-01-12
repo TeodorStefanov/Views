@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import config from "../../../next.config";
+import config from "../../next.config";
 import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 const generateToken = (data: any) => {

@@ -1,16 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { saveUser } from "../controllers/user";
-
+import { loginUser } from "../../controllers/user";
+import { CookieSerializeOptions } from "cookie";
 type responseData = {
   message?: string;
   error?: string;
+  "set-cookie"?: string[];
 };
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<responseData>
 ) {
   if (req.method === "POST") {
-    await saveUser(req, res);
+    await loginUser(req, res);
   }
 }

@@ -28,7 +28,6 @@ const Registration: FC = () => {
   };
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
     const { username, password, rePassword, email } = data;
-    console.log(data);
     if (
       username &&
       password &&
@@ -36,7 +35,7 @@ const Registration: FC = () => {
       email &&
       password === rePassword
     ) {
-      const promise = await fetch("/api/routes/user", {
+      const promise = await fetch("/api/registerUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
