@@ -3,7 +3,6 @@ import Connect from "../utils/mongoDBMongooseConnection";
 import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { getCookie, setCookie } from "cookies-next";
 import { serialize } from "cookie";
 type loginData = {
   userId: string;
@@ -15,9 +14,11 @@ const generateToken = (data: loginData) => {
   });
   return token;
 };
+const date = new Date();
 const cookieOptions = {
- 
-  path: "/localhost:4000",
+  expires: new Date(Date.now() + 3600000),
+  path: "/",
+  httpOnly: true
 };
 type Data = {
   username: string;
@@ -97,7 +98,7 @@ export const loginUser = async (
       username: user.username,
     });
 
-    res.setHeader('Set-Cookie', serialize('token', token, { path: '/' }))
+    res.setHeader("Set-Cookie", serialize("token", token, cookieOptions));
     res.status(200).send(user);
     return;
   } catch (err) {
