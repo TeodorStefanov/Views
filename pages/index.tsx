@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import styles from "./index.module.css";
 import Login from "../components/other components/login";
 import Registration from "../components/other components/register";
 import Connect from "../utils/mongoDBMongooseConnection";
 import Test from "../models/user";
+import UserContext from "../context";
 export type userProps = {
   username: string;
   password: string;
@@ -13,6 +14,7 @@ export type userProps = {
 };
 export default function Home({ user }: { user: userProps[] }) {
   const [loginPress, setLoginPress] = useState<boolean>(false);
+  const context = useContext(UserContext)
   const router = useRouter();
   const message = router.query;
   const getQueryMessage = (): void => {
