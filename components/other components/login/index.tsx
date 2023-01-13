@@ -29,8 +29,10 @@ const Login: FC = () => {
       },
       body: JSON.stringify(data),
     });
-    const result = await promise.json()
-    console.log(result)
+    if (promise.status === 200) {
+      const result = await promise.json();
+      
+    }
   };
   return (
     <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>

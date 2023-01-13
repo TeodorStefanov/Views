@@ -16,9 +16,9 @@ const generateToken = (data: loginData) => {
 };
 const date = new Date();
 const cookieOptions = {
-  expires: new Date(Date.now() + 3600000),
+  expires: new Date(Date.now() + 36000000),
   path: "/",
-  httpOnly: true
+  httpOnly: true,
 };
 type Data = {
   username: string;
@@ -102,8 +102,13 @@ export const loginUser = async (
     res.status(200).send(user);
     return;
   } catch (err) {
-    console.log(err);
     res.status(400).send({ error: "There is an error" });
     return;
   }
 };
+export const checkAuthentication = async (
+  req: NextApiRequest,
+  res: NextApiResponse<responseData>
+) => {
+  const token = req.body
+}
