@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import UserContext from "./context";
-import { NextRequest, NextResponse } from "next/server";
 type Props = {
   children: JSX.Element;
 };
