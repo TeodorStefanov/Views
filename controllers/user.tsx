@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Connect from "../utils/mongoDBMongooseConnection";
 import User from "../models/user";
 import * as bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
 type loginData = {
   userId: string;
@@ -110,5 +110,29 @@ export const checkAuthentication = async (
   req: NextApiRequest,
   res: NextApiResponse<responseData>
 ) => {
-  const token = req.body
-}
+  const { cookies } = req;
+  const token = cookies.token;
+  if (!token) {
+    return;
+  }
+  const decoded = jwt.verify(
+    token,
+    process.env.PRIVATE_KEY as string
+  ) as JwtPayload;
+  if (!decoded) {
+    return;
+  }
+  const { username } = decoded;
+  const user = await User.findOne({ username });
+  res.status(200).send(user);
+};
+export const deleteToken = (
+  req: NextApiRequest,
+  res: NextApiResponse<responseData>
+) => {
+  res.setHeader(
+    "Set-Cookie",
+    "token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+  );
+  res.status(200).send({ message: "Successfully" });
+};
