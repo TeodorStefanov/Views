@@ -4,11 +4,11 @@ type responseData = {
   message?: string;
   error?: string;
 };
-export default async function handler(
+export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<responseData>
 ) {
   if (req.method === "GET") {
-    await deleteToken(req, res);
+    deleteToken(req, res);
   }
 }
