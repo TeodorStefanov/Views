@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./index.module.css";
 import { UseFormRegisterReturn } from "react-hook-form";
 export interface Props {
-  formHook: UseFormRegisterReturn;
+  formHook?: UseFormRegisterReturn;
   name: string;
   label: string;
   type: string;

@@ -5,8 +5,8 @@ import styles from "./index.module.css";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import React from "react";
-import { FC } from "react";
+import React, { FC } from "react";
+
 interface IFormInputs {
   username: string;
   password: string;
@@ -31,7 +31,6 @@ const Login: FC = () => {
     });
     if (promise.status === 200) {
       const result = await promise.json();
-      
     }
   };
   return (
