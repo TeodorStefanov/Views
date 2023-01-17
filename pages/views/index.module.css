@@ -47,8 +47,11 @@
   text-decoration: none;
   cursor: pointer;
 }
-.pressedButton {
+.navigationLink:hover {
   background-color: rgb(226, 238, 236);
+}
+.pressedButton {
+  background-color: white;
   border-bottom: solid 4px #1d9bf0;
 }
 .share {
