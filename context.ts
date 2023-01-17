@@ -1,10 +1,11 @@
 import React from "react";
 type User = {
+  _id: string;
   username: string;
   password: string;
   email: string;
   picture: string;
-  viewsName: string
+  viewsName: string;
 };
 interface userContextInterface {
   loggedIn: boolean;

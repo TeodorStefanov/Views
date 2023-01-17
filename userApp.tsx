@@ -4,15 +4,17 @@ type Props = {
   children: JSX.Element;
 };
 type User = {
+  _id: string;
   username: string;
   password: string;
   email: string;
   picture: string;
-  viewsName: string
+  viewsName: string;
 };
-const UserApp = (props: Props) => {
+const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<boolean>(false);
   const logIn = (user: User): void => {
     setLoggedIn(true);
     setUser(user);
@@ -21,7 +23,6 @@ const UserApp = (props: Props) => {
     const promise = await fetch("/api/getToken");
     if (promise.status === 200) {
       const result = await promise.json();
-      console.log(result);
       logIn(result);
     }
   };
@@ -34,7 +35,11 @@ const UserApp = (props: Props) => {
   };
   useEffect((): void => {
     getToken();
+    setError(true);
   }, []);
+  if (!error) {
+    return null;
+  }
   return (
     <UserContext.Provider
       value={{
