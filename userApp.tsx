@@ -3,11 +3,17 @@ import UserContext from "./context";
 type Props = {
   children: JSX.Element;
 };
-
+type User = {
+  username: string;
+  password: string;
+  email: string;
+  picture: string;
+  viewsName: string
+};
 const UserApp = (props: Props) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<object | null>(null);
-  const logIn = (user: object): void => {
+  const [user, setUser] = useState<User | null>(null);
+  const logIn = (user: User): void => {
     setLoggedIn(true);
     setUser(user);
   };

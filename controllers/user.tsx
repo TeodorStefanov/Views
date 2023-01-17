@@ -14,7 +14,6 @@ const generateToken = (data: loginData) => {
   });
   return token;
 };
-const date = new Date();
 const cookieOptions = {
   expires: new Date(Date.now() + 36000000),
   path: "/",
@@ -23,8 +22,9 @@ const cookieOptions = {
 type Data = {
   username: string;
   password: string;
-  rePassword?: string;
   email: string;
+  picture: string;
+  viewsName: string;
 };
 type responseData = {
   message?: string;
@@ -36,13 +36,14 @@ export const saveUser = async (
   res: NextApiResponse<responseData>
 ) => {
   try {
-    const { username, password, rePassword, email } = req.body;
+    const { username, password, rePassword, email, viewsName } = req.body;
 
     if (
       username &&
       password &&
       rePassword &&
       email &&
+      viewsName &&
       password.match(
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
       ) &&
@@ -51,10 +52,13 @@ export const saveUser = async (
       const salt = bcrypt.genSaltSync(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const data = {
+      const data: Data = {
         username,
         password: hashedPassword,
         email,
+        picture:
+          "https://res.cloudinary.com/daqcaszkf/image/upload/v1673947682/blank-profile-picture-973460__340_v3thun.webp",
+        viewsName,
       };
       await Connect();
       await User.create<Data>(data);
