@@ -54,11 +54,13 @@ const Views: FC = () => {
               );
             })}
           </div>
-          <div>
+          <div className={styles.share}>
             <label>
-              View something
-              <input></input>
+              Share
+              <input className={styles.shareField} />
             </label>
+            <div>Picture</div>
+            <div>Video</div>
           </div>
         </div>
         <div className={styles.right}></div>

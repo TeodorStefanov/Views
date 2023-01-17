@@ -15,12 +15,17 @@
   text-decoration: none;
 }
 .windows {
-  display: flex;
   position: absolute;
   top: 50%;
   left: 88%;
   transform: translate(-50%, -50%);
+}
+.windowLoggedNot {
+  display: flex;
   gap: 20px;
+}
+.windowLogged {
+  display: flex;
 }
 .windowLogin {
   text-decoration: none;
@@ -29,4 +34,19 @@
 .windowRegister {
   text-decoration: none;
   color: white;
+}
+.windowLogOut {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+}
+.picture {
+  vertical-align: middle;
+  margin-right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
 }

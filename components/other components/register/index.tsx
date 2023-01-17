@@ -12,6 +12,7 @@ interface IFormInputs {
   password: string;
   rePassword: string;
   email: string;
+  viewsName: string;
 }
 const Registration: FC = () => {
   const router = useRouter();
@@ -27,12 +28,13 @@ const Registration: FC = () => {
     router.replace({ pathname: "/", query: "" });
   };
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
-    const { username, password, rePassword, email } = data;
+    const { username, password, rePassword, email, viewsName } = data;
     if (
       username &&
       password &&
       rePassword &&
       email &&
+      viewsName &&
       password === rePassword
     ) {
       const promise = await fetch("/api/registerUser", {
@@ -128,7 +130,17 @@ const Registration: FC = () => {
         placeHolder="Enter your email"
         errorMessage={errors.email ? errors.email.message : ""}
       />
-
+      <InputFiled
+        formHook={register("viewsName", {
+          required: "This field is required",
+          minLength: 3,
+        })}
+        name="ViewsName"
+        label="ViewsName"
+        type="text"
+        placeHolder="Enter your Views Name"
+        errorMessage={errors.viewsName ? errors.viewsName.message : ""}
+      />
       <button type="submit" className={styles.submitButton}>
         Proceed
       </button>

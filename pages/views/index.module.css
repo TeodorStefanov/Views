@@ -24,11 +24,12 @@
 .searchMenu:focus {
   outline: none;
   border: solid 1px #1d9bf0;
+  background-color: rgb(255, 255, 255);
 }
 .searchButton {
   position: relative;
   top: 2px;
-  right: 28px;
+  right: 32px;
 }
 .navigation {
   display: flex;
@@ -49,6 +50,10 @@
 .pressedButton {
   background-color: rgb(226, 238, 236);
   border-bottom: solid 4px #1d9bf0;
+}
+.share {
+  font-size: 20px;
+  margin: 40px;
 }
 .right {
   width: 20%;
