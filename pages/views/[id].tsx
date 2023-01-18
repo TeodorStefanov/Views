@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import React, { FC, useContext, useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
@@ -12,15 +11,13 @@ const Profile: FC = ({
   const { user } = context;
 
   useEffect(() => {
-    console.log(id.id);
     if (user) {
       if (user._id === id.id) {
-        console.log(loggedUser);
         setLoggedUser(true);
       }
     }
   }, [user]);
-  if (!id) {
+  if (loggedUser) {
     return <div></div>;
   }
   return (
@@ -58,7 +55,6 @@ const Profile: FC = ({
 export default Profile;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.params;
-  console.log(id);
   return {
     props: {
       id,

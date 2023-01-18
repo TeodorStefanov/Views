@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserContext from "./context";
+import User from "./models/user";
 type Props = {
   children: JSX.Element;
 };
