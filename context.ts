@@ -6,6 +6,7 @@ type User = {
   email: string;
   picture: string;
   viewsName: string;
+  friends: Array<string>;
 };
 interface userContextInterface {
   loggedIn: boolean;
