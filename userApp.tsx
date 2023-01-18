@@ -10,6 +10,7 @@ type User = {
   email: string;
   picture: string;
   viewsName: string;
+  friends: Array<string>;
 };
 const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -31,6 +32,9 @@ const UserApp = (props: Props): JSX.Element | null => {
     if (promise.status === 200) {
       setLoggedIn(false);
       setUser(null);
+      setError(true);
+    } else {
+      setError(true);
     }
   };
   useEffect((): void => {

@@ -27,6 +27,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  friends: [
+    {
+      type: String,
+    }
+  ]
 });
 const User = models.User || model("User", userSchema);
 export default User;

@@ -25,6 +25,7 @@ type Data = {
   email: string;
   picture: string;
   viewsName: string;
+  friends: Array<string>;
 };
 type responseData = {
   message?: string;
@@ -59,6 +60,7 @@ export const saveUser = async (
         picture:
           "https://res.cloudinary.com/daqcaszkf/image/upload/v1673947682/blank-profile-picture-973460__340_v3thun.webp",
         viewsName,
+        friends: [],
       };
       await Connect();
       await User.create<Data>(data);
