@@ -24,6 +24,7 @@ type Data = {
   password: string;
   email: string;
   picture: string;
+  backgroundPicture: string;
   viewsName: string;
   friends: Array<string>;
 };
@@ -59,6 +60,8 @@ export const saveUser = async (
         email,
         picture:
           "https://res.cloudinary.com/daqcaszkf/image/upload/v1673947682/blank-profile-picture-973460__340_v3thun.webp",
+        backgroundPicture:
+          "https://res.cloudinary.com/daqcaszkf/image/upload/v1674032617/1584x396-pale-aqua-solid-color-background_skjmq8.jpg",
         viewsName,
         friends: [],
       };
@@ -71,6 +74,7 @@ export const saveUser = async (
       return;
     }
   } catch (err: any) {
+    console.log(err)
     if (err.code === 11000 && err.keyValue.email) {
       res.status(409).send({ error: "Email already exists." });
       return;
