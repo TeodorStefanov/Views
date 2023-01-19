@@ -23,6 +23,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  backgroundPicture: {
+    type: String,
+    required: true,
+  },
   viewsName: {
     type: String,
     required: true,
@@ -30,8 +34,8 @@ const userSchema = new Schema({
   friends: [
     {
       type: String,
-    }
-  ]
+    },
+  ],
 });
 const User = models.User || model("User", userSchema);
 export default User;
