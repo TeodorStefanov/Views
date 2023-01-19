@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
 import User from "../../models/user";
-import { useRouter } from "next/router";
 const Profile: FC = ({
   userFind,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -14,11 +13,9 @@ const Profile: FC = ({
   const [loggedUser, setLoggedUser] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState<boolean>(false);
   const { user } = context;
-  const router = useRouter();
-
   useEffect(() => {
     if (user) {
-      if (user._id === userFind?._id) {
+      if (user._id === userFind._id) {
         setLoggedUser(true);
       }
     }
@@ -90,7 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const { id } = context.params as { id: string };
 
-    const userFind = await User.findById(id).exec();
+    const userFind = await User.findById(id);
     return {
       props: {
         userFind: JSON.parse(JSON.stringify(userFind)),
