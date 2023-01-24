@@ -1,18 +1,27 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import UserContext from "./context";
-import User from "./models/user";
+import User from "../models/user";
+
 type Props = {
   children: JSX.Element;
+  token?: User | null;
 };
 type User = {
   _id: string;
   username: string;
-  password: string;
   email: string;
   picture: string;
   viewsName: string;
   friends: Array<string>;
 };
+
+async function deleteToken() {
+  const res = await fetch("/api/deleteToken");
+  if (res.status === 200) {
+    return true;
+  }
+}
 const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
@@ -21,16 +30,10 @@ const UserApp = (props: Props): JSX.Element | null => {
     setLoggedIn(true);
     setUser(user);
   };
-  const getToken = async () => {
-    const promise = await fetch("/api/getToken");
-    if (promise.status === 200) {
-      const result = await promise.json();
-      logIn(result);
-    }
-  };
+
   const logOut = async () => {
-    const promise = await fetch("/api/deleteToken");
-    if (promise.status === 200) {
+    const res = await fetch("/api/deleteToken");
+    if (res.status === 200) {
       setLoggedIn(false);
       setUser(null);
       setError(true);
@@ -39,9 +42,12 @@ const UserApp = (props: Props): JSX.Element | null => {
     }
   };
   useEffect((): void => {
-    getToken();
+    if (props.token) {
+      logIn(props.token);
+    }
+
     setError(true);
-  }, []);
+  }, [props.token]);
   if (!error) {
     return null;
   }

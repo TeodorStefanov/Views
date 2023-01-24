@@ -2,20 +2,19 @@ import InputFiled from "../inputFields";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
+import UserContext from "../../context/context";
 
 interface IFormInputs {
   username: string;
   password: string;
 }
 const Login: FC = () => {
+  const { logIn } = useContext(UserContext);
   const router = useRouter();
-  const handleCloseButton = (): void => {
-    router.push({ pathname: "/", query: "" });
-  };
   const {
     register,
     handleSubmit,
@@ -29,8 +28,11 @@ const Login: FC = () => {
       },
       body: JSON.stringify(data),
     });
+
     if (promise.status === 200) {
+      router.push("/views");
       const result = await promise.json();
+      logIn(result);
     }
   };
   return (
@@ -38,7 +40,7 @@ const Login: FC = () => {
       <FontAwesomeIcon
         className={styles.markButton}
         icon={faXmark}
-        onClick={handleCloseButton}
+        onClick={() => router.push("/")}
       />
 
       <h1 className={styles.name}>Login Views</h1>
@@ -91,7 +93,7 @@ const Login: FC = () => {
       <div>
         <p className={styles.registerAccount}>You dont have an account?</p>
         <Link
-          href="/?registration=true"
+          href={{ pathname: "/", query: { message: "registration" } }}
           className={styles.registerAccountButton}
         >
           Registration
