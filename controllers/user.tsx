@@ -15,7 +15,7 @@ const generateToken = (data: loginData) => {
   return token;
 };
 const cookieOptions = {
-  expires: new Date(Date.now() + 36000000),
+  expires: new Date(Date.now() + 3600000),
   path: "/",
   httpOnly: true,
 };
@@ -74,7 +74,6 @@ export const saveUser = async (
       return;
     }
   } catch (err: any) {
-    console.log(err)
     if (err.code === 11000 && err.keyValue.email) {
       res.status(409).send({ error: "Email already exists." });
       return;
@@ -93,7 +92,9 @@ export const loginUser = async (
 ) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    await Connect();
+    const user = await User.findOne({ username }).select('+password');
+
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });
       return;
@@ -107,7 +108,6 @@ export const loginUser = async (
       userId: user._id,
       username: user.username,
     });
-
     res.setHeader("Set-Cookie", serialize("token", token, cookieOptions));
     res.status(200).send(user);
     return;
@@ -115,26 +115,6 @@ export const loginUser = async (
     res.status(400).send({ error: "There is an error" });
     return;
   }
-};
-export const checkAuthentication = async (
-  req: NextApiRequest,
-  res: NextApiResponse<responseData>
-) => {
-  const { cookies } = req;
-  const token = cookies.token;
-  if (!token) {
-    return;
-  }
-  const decoded = jwt.verify(
-    token,
-    process.env.PRIVATE_KEY as string
-  ) as JwtPayload;
-  if (!decoded) {
-    return;
-  }
-  const { username } = decoded;
-  const user = await User.findOne({ username });
-  res.status(200).send(user);
 };
 export const deleteToken = (
   req: NextApiRequest,

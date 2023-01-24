@@ -1,7 +1,8 @@
+"use client";
 import Link from "next/link";
 import React, { useContext } from "react";
 import styles from "./index.module.css";
-import UserContext from "../../context";
+import UserContext from "../../context/context";
 const Header = () => {
   const context = useContext(UserContext);
   const { loggedIn, user, logOut } = context;
@@ -16,13 +17,13 @@ const Header = () => {
         {!loggedIn ? (
           <div className={styles.windowLoggedNot}>
             <Link
-              href={{ pathname: "/", query: { login: true } }}
+              href={{ pathname: "/", query: { message: "login" } }}
               className={styles.windowLogin}
             >
               Log In
             </Link>
             <Link
-              href={{ pathname: "/", query: { registration: true } }}
+              href={{ pathname: "/", query: { message: "registration" } }}
               className={styles.windowRegister}
             >
               Registration

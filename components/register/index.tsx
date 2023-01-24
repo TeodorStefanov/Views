@@ -2,11 +2,12 @@ import InputFiled from "../inputFields";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { FC } from "react";
+
 interface IFormInputs {
   username: string;
   password: string;
@@ -24,9 +25,6 @@ const Registration: FC = () => {
     formState: { errors },
   } = useForm<IFormInputs>();
 
-  const handleCloseButton = (): void => {
-    router.replace({ pathname: "/", query: "" });
-  };
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
     const { username, password, rePassword, email, viewsName } = data;
     if (
@@ -59,7 +57,7 @@ const Registration: FC = () => {
       <FontAwesomeIcon
         className={styles.markButton}
         icon={faXmark}
-        onClick={handleCloseButton}
+        onClick={() => router.push("/")}
       />
       <h1 className={styles.name}>Register Views</h1>
       <InputFiled
@@ -147,7 +145,10 @@ const Registration: FC = () => {
       {error ? <div className={styles.errorMessage}>{error}</div> : ""}
       <div>
         <p className={styles.registerAccount}>You already have an account?</p>
-        <Link href="/?login=true" className={styles.registerAccountButton}>
+        <Link
+          href={{ pathname: "/", query: { message: "login" } }}
+          className={styles.registerAccountButton}
+        >
           Sign in
         </Link>
       </div>

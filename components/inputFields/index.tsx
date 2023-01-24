@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import styles from "./index.module.css";
 import { UseFormRegisterReturn } from "react-hook-form";
@@ -7,7 +8,7 @@ export interface Props {
   label: string;
   type: string;
   placeHolder: string;
-  errorMessage?: string
+  errorMessage?: string;
 }
 export default function InputFiled(props: Props) {
   return (
@@ -22,7 +23,11 @@ export default function InputFiled(props: Props) {
           autoComplete=""
         />
       </label>
-      {props.errorMessage ? <div className={styles.errorMessage}>{props.errorMessage}</div> : ""}
+      {props.errorMessage ? (
+        <div className={styles.errorMessage}>{props.errorMessage}</div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
