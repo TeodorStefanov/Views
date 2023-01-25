@@ -1,14 +1,22 @@
 "use client";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import UserContext from "../../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
+import { useRouter } from "next/navigation";
 interface user {
   id: string;
   backgroundPicture: string;
   picture: string;
   friends: [];
+  posts: { content: string; imageUrl: string; videoUrl: string }[];
 }
 interface IFormInputs {
   text?: string;
@@ -19,30 +27,79 @@ interface Window {
   cloudinary: string;
 }
 
-const ProfileChecker = ({ id, backgroundPicture, picture, friends }: user) => {
+const ProfileChecker = ({
+  id,
+  backgroundPicture,
+  picture,
+  friends,
+  posts,
+}: user) => {
   const context = useContext(UserContext);
   const [loggedUser, setLoggedUser] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState<boolean>(false);
   const { user } = context;
-  const [write, setWrite] = useState<string>("");
-  const [addPicture, setAddPicture] = useState<string>("");
-  const handleClickPicture = (e: React.FormEvent<HTMLFormElement>) => {
+  const [content, setContent] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string>("");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
     const widget = window.cloudinary.createUploadWidget(
       {
         cloudName: "daqcaszkf",
         uploadPreset: "softuni",
       },
-      (error:any, result:any) => {
+      (error: any, result: any) => {
         if (error) {
           console.log("Error:", error);
         }
         if (result.event === "success") {
-          setAddPicture(result.info.url);
+          setImageUrl(result.info.url);
         }
       }
     );
     widget.open();
+  };
+  const handleClickVideo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const widget = window.cloudinary.createUploadWidget(
+      {
+        cloudName: "daqcaszkf",
+        uploadPreset: "softuni",
+      },
+      (error: any, result: any) => {
+        if (error) {
+          console.log("Error:", error);
+        }
+        if (result.event === "success") {
+          setVideoUrl(result.info.url);
+        }
+      }
+    );
+    widget.open();
+  };
+  const handleClickPost = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const promise = await fetch(
+      "http://localhost:3000/api/registerUpdateUser",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: user?._id,
+          posts: { content, imageUrl, videoUrl },
+        }),
+      }
+    );
+    if (promise.status === 200) {
+      startTransition(() => {
+        router.refresh();
+      });
+    }
+    const result = await promise.json();
   };
   useEffect(() => {
     if (user?._id === id) {
@@ -97,7 +154,7 @@ const ProfileChecker = ({ id, backgroundPicture, picture, friends }: user) => {
                   <input
                     name="Add something"
                     className={styles.addSomethingField}
-                    onChange={(e) => setWrite(e.target.value)}
+                    onChange={(e) => setContent(e.target.value)}
                   />
                 </label>
                 <div className={styles.addSomethingButtons}>
@@ -107,10 +164,16 @@ const ProfileChecker = ({ id, backgroundPicture, picture, friends }: user) => {
                   >
                     Add Picture
                   </button>
-                  <button className={styles.addSomethingButton}>
+                  <button
+                    className={styles.addSomethingButton}
+                    onClick={handleClickVideo}
+                  >
                     Add Video
                   </button>
-                  <button className={styles.addSomethingButtonPost}>
+                  <button
+                    className={styles.addSomethingButtonPost}
+                    onClick={handleClickPost}
+                  >
                     Post
                   </button>
                 </div>

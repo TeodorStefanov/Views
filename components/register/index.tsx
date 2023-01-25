@@ -35,7 +35,7 @@ const Registration: FC = () => {
       viewsName &&
       password === rePassword
     ) {
-      const promise = await fetch("/api/registerUser", {
+      const promise = await fetch("/api/registerUpdateUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

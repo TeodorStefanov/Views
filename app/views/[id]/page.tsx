@@ -1,11 +1,11 @@
 import User from "../../../models/user";
 import Connect from "../../../utils/mongoDBMongooseConnection";
 import ProfileChecker from "./profileChecker";
-
+export const revalidate = 0;
 async function getUser(id: string) {
-  try { 
+  try {
     await Connect();
-    const user = await User.findById(id).lean(); 
+    const user = await User.findById(id).lean();
 
     return JSON.parse(JSON.stringify(user));
   } catch (err) {
@@ -17,12 +17,13 @@ interface user {
   backgroundPicture: string;
   picture: string;
   friends: [];
+  posts: { content: string; imageUrl: string; videoUrl: string }[];
 }
 export default async function Profile({ params }: any) {
   const id = params.id;
   const userFind: user = await getUser(id);
   if (!userFind) {
-    throw new Error('User not found!')
+    throw new Error("User not found!");
   }
   return (
     <ProfileChecker
@@ -30,6 +31,7 @@ export default async function Profile({ params }: any) {
       backgroundPicture={userFind.backgroundPicture}
       picture={userFind.picture}
       friends={userFind.friends}
+      posts={userFind.posts}
     />
   );
 }
