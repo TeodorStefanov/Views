@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { saveUser } from "../../controllers/user";
+import { saveUser, updateUser } from "../../controllers/user";
 
 type responseData = {
   message?: string;
@@ -11,6 +11,8 @@ export default async function handler(
   res: NextApiResponse<responseData>
 ) {
   if (req.method === "POST") {
-    await saveUser(req, res) ;
+    await saveUser(req, res);
+  } else if (req.method === "PUT") {
+    await updateUser(req, res);
   }
 }

@@ -27,6 +27,7 @@ type Data = {
   backgroundPicture: string;
   viewsName: string;
   friends: Array<string>;
+  posts: { content: string; imageUrl: string; videoUrl: string }[];
 };
 type responseData = {
   message?: string;
@@ -64,6 +65,7 @@ export const saveUser = async (
           "https://res.cloudinary.com/daqcaszkf/image/upload/v1674032617/1584x396-pale-aqua-solid-color-background_skjmq8.jpg",
         viewsName,
         friends: [],
+        posts: [],
       };
       await Connect();
       await User.create<Data>(data);
@@ -93,7 +95,7 @@ export const loginUser = async (
   try {
     const { username, password } = req.body;
     await Connect();
-    const user = await User.findOne({ username }).select('+password');
+    const user = await User.findOne({ username }).select("+password");
 
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });
@@ -125,4 +127,31 @@ export const deleteToken = (
     "token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
   );
   res.status(200).send({ message: "Successfully" });
+};
+export const updateUser = async (
+  req: NextApiRequest,
+  res: NextApiResponse<responseData>
+) => {
+  try {
+    const { id, posts } = req.body;
+    if (id && posts) {
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        {
+          $push: {
+            posts: posts,
+          },
+        },
+        {
+          new: true,
+        }
+      );
+      res.status(200).send(user);
+    } else {
+      res.status(200).send({ error: "There is an error!" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
+  }
 };
