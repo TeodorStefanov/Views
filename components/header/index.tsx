@@ -18,12 +18,14 @@ const Header = () => {
           <div className={styles.windowLoggedNot}>
             <Link
               href={{ pathname: "/", query: { message: "login" } }}
+              shallow
               className={styles.windowLogin}
             >
               Log In
             </Link>
             <Link
               href={{ pathname: "/", query: { message: "registration" } }}
+              shallow
               className={styles.windowRegister}
             >
               Registration

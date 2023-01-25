@@ -16,12 +16,6 @@ type User = {
   friends: Array<string>;
 };
 
-async function deleteToken() {
-  const res = await fetch("/api/deleteToken");
-  if (res.status === 200) {
-    return true;
-  }
-}
 const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
