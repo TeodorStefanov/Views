@@ -1,3 +1,4 @@
+"use client";
 import InputFiled from "../inputFields";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
