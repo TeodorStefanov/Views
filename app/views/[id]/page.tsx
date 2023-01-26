@@ -16,8 +16,14 @@ interface user {
   _id: string;
   backgroundPicture: string;
   picture: string;
+  viewsName: string;
   friends: [];
-  posts: { content: string; imageUrl: string; videoUrl: string }[];
+  posts: {
+    content: string;
+    imageUrl: string;
+    videoUrl: string;
+    createdAt: string;
+  }[];
 }
 export default async function Profile({ params }: any) {
   const id = params.id;
@@ -30,6 +36,7 @@ export default async function Profile({ params }: any) {
       id={userFind._id}
       backgroundPicture={userFind.backgroundPicture}
       picture={userFind.picture}
+      viewsName={userFind.viewsName}
       friends={userFind.friends}
       posts={userFind.posts}
     />

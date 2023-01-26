@@ -42,6 +42,7 @@ const userSchema = new Schema({
       content: String,
       imageUrl: String,
       videoUrl: String,
+      createdAt: Date,
     },
   ],
 });

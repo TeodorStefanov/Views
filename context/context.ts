@@ -7,6 +7,7 @@ type User = {
   picture: string;
   viewsName: string;
   friends: Array<string>;
+  posts: { content: string; imageUrl: string; videoUrl: string }[];
 };
 interface userContextInterface {
   loggedIn: boolean;
