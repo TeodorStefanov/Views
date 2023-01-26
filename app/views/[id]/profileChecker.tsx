@@ -1,11 +1,5 @@
 "use client";
-import React, {
-  FC,
-  useContext,
-  useEffect,
-  useState,
-  useTransition,
-} from "react";
+import React, { useContext, useEffect, useState, useTransition } from "react";
 import UserContext from "../../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -15,22 +9,21 @@ interface user {
   id: string;
   backgroundPicture: string;
   picture: string;
+  viewsName: string;
   friends: [];
-  posts: { content: string; imageUrl: string; videoUrl: string }[];
-}
-interface IFormInputs {
-  text?: string;
-  picture?: string;
-  video?: string;
-}
-interface Window {
-  cloudinary: string;
+  posts: {
+    content: string;
+    imageUrl: string;
+    videoUrl: string;
+    createdAt: string;
+  }[];
 }
 
 const ProfileChecker = ({
   id,
   backgroundPicture,
   picture,
+  viewsName,
   friends,
   posts,
 }: user) => {
@@ -45,6 +38,7 @@ const ProfileChecker = ({
   const router = useRouter();
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
+
     const widget = window.cloudinary.createUploadWidget(
       {
         cloudName: "daqcaszkf",
@@ -181,6 +175,29 @@ const ProfileChecker = ({
             ) : (
               ""
             )}
+            {posts.map((post, index) => {
+              return (
+                <div className={styles.postContainer} key={index}>
+                  <div className={styles.postContent}>
+                    <img src={picture} className={styles.postUserPicture} />
+                    <p>{viewsName}</p>
+                    <p>{post.createdAt}</p>
+                  </div>
+                  <p>{post.content}</p>
+                  <img src={post.imageUrl} />
+                  <video
+                    width="380"
+                    height="380"
+                    className={styles.footerVideo}
+                    autoPlay={true}
+                    loop
+                    muted
+                  >
+                    <source src={post.videoUrl} type="video/mp4" />
+                  </video>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className={styles.UserData}></div>

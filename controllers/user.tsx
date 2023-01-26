@@ -135,6 +135,9 @@ export const updateUser = async (
   try {
     const { id, posts } = req.body;
     if (id && posts) {
+      await Connect();
+      posts["createdAt"] = new Date()
+      console.log(posts)
       const user = await User.findOneAndUpdate(
         { _id: id },
         {
@@ -146,6 +149,7 @@ export const updateUser = async (
           new: true,
         }
       );
+
       res.status(200).send(user);
     } else {
       res.status(200).send({ error: "There is an error!" });

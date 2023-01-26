@@ -14,6 +14,7 @@ type User = {
   picture: string;
   viewsName: string;
   friends: Array<string>;
+  posts: { content: string; imageUrl: string; videoUrl: string }[];
 };
 
 const UserApp = (props: Props): JSX.Element | null => {
