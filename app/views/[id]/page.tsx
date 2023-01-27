@@ -38,7 +38,7 @@ export default async function Profile({ params }: any) {
       picture={userFind.picture}
       viewsName={userFind.viewsName}
       friends={userFind.friends}
-      posts={userFind.posts}
+      posts={userFind.posts.reverse()}
     />
   );
 }

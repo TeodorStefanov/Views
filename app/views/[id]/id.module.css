@@ -13,7 +13,6 @@
 }
 .top {
   position: relative;
-  width: 100%;
   height: 280px;
   background-color: white;
   border-left: solid 1px rgb(232, 225, 225);
@@ -23,6 +22,13 @@
   width: 100%;
   height: 200px;
   border: none;
+}
+.viewsName {
+  font-size: 20px;
+  font-weight: bold;
+  position: relative;
+  top: 0px;
+  left: 240px;
 }
 .topAddPicture {
   display: flex;
@@ -69,17 +75,15 @@
 .follow:hover {
   background-color: rgb(33, 32, 32);
 }
-.viewsName {
-  font-size: 20px;
-}
+
 .content {
   display: flex;
   justify-content: center;
   flex-flow: wrap;
   box-sizing: border-box;
   width: 100%;
-  padding-left: 150px;
-  padding-right: 150px;
+  padding-left: 100px;
+  padding-right: 100px;
   margin-top: 40px;
   text-align: center;
   align-items: center;
@@ -146,12 +150,19 @@
   background-color: rgb(226, 220, 220);
 }
 .postContainer {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   margin: 20px;
   background-color: white;
+  border: solid 1px white;
+  border-radius: 20px;
+  align-items: center;
+  text-align: center;
 }
 .postContent {
   display: flex;
+  width: 100%;
 }
 .postUserPicture {
   width: 40px;
@@ -159,6 +170,26 @@
   margin: 10px;
   border-radius: 50%;
   cursor: pointer;
+}
+.postTime {
+  color: rgb(120, 119, 119);
+}
+.postTextContent {
+  padding-left: 24px;
+  width: 100%;
+  text-align: left;
+}
+.postImageUrl {
+  display: inline-block;
+  margin: 10px;
+  max-width: 600px;
+  max-height: 600px;
+}
+.postVideoUrl {
+  display: inline-block;
+  margin: 10px;
+  max-width: 505px;
+  max-height: 305px;
 }
 .right {
   width: 20%;
