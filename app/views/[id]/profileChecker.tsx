@@ -36,6 +36,7 @@ const ProfileChecker = ({
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -124,6 +125,7 @@ const ProfileChecker = ({
               className={styles.picture}
               onClick={() => setProfilePicture(true)}
             ></img>
+            <p className={styles.viewsName}>{viewsName}</p>
             {!loggedUser ? (
               <button type="button" className={styles.follow}>
                 Follow
@@ -133,9 +135,8 @@ const ProfileChecker = ({
             )}
           </div>
           <div className={styles.middleDescription}>
-            <b className={styles.viewsName}>{user?.viewsName}</b>
-            <p>Description</p>
-            <div>{friends.length} Following</div>
+            <div>Description</div>
+            <p>{friends.length} Following</p>
           </div>
           <div className={styles.content}>
             {loggedUser ? (
@@ -176,25 +177,61 @@ const ProfileChecker = ({
               ""
             )}
             {posts.map((post, index) => {
+              console.log(posts);
+              const dateNow = new Date().getTime();
+              const postDate = new Date(post.createdAt).getTime();
+              const differenceInHours = Number(
+                ((dateNow - postDate) / 36e5).toFixed(0)
+              );
+              let postTime = `${differenceInHours} h`;
+              if (differenceInHours === 0) {
+                const minutes =
+                  new Date().getMinutes() -
+                  new Date(post.createdAt).getMinutes();
+                postTime = `${minutes} m`;
+                if (minutes === 0) {
+                  postTime = "Just now";
+                }
+              }
+              if (differenceInHours > 24) {
+                postTime = `${new Date(
+                  new Date().getTime() - differenceInHours * 60 * 60 * 1000
+                ).toLocaleDateString("en-GB")}`;
+                console.log(differenceInHours);
+              }
               return (
                 <div className={styles.postContainer} key={index}>
                   <div className={styles.postContent}>
                     <img src={picture} className={styles.postUserPicture} />
-                    <p>{viewsName}</p>
-                    <p>{post.createdAt}</p>
+                    <p>
+                      <b>{viewsName}</b> -{" "}
+                    </p>
+                    <p className={styles.postTime}>{postTime}</p>
                   </div>
-                  <p>{post.content}</p>
-                  <img src={post.imageUrl} />
-                  <video
-                    width="380"
-                    height="380"
-                    className={styles.footerVideo}
-                    autoPlay={true}
-                    loop
-                    muted
-                  >
-                    <source src={post.videoUrl} type="video/mp4" />
-                  </video>
+                  {post.content ? (
+                    <p className={styles.postTextContent}>{post.content}</p>
+                  ) : (
+                    ""
+                  )}
+                  {post.imageUrl ? (
+                    <img src={post.imageUrl} className={styles.postImageUrl} />
+                  ) : (
+                    ""
+                  )}
+                  {post.videoUrl ? (
+                    <video
+                      width="380"
+                      height="380"
+                      className={styles.postVideoUrl}
+                      autoPlay={true}
+                      loop
+                      muted
+                    >
+                      <source src={post.videoUrl} type="video/mp4" />
+                    </video>
+                  ) : (
+                    ""
+                  )}
                 </div>
               );
             })}
