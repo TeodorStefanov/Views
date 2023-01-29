@@ -241,20 +241,18 @@ const ProfileChecker = ({
         <div className={styles.right}></div>
       </div>
       {profilePicture ? (
-        
-          <div className={styles.modalContainer}>
-            <div className={styles.modalMain}>
-              <img src={picture} className={styles.modalPicture} />
-            </div>
-            <div className={styles.overlay}></div>
-            <div
-              className={styles.modalOverlayButton}
-              onClick={() => setProfilePicture(false)}
-            >
-              <FontAwesomeIcon className={styles.markButton} icon={faXmark} />
-            </div>
+        <div className={styles.modalContainer}>
+          <div className={styles.modalMain}>
+            <img src={picture} className={styles.modalPicture} />
           </div>
-        
+          <div className={styles.overlay}></div>
+          <div
+            className={styles.modalOverlayButton}
+            onClick={() => setProfilePicture(false)}
+          >
+            <FontAwesomeIcon className={styles.markButton} icon={faXmark} />
+          </div>
+        </div>
       ) : (
         ""
       )}
