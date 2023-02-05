@@ -247,16 +247,17 @@ const ProfileChecker = ({
                   ) : (
                     ""
                   )}
-                  <div>
-                    <div>
+
+                  <div className={styles.likes}>
+                    <div className={styles.markCount}>
                       <FontAwesomeIcon
-                        className={styles.markButton}
+                        className={styles.likeMark}
                         icon={faHeart}
                       />
                       {post.likes.length}
                     </div>
                   </div>
-                  <div>
+                  <div className={styles.likeButtons}>
                     <button onClick={(e) => addLike(e, post._id)}>Like</button>
                     <button>Comments</button>
                   </div>
