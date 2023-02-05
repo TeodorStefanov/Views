@@ -1,14 +1,17 @@
 import User from "../../../models/user";
+import Posts from "../../../models/posts";
 import Connect from "../../../utils/mongoDBMongooseConnection";
 import ProfileChecker from "./profileChecker";
 export const revalidate = 0;
 async function getUser(id: string) {
   try {
     await Connect();
-    const user = await User.findById(id).lean();
-
+    const user = await User.findById(id)
+      .populate({ path: "posts", model: Posts })
+      .lean();
     return JSON.parse(JSON.stringify(user));
   } catch (err) {
+    console.log(err);
     return null;
   }
 }
@@ -18,19 +21,16 @@ interface user {
   picture: string;
   viewsName: string;
   friends: [];
-  posts: {
-    content: string;
-    imageUrl: string;
-    videoUrl: string;
-    createdAt: string;
-  }[];
+  posts: [];
 }
 export default async function Profile({ params }: any) {
   const id = params.id;
   const userFind: user = await getUser(id);
+  console.log(userFind.posts)
   if (!userFind) {
     throw new Error("User not found!");
   }
+
   return (
     <ProfileChecker
       id={userFind._id}

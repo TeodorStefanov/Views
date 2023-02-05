@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState, useTransition } from "react";
 import UserContext from "../../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faHeart } from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
 import { useRouter } from "next/navigation";
 interface user {
@@ -12,10 +12,13 @@ interface user {
   viewsName: string;
   friends: [];
   posts: {
+    _id: string;
     content: string;
     imageUrl: string;
     videoUrl: string;
     createdAt: string;
+    likes: Array<string>;
+    comments: Array<string>;
   }[];
 }
 
@@ -39,7 +42,6 @@ const ProfileChecker = ({
 
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
-
     const widget = window.cloudinary.createUploadWidget(
       {
         cloudName: "daqcaszkf",
@@ -76,25 +78,40 @@ const ProfileChecker = ({
   };
   const handleClickPost = async (e: React.MouseEvent) => {
     e.preventDefault();
-    const promise = await fetch(
-      "http://localhost:3000/api/registerUpdateUser",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: user?._id,
-          posts: { content, imageUrl, videoUrl },
-        }),
-      }
-    );
+    const promise = await fetch("http://localhost:3000/api/newCart", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user?._id,
+        content,
+        imageUrl,
+        videoUrl,
+      }),
+    });
     if (promise.status === 200) {
       startTransition(() => {
         router.refresh();
       });
     }
     const result = await promise.json();
+  };
+  const addLike = async (event: React.MouseEvent, postId: string) => {
+    event.preventDefault();
+    const userId = user?._id;
+    const promise = await fetch("http://localhost:3000/api/addLikeToPost", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, userId }),
+    });
+    if (promise.status === 200) {
+      startTransition(() => {
+        router.refresh();
+      });
+    }
   };
   useEffect(() => {
     if (user?._id === id) {
@@ -177,7 +194,6 @@ const ProfileChecker = ({
               ""
             )}
             {posts.map((post, index) => {
-              console.log(posts);
               const dateNow = new Date().getTime();
               const postDate = new Date(post.createdAt).getTime();
               const differenceInHours = Number(
@@ -197,7 +213,6 @@ const ProfileChecker = ({
                 postTime = `${new Date(
                   new Date().getTime() - differenceInHours * 60 * 60 * 1000
                 ).toLocaleDateString("en-GB")}`;
-                console.log(differenceInHours);
               }
               return (
                 <div className={styles.postContainer} key={index}>
@@ -232,6 +247,19 @@ const ProfileChecker = ({
                   ) : (
                     ""
                   )}
+                  <div>
+                    <div>
+                      <FontAwesomeIcon
+                        className={styles.markButton}
+                        icon={faHeart}
+                      />
+                      {post.likes.length}
+                    </div>
+                  </div>
+                  <div>
+                    <button onClick={(e) => addLike(e, post._id)}>Like</button>
+                    <button>Comments</button>
+                  </div>
                 </div>
               );
             })}
