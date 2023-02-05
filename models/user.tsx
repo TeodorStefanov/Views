@@ -39,10 +39,8 @@ const userSchema = new Schema({
   ],
   posts: [
     {
-      content: String,
-      imageUrl: String,
-      videoUrl: String,
-      createdAt: Date,
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Posts",
     },
   ],
 });
