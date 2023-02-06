@@ -26,7 +26,6 @@ interface user {
 export default async function Profile({ params }: any) {
   const id = params.id;
   const userFind: user = await getUser(id);
-  console.log(userFind.posts)
   if (!userFind) {
     throw new Error("User not found!");
   }

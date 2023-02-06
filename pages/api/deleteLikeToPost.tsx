@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { addLikeToPost } from "../../controllers/posts";
+import { deleteLikeToPost } from "../../controllers/posts";
 
 type responseData = {
   message?: string;
@@ -11,6 +11,6 @@ export default async function handler(
   res: NextApiResponse<responseData>
 ) {
   if (req.method === "PUT") {
-    await addLikeToPost(req, res);
+    await deleteLikeToPost(req, res);
   }
 }

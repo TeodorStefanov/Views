@@ -234,6 +234,20 @@
 .buttonLike:hover {
   background-color: rgb(226, 220, 220);
 }
+.buttonUnLike {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  color: #1d9bf0;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonUnLike:hover {
+  background-color: rgb(226, 220, 220);
+}
 .buttonComment {
   display: flex;
   justify-content: center;

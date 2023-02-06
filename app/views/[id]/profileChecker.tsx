@@ -118,6 +118,22 @@ const ProfileChecker = ({
       });
     }
   };
+  const deleteLike = async (event: React.MouseEvent, postId: string) => {
+    event.preventDefault();
+    const userId = user?._id;
+    const promise = await fetch("http://localhost:3000/api/deleteLikeToPost", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, userId }),
+    });
+    if (promise.status === 200) {
+      startTransition(() => {
+        router.refresh();
+      });
+    }
+  };
   useEffect(() => {
     if (user?._id === id) {
       setLoggedUser(true);
@@ -283,8 +299,8 @@ const ProfileChecker = ({
                         </div>
                       ) : (
                         <div
-                          className={styles.buttonLike}
-                          onClick={(e) => addLike(e, post._id)}
+                          className={styles.buttonUnLike}
+                          onClick={(e) => deleteLike(e, post._id)}
                         >
                           <FontAwesomeIcon
                             className={styles.likeMark}
