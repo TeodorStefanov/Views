@@ -59,3 +59,20 @@ export const addLikeToPost = async (
     console.log(err);
   }
 };
+export const deleteLikeToPost = async (
+  req: NextApiRequest,
+  res: NextApiResponse<responseData>
+) => {
+  const { postId, userId } = req.body;
+  try {
+    await Connect();
+    const user = await Posts.findOneAndUpdate(
+      { _id: postId },
+      { $pull: { likes: userId } },
+      { new: true }
+    );
+    res.status(200).send(user);
+  } catch (err) {
+    console.log(err);
+  }
+};
