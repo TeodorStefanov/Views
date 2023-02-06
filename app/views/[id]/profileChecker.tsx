@@ -2,7 +2,12 @@
 import React, { useContext, useEffect, useState, useTransition } from "react";
 import UserContext from "../../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faHeart } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXmark,
+  faHeart,
+  faThumbsUp,
+  faComment,
+} from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
 import { useRouter } from "next/navigation";
 interface user {
@@ -194,6 +199,7 @@ const ProfileChecker = ({
               ""
             )}
             {posts.map((post, index) => {
+              let liked = false;
               const dateNow = new Date().getTime();
               const postDate = new Date(post.createdAt).getTime();
               const differenceInHours = Number(
@@ -214,6 +220,11 @@ const ProfileChecker = ({
                   new Date().getTime() - differenceInHours * 60 * 60 * 1000
                 ).toLocaleDateString("en-GB")}`;
               }
+              post.likes.map((el) => {
+                if (el === user?._id) {
+                  liked = true;
+                }
+              });
               return (
                 <div className={styles.postContainer} key={index}>
                   <div className={styles.postContent}>
@@ -257,9 +268,39 @@ const ProfileChecker = ({
                       {post.likes.length}
                     </div>
                   </div>
-                  <div className={styles.likeButtons}>
-                    <button onClick={(e) => addLike(e, post._id)}>Like</button>
-                    <button>Comments</button>
+                  <div className={styles.mainLikeCommentButtons}>
+                    <div className={styles.likeCommentButtons}>
+                      {!liked ? (
+                        <div
+                          className={styles.buttonLike}
+                          onClick={(e) => addLike(e, post._id)}
+                        >
+                          <FontAwesomeIcon
+                            className={styles.likeMark}
+                            icon={faThumbsUp}
+                          />
+                          Like
+                        </div>
+                      ) : (
+                        <div
+                          className={styles.buttonLike}
+                          onClick={(e) => addLike(e, post._id)}
+                        >
+                          <FontAwesomeIcon
+                            className={styles.likeMark}
+                            icon={faThumbsUp}
+                          />
+                          Like
+                        </div>
+                      )}
+                      <div className={styles.buttonComment}>
+                        <FontAwesomeIcon
+                          className={styles.likeMark}
+                          icon={faComment}
+                        />
+                        Comment
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

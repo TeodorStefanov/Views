@@ -203,16 +203,49 @@
   text-align: left;
   border-bottom: solid 1px rgb(194, 190, 190);
 }
-.likeButtons {
-  width: 90%;
+.mainLikeCommentButtons {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin: 10px;
   text-align: left;
-  border-bottom: solid 1px rgb(194, 190, 190);
+}
+.likeCommentButtons {
+  display: flex;
+  gap: 20px;
+  width: 97%;
 }
 .likeMark {
   width: 20px;
   height: 20px;
   padding-right: 4px;
+}
+.buttonLike {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonLike:hover {
+  background-color: rgb(226, 220, 220);
+}
+.buttonComment {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonComment:hover {
+  background-color: rgb(226, 220, 220);
 }
 .right {
   width: 20%;
