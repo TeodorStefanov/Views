@@ -19,7 +19,12 @@ const postSchema = new Schema({
       ref: "User",
     },
   ],
-  comments: [],
+  comments: [
+    {
+      userId: String,
+      content: String,
+    },
+  ],
 });
 const Posts = models.Posts || model("Posts", postSchema);
 export default Posts;

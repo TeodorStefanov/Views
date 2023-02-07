@@ -11,6 +11,7 @@ interface fields {
   liked: boolean;
   addLike: (e: React.MouseEvent) => void;
   deleteLike: (e: React.MouseEvent) => void;
+  addComment: (e: React.MouseEvent) => void;
 }
 const Post = ({
   post,
@@ -20,6 +21,7 @@ const Post = ({
   liked,
   addLike,
   deleteLike,
+  addComment,
 }: fields) => {
   return (
     <div className={styles.postContainer}>
@@ -57,8 +59,29 @@ const Post = ({
 
       <div className={styles.likes}>
         <div className={styles.markCount}>
-          <FontAwesomeIcon className={styles.likeMark} icon={faThumbsUp} />
-          {post.likes.length}
+          <div>
+            {post.likes.length > 0 ? (
+              <div>
+                <FontAwesomeIcon
+                  className={styles.likeMark}
+                  icon={faThumbsUp}
+                />
+                {post.likes.length}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
+            {post.comments.length > 0 ? (
+              <div>
+                <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
+                {post.comments.length}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
       </div>
       <div className={styles.mainLikeCommentButtons}>
@@ -70,11 +93,14 @@ const Post = ({
             </div>
           ) : (
             <div className={styles.buttonUnLike} onClick={deleteLike}>
-              <FontAwesomeIcon className={styles.likeMark} icon={faThumbsUp} />
+              <FontAwesomeIcon
+                className={styles.unLikeMark}
+                icon={faThumbsUp}
+              />
               Like
             </div>
           )}
-          <div className={styles.buttonComment}>
+          <div className={styles.buttonComment} onClick={addComment}>
             <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
             Comment
           </div>
