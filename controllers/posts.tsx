@@ -76,3 +76,20 @@ export const deleteLikeToPost = async (
     console.log(err);
   }
 };
+export const addComment = async (
+  req: NextApiRequest,
+  res: NextApiResponse<responseData>
+) => {
+  const { postId, userId, content } = req.body;
+  console.log(postId);
+  try {
+    await Connect();
+    const user = await Posts.findOneAndUpdate(
+      { _id: postId },
+      { $push: { comments: { userId, content } } },
+      { new: true }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};

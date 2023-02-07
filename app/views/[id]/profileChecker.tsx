@@ -133,6 +133,23 @@ const ProfileChecker = ({
       });
     }
   };
+  const addComment = async (event: React.MouseEvent, postId: string) => {
+    event.preventDefault();
+    const userId = user?._id;
+    console.log(userId);
+    const promise = await fetch("http://localhost:3000/api/addComment", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ postId, userId, content: "asdasdasda" }),
+    });
+    if (promise.status === 200) {
+      startTransition(() => {
+        router.refresh();
+      });
+    }
+  };
   useEffect(() => {
     if (user?._id === id) {
       setLoggedUser(true);
@@ -226,6 +243,7 @@ const ProfileChecker = ({
                   liked={liked}
                   addLike={(e: React.MouseEvent) => addLike(e, post._id)}
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
+                  addComment={(e: React.MouseEvent) => addComment(e, post._id)}
                 />
               );
             })}
