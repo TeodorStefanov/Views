@@ -1,0 +1,111 @@
+.postContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 8px;
+  background-color: white;
+  border: solid 1px white;
+  border-radius: 20px;
+  align-items: center;
+  text-align: center;
+}
+.postContent {
+  display: flex;
+  width: 100%;
+}
+.postUserPicture {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.postTime {
+  color: rgb(120, 119, 119);
+}
+.postTextContent {
+  box-sizing: border-box;
+  padding-left: 12px;
+  width: 100%;
+  text-align: left;
+}
+.postImageUrl {
+  margin-bottom: 20px;
+  max-width: 600px;
+  max-height: 550px;
+}
+.postVideoUrl {
+  margin-bottom: 20px;
+  max-width: 505px;
+  max-height: 305px;
+}
+.likes {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.markCount {
+  box-sizing: border-box;
+  width: 97%;
+  padding-bottom: 10px;
+  text-align: left;
+  border-bottom: solid 1px rgb(194, 190, 190);
+}
+.mainLikeCommentButtons {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px;
+  text-align: left;
+}
+.likeCommentButtons {
+  display: flex;
+  gap: 20px;
+  width: 97%;
+}
+.likeMark {
+  width: 20px;
+  height: 20px;
+  padding-right: 4px;
+}
+.buttonLike {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonLike:hover {
+  background-color: rgb(226, 220, 220);
+}
+.buttonUnLike {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  color: #1d9bf0;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonUnLike:hover {
+  background-color: rgb(226, 220, 220);
+}
+.buttonComment {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  align-items: center;
+  width: 150px;
+  height: 28px;
+  cursor: pointer;
+}
+.buttonComment:hover {
+  background-color: rgb(226, 220, 220);
+}

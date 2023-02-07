@@ -1,7 +1,7 @@
 import User from "../../../models/user";
 import Posts from "../../../models/posts";
 import Connect from "../../../utils/mongoDBMongooseConnection";
-import ProfileChecker from "./profileChecker";
+import ProfileChecker, { posts } from "./profileChecker";
 export const revalidate = 0;
 async function getUser(id: string) {
   try {
@@ -15,13 +15,13 @@ async function getUser(id: string) {
     return null;
   }
 }
-interface user {
+ interface user {
   _id: string;
   backgroundPicture: string;
   picture: string;
   viewsName: string;
   friends: [];
-  posts: [];
+  posts: posts[];
 }
 export default async function Profile({ params }: any) {
   const id = params.id;

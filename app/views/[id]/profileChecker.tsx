@@ -2,29 +2,28 @@
 import React, { useContext, useEffect, useState, useTransition } from "react";
 import UserContext from "../../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faXmark,
-  faHeart,
-  faThumbsUp,
-  faComment,
-} from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
 import { useRouter } from "next/navigation";
-interface user {
+import Post from "../../../components/post";
+import AddPost from "../../../components/addPost";
+import ModalProfilePicture from "../../../components/modalProfilePicture";
+export type posts = {
+  _id: string;
+  content: string;
+  imageUrl: string;
+  videoUrl: string;
+  createdAt: string;
+  likes: Array<string>;
+  comments: Array<string>;
+};
+export interface user {
   id: string;
   backgroundPicture: string;
   picture: string;
   viewsName: string;
   friends: [];
-  posts: {
-    _id: string;
-    content: string;
-    imageUrl: string;
-    videoUrl: string;
-    createdAt: string;
-    likes: Array<string>;
-    comments: Array<string>;
-  }[];
+  posts: posts[];
 }
 
 const ProfileChecker = ({
@@ -178,39 +177,15 @@ const ProfileChecker = ({
           </div>
           <div className={styles.content}>
             {loggedUser ? (
-              <div className={styles.addSomething}>
-                <img
-                  src={user?.picture}
-                  className={styles.addSomethingPicture}
-                ></img>
-                <label htmlFor="Add something">
-                  <input
-                    name="Add something"
-                    className={styles.addSomethingField}
-                    onChange={(e) => setContent(e.target.value)}
-                  />
-                </label>
-                <div className={styles.addSomethingButtons}>
-                  <button
-                    className={styles.addSomethingButton}
-                    onClick={handleClickPicture}
-                  >
-                    Add Picture
-                  </button>
-                  <button
-                    className={styles.addSomethingButton}
-                    onClick={handleClickVideo}
-                  >
-                    Add Video
-                  </button>
-                  <button
-                    className={styles.addSomethingButtonPost}
-                    onClick={handleClickPost}
-                  >
-                    Post
-                  </button>
-                </div>
-              </div>
+              <AddPost
+                picture={user!.picture}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setContent(e.target.value)
+                }
+                handleClickPicture={handleClickPicture}
+                handleClickVideo={handleClickVideo}
+                handleClickPost={handleClickPost}
+              />
             ) : (
               ""
             )}
@@ -242,83 +217,16 @@ const ProfileChecker = ({
                 }
               });
               return (
-                <div className={styles.postContainer} key={index}>
-                  <div className={styles.postContent}>
-                    <img src={picture} className={styles.postUserPicture} />
-                    <p>
-                      <b>{viewsName}</b> -{" "}
-                    </p>
-                    <p className={styles.postTime}>{postTime}</p>
-                  </div>
-                  {post.content ? (
-                    <p className={styles.postTextContent}>{post.content}</p>
-                  ) : (
-                    ""
-                  )}
-                  {post.imageUrl ? (
-                    <img src={post.imageUrl} className={styles.postImageUrl} />
-                  ) : (
-                    ""
-                  )}
-                  {post.videoUrl ? (
-                    <video
-                      width="380"
-                      height="380"
-                      className={styles.postVideoUrl}
-                      autoPlay={true}
-                      loop
-                      muted
-                    >
-                      <source src={post.videoUrl} type="video/mp4" />
-                    </video>
-                  ) : (
-                    ""
-                  )}
-
-                  <div className={styles.likes}>
-                    <div className={styles.markCount}>
-                      <FontAwesomeIcon
-                        className={styles.likeMark}
-                        icon={faHeart}
-                      />
-                      {post.likes.length}
-                    </div>
-                  </div>
-                  <div className={styles.mainLikeCommentButtons}>
-                    <div className={styles.likeCommentButtons}>
-                      {!liked ? (
-                        <div
-                          className={styles.buttonLike}
-                          onClick={(e) => addLike(e, post._id)}
-                        >
-                          <FontAwesomeIcon
-                            className={styles.likeMark}
-                            icon={faThumbsUp}
-                          />
-                          Like
-                        </div>
-                      ) : (
-                        <div
-                          className={styles.buttonUnLike}
-                          onClick={(e) => deleteLike(e, post._id)}
-                        >
-                          <FontAwesomeIcon
-                            className={styles.likeMark}
-                            icon={faThumbsUp}
-                          />
-                          Like
-                        </div>
-                      )}
-                      <div className={styles.buttonComment}>
-                        <FontAwesomeIcon
-                          className={styles.likeMark}
-                          icon={faComment}
-                        />
-                        Comment
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Post
+                  key={index}
+                  post={post}
+                  picture={picture}
+                  viewsName={viewsName}
+                  postTime={postTime}
+                  liked={liked}
+                  addLike={(e: React.MouseEvent) => addLike(e, post._id)}
+                  deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
+                />
               );
             })}
           </div>
@@ -327,18 +235,10 @@ const ProfileChecker = ({
         <div className={styles.right}></div>
       </div>
       {profilePicture ? (
-        <div className={styles.modalContainer}>
-          <div className={styles.modalMain}>
-            <img src={picture} className={styles.modalPicture} />
-          </div>
-          <div className={styles.overlay}></div>
-          <div
-            className={styles.modalOverlayButton}
-            onClick={() => setProfilePicture(false)}
-          >
-            <FontAwesomeIcon className={styles.markButton} icon={faXmark} />
-          </div>
-        </div>
+        <ModalProfilePicture
+          picture={picture}
+          onClick={() => setProfilePicture(false)}
+        />
       ) : (
         ""
       )}
