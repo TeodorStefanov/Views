@@ -4,6 +4,8 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
+import { user } from "../app/views/[id]/page";
+import { NewLineKind } from "typescript";
 type loginData = {
   userId: string;
   username: string;
@@ -128,37 +130,26 @@ export const deleteToken = (
   );
   res.status(200).send({ message: "Successfully" });
 };
-export const updateUser = async (
-  req: NextApiRequest,
-  res: NextApiResponse<responseData>
-) => {
+let likedUser: user[] = [];
+let commentsUser: user[] = [];
+export const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { id, posts } = req.body;
-    if (id && posts) {
-      await Connect();
-      posts["createdAt"] = new Date();
-      posts["likes"] = [];
-      posts["comments"] = [];
-      console.log(posts);
-      const user = await User.findOneAndUpdate(
-        { _id: id },
-        {
-          $push: {
-            posts: posts,
-          },
-        },
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).send(user);
-    } else {
-      res.status(200).send({ error: "There is an error!" });
-    }
+    await Connect();
+    const { likes, comments } = req.body;
+    likes.map(async (el: string) => {
+      const user = await User.findById(el);
+      likedUser.push(user);
+    });
+    comments.map(async (el: { userId: string; content: string }) => {
+      const user = await User.findById(el.userId);
+      user["content"] = el.content;
+      commentsUser.push(user);
+    });
+    console.log(likedUser);
+    res.status(200).send({ likedUser, commentsUser });
+    likedUser = [];
+    commentsUser = [];
   } catch (err) {
     console.log(err);
-    res.status(400).send({ error: "There is an error!" });
   }
 };
-

@@ -1,0 +1,89 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+.main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  border: solid 1px rgb(255, 255, 255);
+  border-radius: 20px;
+  background-color: white;
+  z-index: 10;
+  overflow: auto;
+  overflow-x: hidden;
+}
+.user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+}
+.userNameAndPicture {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.picture {
+  width: 40px;
+  height: 40px;
+  margin: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.viewsName {
+  font-weight: bold;
+  cursor: pointer;
+}
+.viewsName:hover {
+  text-decoration: underline;
+}
+.follow {
+  width: 100px;
+  height: 25px;
+  margin-right: 10px;
+  border: solid 1px rgb(194, 190, 190);
+  border-radius: 10px;
+  background-color: rgb(194, 190, 190);
+}
+.follow:hover {
+  background-color: rgb(222, 217, 217);
+}
+.modalOverlayButton {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 28px;
+  height: 28px;
+  border: solid 1px #1d9bf0;
+  border-radius: 20px;
+  z-index: 15;
+  align-items: center;
+  text-align: center;
+  background-color: #1d9bf0;
+  cursor: pointer;
+}
+.markButton {
+  width: 20px;
+  height: 20px;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(216, 214, 214);
+  opacity: 0.7;
+}

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
 import { posts } from "../../app/views/[id]/profileChecker";
+import { user } from "../../app/views/[id]/page";
+import { useRouter } from "next/navigation";
 interface fields {
   post: posts;
   picture: string;
@@ -12,6 +14,7 @@ interface fields {
   addLike: (e: React.MouseEvent) => void;
   deleteLike: (e: React.MouseEvent) => void;
   addComment: (e: React.MouseEvent) => void;
+  likedUsers: (e: React.MouseEvent) => void;
 }
 const Post = ({
   post,
@@ -22,7 +25,30 @@ const Post = ({
   addLike,
   deleteLike,
   addComment,
+  likedUsers,
 }: fields) => {
+  const [postLiked, setPostLiked] = useState<user[] | []>([]);
+  const [postComments, setPostComments] = useState<user[] | []>([]);
+  const router = useRouter();
+  const getLikedUser = async () => {
+    console.log(post.likes);
+    const promise = await fetch(
+      "http://localhost:3000/api/getLikedAndCommentsUser",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ likes: post.likes, comments: post.comments }),
+      }
+    );
+    const { likedUser, commentsUser } = await promise.json();
+
+    setPostLiked(likedUser);
+    setPostComments(commentsUser);
+    router.push("/");
+  };
+
   return (
     <div className={styles.postContainer}>
       <div className={styles.postContent}>
@@ -61,7 +87,7 @@ const Post = ({
         <div className={styles.markCount}>
           <div>
             {post.likes.length > 0 ? (
-              <div>
+              <div onClick={likedUsers}>
                 <FontAwesomeIcon
                   className={styles.likeMark}
                   icon={faThumbsUp}
