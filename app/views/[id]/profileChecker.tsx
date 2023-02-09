@@ -1,20 +1,19 @@
 "use client";
 import React, { useContext, useEffect, useState, useTransition } from "react";
 import UserContext from "../../../context/context";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import styles from "./id.module.css";
 import { useRouter } from "next/navigation";
 import Post from "../../../components/post";
 import AddPost from "../../../components/addPost";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
+import ModalLikedUsers from "../../../components/modalLikedUsers";
 export type posts = {
   _id: string;
   content: string;
   imageUrl: string;
   videoUrl: string;
   createdAt: string;
-  likes: Array<string>;
+  likes: Array<user2>;
   comments: Array<string>;
 };
 export interface user {
@@ -25,7 +24,14 @@ export interface user {
   friends: [];
   posts: posts[];
 }
-
+export interface user2 {
+  _id: string;
+  backgroundPicture: string;
+  picture: string;
+  viewsName: string;
+  friends: [];
+  posts: posts[];
+}
 const ProfileChecker = ({
   id,
   backgroundPicture,
@@ -41,6 +47,7 @@ const ProfileChecker = ({
   const [content, setContent] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [likedUsersPressed, setLikedUsersPressed] = useState<user2[] | []>([]);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -150,6 +157,11 @@ const ProfileChecker = ({
       });
     }
   };
+  const likedUsers = async (event: React.MouseEvent, post: posts) => {
+    event.preventDefault();
+    setLikedUsersPressed(post.likes);
+  };
+
   useEffect(() => {
     if (user?._id === id) {
       setLoggedUser(true);
@@ -228,8 +240,8 @@ const ProfileChecker = ({
                   new Date().getTime() - differenceInHours * 60 * 60 * 1000
                 ).toLocaleDateString("en-GB")}`;
               }
-              post.likes.map((el) => {
-                if (el === user?._id) {
+              post.likes.map((el: user2) => {
+                if (el._id === user?._id) {
                   liked = true;
                 }
               });
@@ -244,6 +256,7 @@ const ProfileChecker = ({
                   addLike={(e: React.MouseEvent) => addLike(e, post._id)}
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
                   addComment={(e: React.MouseEvent) => addComment(e, post._id)}
+                  likedUsers={(e: React.MouseEvent) => likedUsers(e, post)}
                 />
               );
             })}
@@ -256,6 +269,14 @@ const ProfileChecker = ({
         <ModalProfilePicture
           picture={picture}
           onClick={() => setProfilePicture(false)}
+        />
+      ) : (
+        ""
+      )}
+      {likedUsersPressed.length > 0 ? (
+        <ModalLikedUsers
+          users={likedUsersPressed}
+          onClick={() => setLikedUsersPressed([])}
         />
       ) : (
         ""

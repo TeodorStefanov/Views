@@ -7,7 +7,7 @@ async function getUser(id: string) {
   try {
     await Connect();
     const user = await User.findById(id)
-      .populate({ path: "posts", model: Posts })
+      .populate({ path: "posts", model: Posts, populate: "likes" })
       .lean();
     return JSON.parse(JSON.stringify(user));
   } catch (err) {
@@ -15,7 +15,7 @@ async function getUser(id: string) {
     return null;
   }
 }
-interface user {
+export interface user {
   _id: string;
   backgroundPicture: string;
   picture: string;
@@ -24,7 +24,7 @@ interface user {
   posts: posts[];
 }
 export default async function Profile({ params }: any) {
-  const id = params.id; 
+  const id = params.id;
   const userFind: user = await getUser(id);
   if (!userFind) {
     throw new Error("User not found!");

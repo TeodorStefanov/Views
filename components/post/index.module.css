@@ -71,6 +71,7 @@
   height: 20px;
   padding-right: 4px;
   color: rgb(119, 115, 115);
+  cursor: pointer;
 }
 .unLikeMark {
   width: 20px;
