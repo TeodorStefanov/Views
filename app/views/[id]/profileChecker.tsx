@@ -277,6 +277,7 @@ const ProfileChecker = ({
         <ModalLikedUsers
           users={likedUsersPressed}
           onClick={() => setLikedUsersPressed([])}
+          id={id}
         />
       ) : (
         ""

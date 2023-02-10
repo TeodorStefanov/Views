@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 type fields = {
   users: user2[] | [];
   onClick: () => void;
+  id: string;
 };
-const ModalLikedUsers = ({ users, onClick }: fields) => {
+const ModalLikedUsers = ({ users, onClick, id }: fields) => {
   const router = useRouter();
   const context = useContext(UserContext);
   const { user } = context;
@@ -24,7 +25,7 @@ const ModalLikedUsers = ({ users, onClick }: fields) => {
                   src={el.picture}
                   className={styles.picture}
                   onClick={() => {
-                    if (el._id === user?._id) {
+                    if (el._id === id) {
                       onClick();
                     }
                     router.push(`/views/${el._id}`);
@@ -33,7 +34,7 @@ const ModalLikedUsers = ({ users, onClick }: fields) => {
                 <div
                   className={styles.viewsName}
                   onClick={() => {
-                    if (el._id === user?._id) {
+                    if (el._id === id) {
                       onClick();
                     }
                     router.push(`/views/${el._id}`);
