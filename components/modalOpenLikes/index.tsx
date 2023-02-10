@@ -10,7 +10,7 @@ type fields = {
   onClick: () => void;
   id: string;
 };
-const ModalLikedUsers = ({ users, onClick, id }: fields) => {
+const ModalOpenLikes = ({ users, onClick, id }: fields) => {
   const router = useRouter();
   const context = useContext(UserContext);
   const { user } = context;
@@ -59,4 +59,4 @@ const ModalLikedUsers = ({ users, onClick, id }: fields) => {
     </div>
   );
 };
-export default ModalLikedUsers;
+export default ModalOpenLikes;

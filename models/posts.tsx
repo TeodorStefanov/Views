@@ -21,8 +21,8 @@ const postSchema = new Schema({
   ],
   comments: [
     {
-      userId: String,
-      content: String,
+      type: "ObjectId",
+      ref: "Comments",
     },
   ],
 });

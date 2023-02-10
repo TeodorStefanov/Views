@@ -1,5 +1,6 @@
 import User from "../../../models/user";
 import Posts from "../../../models/posts";
+import Comments from "../../../models/comments";
 import Connect from "../../../utils/mongoDBMongooseConnection";
 import ProfileChecker, { posts } from "./profileChecker";
 export const revalidate = 0;
@@ -7,7 +8,15 @@ async function getUser(id: string) {
   try {
     await Connect();
     const user = await User.findById(id)
-      .populate({ path: "posts", model: Posts, populate: "likes" })
+      .populate({
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          { path: "comments", model: Comments },
+        ],
+      })
+
       .lean();
     return JSON.parse(JSON.stringify(user));
   } catch (err) {

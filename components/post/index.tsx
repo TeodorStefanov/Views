@@ -5,6 +5,7 @@ import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
 import { posts } from "../../app/views/[id]/profileChecker";
 import { user } from "../../app/views/[id]/page";
 import { useRouter } from "next/navigation";
+import AddPost from "../addPost";
 interface fields {
   post: posts;
   picture: string;
@@ -14,7 +15,8 @@ interface fields {
   addLike: (e: React.MouseEvent) => void;
   deleteLike: (e: React.MouseEvent) => void;
   addComment: (e: React.MouseEvent) => void;
-  likedUsers: (e: React.MouseEvent) => void;
+  openLikes: (e: React.MouseEvent) => void;
+  openComments: (e: React.MouseEvent) => void;
 }
 const Post = ({
   post,
@@ -25,10 +27,12 @@ const Post = ({
   addLike,
   deleteLike,
   addComment,
-  likedUsers,
+  openLikes,
+  openComments,
 }: fields) => {
   const [postLiked, setPostLiked] = useState<user[] | []>([]);
   const [postComments, setPostComments] = useState<user[] | []>([]);
+  const [openComment, setOpenComment] = useState<boolean>(false);
   const router = useRouter();
   const getLikedUser = async () => {
     console.log(post.likes);
@@ -87,7 +91,7 @@ const Post = ({
         <div className={styles.markCount}>
           <div>
             {post.likes.length > 0 ? (
-              <div onClick={likedUsers}>
+              <div onClick={openLikes}>
                 <FontAwesomeIcon
                   className={styles.likeMark}
                   icon={faThumbsUp}
@@ -100,7 +104,7 @@ const Post = ({
           </div>
           <div>
             {post.comments.length > 0 ? (
-              <div>
+              <div onClick={openComments}>
                 <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
                 {post.comments.length}
               </div>
@@ -126,7 +130,10 @@ const Post = ({
               Like
             </div>
           )}
-          <div className={styles.buttonComment} onClick={addComment}>
+          <div
+            className={styles.buttonComment}
+            onClick={() => setOpenComment(true)}
+          >
             <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
             Comment
           </div>

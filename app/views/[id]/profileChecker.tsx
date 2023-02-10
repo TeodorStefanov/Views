@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import Post from "../../../components/post";
 import AddPost from "../../../components/addPost";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
-import ModalLikedUsers from "../../../components/modalLikedUsers";
+import ModalOpenLikes from "../../../components/modalOpenLikes";
+import ModalOpenComments from "../../../components/modalOpenComments";
 export type posts = {
   _id: string;
   content: string;
@@ -14,7 +15,7 @@ export type posts = {
   videoUrl: string;
   createdAt: string;
   likes: Array<user2>;
-  comments: Array<string>;
+  comments: { _id: string; user: user2; content: string; createdAt: Date }[];
 };
 export interface user {
   id: string;
@@ -47,7 +48,11 @@ const ProfileChecker = ({
   const [content, setContent] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [likedUsersPressed, setLikedUsersPressed] = useState<user2[] | []>([]);
+  const [openLikesPressed, setOpenLikesPressed] = useState<user2[] | []>([]);
+  const [openCommentsPressed, setOpenCommentsPressed] = useState<
+    { user: user2; content: string }[] | []
+  >([]);
+  const [postId, setPostId] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -157,9 +162,14 @@ const ProfileChecker = ({
       });
     }
   };
-  const likedUsers = async (event: React.MouseEvent, post: posts) => {
+  const openLikes = async (event: React.MouseEvent, post: posts) => {
     event.preventDefault();
-    setLikedUsersPressed(post.likes);
+    setOpenLikesPressed(post.likes);
+  };
+  const openComments = async (event: React.MouseEvent, post: posts) => {
+    event.preventDefault();
+    setOpenCommentsPressed(post.comments);
+    setPostId(post._id);
   };
 
   useEffect(() => {
@@ -256,7 +266,8 @@ const ProfileChecker = ({
                   addLike={(e: React.MouseEvent) => addLike(e, post._id)}
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
                   addComment={(e: React.MouseEvent) => addComment(e, post._id)}
-                  likedUsers={(e: React.MouseEvent) => likedUsers(e, post)}
+                  openLikes={(e: React.MouseEvent) => openLikes(e, post)}
+                  openComments={(e: React.MouseEvent) => openComments(e, post)}
                 />
               );
             })}
@@ -273,11 +284,20 @@ const ProfileChecker = ({
       ) : (
         ""
       )}
-      {likedUsersPressed.length > 0 ? (
-        <ModalLikedUsers
-          users={likedUsersPressed}
-          onClick={() => setLikedUsersPressed([])}
+      {openLikesPressed.length > 0 ? (
+        <ModalOpenLikes
+          users={openLikesPressed}
+          onClick={() => setOpenLikesPressed([])}
           id={id}
+        />
+      ) : (
+        ""
+      )}
+      {postId ? (
+        <ModalOpenComments
+          comments={openCommentsPressed}
+          onClick={() => setOpenCommentsPressed([])}
+          id={postId}
         />
       ) : (
         ""
