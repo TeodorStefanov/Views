@@ -13,7 +13,7 @@ type fields = {
 const ModalOpenComments = ({ comments, onClick, id }: fields) => {
   const router = useRouter();
   const context = useContext(UserContext);
-  const [comment, setComment] = useState("");
+  const [content, setContent] = useState("");
   const [isPending, startTransition] = useTransition();
   const { user } = context;
   const handleSubmit = async () => {
@@ -24,13 +24,13 @@ const ModalOpenComments = ({ comments, onClick, id }: fields) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: user?._id, id, comment }),
+        body: JSON.stringify({ userId: user?._id, id, content }),
       }
     );
     const result = await promise.json();
     if (promise.status === 200) {
       startTransition(() => {
-        setComment("");
+        setContent("");
         router.refresh();
       });
     }
@@ -44,32 +44,30 @@ const ModalOpenComments = ({ comments, onClick, id }: fields) => {
     <div className={styles.container}>
       <div className={styles.main}>
         <div className={styles.comments}>
-          <div className={styles.comment}>
-            {comments.map((el, index) => {
-              return (
-                <div key={index}>
-                  <div>
-                    <img src={el.user.picture} />
-                    <div>
-                      {el.user.viewsName}
-                      <p>{el.content}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <button>Like</button>
-                    <button>Comment</button>
+          {comments.map((el, index) => {
+            return (
+              <div className={styles.comment} key={index}>
+                <div className={styles.content}>
+                  <img src={el.user.picture} className={styles.picture} />
+                  <div className={styles.nameContent}>
+                    <b>{el.user.viewsName}</b>
+                    <div>{el.content}</div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                <div className={styles.likeAndComment}>
+                  <div className={styles.likeComment}>Like</div>
+                  <div className={styles.likeComment}>Comment</div>
+                </div>
+              </div>
+            );
+          })}
         </div>
         <div className={styles.postComment}>
           <img src={user?.picture} className={styles.postPicture} />
           <input
             className={styles.addComment}
-            onChange={(e) => setComment(e.target.value)}
-            value={comment}
+            onChange={(e) => setContent(e.target.value)}
+            value={content}
             onSubmit={handleSubmit}
             onKeyDown={handleKeyDown}
           />
