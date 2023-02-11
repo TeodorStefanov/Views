@@ -24,6 +24,44 @@
   overflow: auto;
   overflow-x: hidden;
 }
+.comment {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.content {
+  display: flex;
+  align-items: left;
+}
+.picture {
+  width: 34px;
+  height: 34px;
+  margin-top: 2px;
+  margin-left: 10px;
+  margin-right: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.nameContent {
+  width: auto;
+  text-align: left;
+  padding: 10px;
+  border: solid 1px rgb(240, 240, 240);
+  border-radius: 20px;
+  background-color: rgb(240, 240, 240);
+}
+.likeAndComment {
+  display: flex;
+  gap: 10px;
+  margin-left: 60px;
+}
+.likeComment {
+  font-family: inherit;
+  font-weight: bold;
+  color: #65676b;
+}
+.likeComment:hover {
+  text-decoration: underline;
+}
 .postComment {
   display: flex;
   align-items: center;
@@ -48,36 +86,7 @@
   padding-right: 10px;
   outline: none;
 }
-.user {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 50px;
-}
-.userNameAndPicture {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.viewsName {
-  font-weight: bold;
-  cursor: pointer;
-}
-.viewsName:hover {
-  text-decoration: underline;
-}
-.follow {
-  width: 100px;
-  height: 25px;
-  margin-right: 10px;
-  border: solid 1px rgb(194, 190, 190);
-  border-radius: 10px;
-  background-color: rgb(194, 190, 190);
-}
-.follow:hover {
-  background-color: rgb(222, 217, 217);
-}
+
 .modalOverlayButton {
   display: flex;
   justify-content: center;

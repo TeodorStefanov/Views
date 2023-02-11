@@ -18,17 +18,17 @@ export const createCommentUpdatePost = async (
   res: NextApiResponse<responseData>
 ) => {
   try {
-    const { userId, id, comment } = req.body;
+    const { userId, id, content } = req.body;
     const createdAt = new Date();
     await Connect();
-    const commentResult = await Comments.create<Data>({
+    const comment = await Comments.create<Data>({
       user: userId,
-      content: comment,
+      content,
       createdAt,
     });
     const post = await Posts.findOneAndUpdate(
       { _id: id },
-      { $push: { comments: commentResult._id } },
+      { $push: { comments: comment._id } },
       {
         new: true,
       }

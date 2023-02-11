@@ -14,7 +14,6 @@ interface fields {
   liked: boolean;
   addLike: (e: React.MouseEvent) => void;
   deleteLike: (e: React.MouseEvent) => void;
-  addComment: (e: React.MouseEvent) => void;
   openLikes: (e: React.MouseEvent) => void;
   openComments: (e: React.MouseEvent) => void;
 }
@@ -26,33 +25,9 @@ const Post = ({
   liked,
   addLike,
   deleteLike,
-  addComment,
   openLikes,
   openComments,
 }: fields) => {
-  const [postLiked, setPostLiked] = useState<user[] | []>([]);
-  const [postComments, setPostComments] = useState<user[] | []>([]);
-  const [openComment, setOpenComment] = useState<boolean>(false);
-  const router = useRouter();
-  const getLikedUser = async () => {
-    console.log(post.likes);
-    const promise = await fetch(
-      "http://localhost:3000/api/getLikedAndCommentsUser",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ likes: post.likes, comments: post.comments }),
-      }
-    );
-    const { likedUser, commentsUser } = await promise.json();
-
-    setPostLiked(likedUser);
-    setPostComments(commentsUser);
-    router.push("/");
-  };
-
   return (
     <div className={styles.postContainer}>
       <div className={styles.postContent}>
@@ -130,10 +105,7 @@ const Post = ({
               Like
             </div>
           )}
-          <div
-            className={styles.buttonComment}
-            onClick={() => setOpenComment(true)}
-          >
+          <div className={styles.buttonComment} onClick={openComments}>
             <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
             Comment
           </div>
