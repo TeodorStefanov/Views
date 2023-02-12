@@ -62,6 +62,9 @@
 .likeComment:hover {
   text-decoration: underline;
 }
+.time {
+  color: #65676b;
+}
 .postComment {
   display: flex;
   align-items: center;

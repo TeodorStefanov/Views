@@ -1,18 +1,10 @@
-"use client";
 import React from "react";
-type User = {
-  _id: string;
-  username: string;
-  email: string;
-  picture: string;
-  viewsName: string;
-  friends: Array<string>;
-  posts: { content: string; imageUrl: string; videoUrl: string }[];
-};
+import { UserData } from "../app/views/[id]/profileChecker";
+
 interface userContextInterface {
   loggedIn: boolean;
-  user: User | null;
-  logIn: (user: User) => void;
+  user: UserData | null;
+  logIn: (user: UserData) => void;
   logOut: () => void;
 }
 const UserContext = React.createContext<userContextInterface>({

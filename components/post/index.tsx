@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
-import { posts } from "../../app/views/[id]/profileChecker";
-import { user } from "../../app/views/[id]/page";
-import { useRouter } from "next/navigation";
-import AddPost from "../addPost";
+import { PostsType } from "../../app/views/[id]/profileChecker";
+
 interface fields {
-  post: posts;
+  post: PostsType;
   picture: string;
   viewsName: string;
   postTime: string;

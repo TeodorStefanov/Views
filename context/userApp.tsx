@@ -2,26 +2,18 @@
 import React, { useEffect, useState } from "react";
 import UserContext from "./context";
 import User from "../models/user";
+import { UserData } from "../app/views/[id]/profileChecker";
 
 type Props = {
   children: JSX.Element;
-  token?: User | null;
-};
-type User = {
-  _id: string;
-  username: string;
-  email: string;
-  picture: string;
-  viewsName: string;
-  friends: Array<string>;
-  posts: { content: string; imageUrl: string; videoUrl: string }[];
+  token?: UserData | null;
 };
 
 const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [error, setError] = useState<boolean>(false);
-  const logIn = (user: User): void => {
+  const logIn = (user: UserData): void => {
     setLoggedIn(true);
     setUser(user);
   };

@@ -2,11 +2,11 @@ import React from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-interface fields {
+interface Fields {
   picture: string;
   onClick: () => void;
 }
-const ModalProfilePicture = ({ picture, onClick }: fields) => {
+const ModalProfilePicture = ({ picture, onClick }: Fields) => {
   return (
     <div className={styles.modalContainer}>
       <div className={styles.modalMain}>
