@@ -4,7 +4,7 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
-import { user } from "../app/views/[id]/page";
+import { UserData } from "../app/views/[id]/profileChecker";
 import { NewLineKind } from "typescript";
 type loginData = {
   userId: string;
@@ -130,8 +130,8 @@ export const deleteToken = (
   );
   res.status(200).send({ message: "Successfully" });
 };
-let likedUser: user[] = [];
-let commentsUser: user[] = [];
+let likedUser: UserData[] = [];
+let commentsUser: UserData[] = [];
 export const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     await Connect();

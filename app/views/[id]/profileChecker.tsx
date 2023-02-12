@@ -8,39 +8,33 @@ import AddPost from "../../../components/addPost";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
 import ModalOpenLikes from "../../../components/modalOpenLikes";
 import ModalOpenComments from "../../../components/modalOpenComments";
-export type posts = {
+import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
+export type PostsType = {
   _id: string;
   content: string;
   imageUrl: string;
   videoUrl: string;
-  createdAt: string;
-  likes: Array<user2>;
-  comments: { _id: string; user: user2; content: string; createdAt: Date }[];
+  createdAt: Date;
+  likes: Array<UserData>;
+  comments: { _id: string; user: UserData; content: string; createdAt: Date }[];
 };
-export interface user {
-  id: string;
-  backgroundPicture: string;
-  picture: string;
-  viewsName: string;
-  friends: [];
-  posts: posts[];
-}
-export interface user2 {
+export interface UserData {
   _id: string;
   backgroundPicture: string;
   picture: string;
   viewsName: string;
   friends: [];
-  posts: posts[];
+  posts: PostsType[];
 }
+
 const ProfileChecker = ({
-  id,
+  _id,
   backgroundPicture,
   picture,
   viewsName,
   friends,
   posts,
-}: user) => {
+}: UserData) => {
   const context = useContext(UserContext);
   const [loggedUser, setLoggedUser] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState<boolean>(false);
@@ -48,9 +42,9 @@ const ProfileChecker = ({
   const [content, setContent] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
-  const [openLikesPressed, setOpenLikesPressed] = useState<user2[] | []>([]);
+  const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
   const [openCommentsPressed, setOpenCommentsPressed] = useState<
-    { user: user2; content: string }[] | []
+    { user: UserData; content: string; createdAt: Date }[] | []
   >([]);
   const [postId, setPostId] = useState<string>("");
   const [isPending, startTransition] = useTransition();
@@ -145,18 +139,18 @@ const ProfileChecker = ({
       });
     }
   };
-  const openLikes = async (event: React.MouseEvent, post: posts) => {
+  const openLikes = async (event: React.MouseEvent, post: PostsType) => {
     event.preventDefault();
     setOpenLikesPressed(post.likes);
   };
-  const openComments = async (event: React.MouseEvent, post: posts) => {
+  const openComments = async (event: React.MouseEvent, post: PostsType) => {
     event.preventDefault();
     setOpenCommentsPressed(post.comments);
     setPostId(post._id);
   };
 
   useEffect(() => {
-    if (user?._id === id) {
+    if (user?._id === _id) {
       setLoggedUser(true);
     }
   }, [user]);
@@ -213,27 +207,8 @@ const ProfileChecker = ({
             )}
             {posts.map((post, index) => {
               let liked = false;
-              const dateNow = new Date().getTime();
-              const postDate = new Date(post.createdAt).getTime();
-              const differenceInHours = Number(
-                ((dateNow - postDate) / 36e5).toFixed(0)
-              );
-              let postTime = `${differenceInHours} h`;
-              if (differenceInHours === 0) {
-                const minutes =
-                  new Date().getMinutes() -
-                  new Date(post.createdAt).getMinutes();
-                postTime = `${minutes} m`;
-                if (minutes === 0) {
-                  postTime = "Just now";
-                }
-              }
-              if (differenceInHours > 24) {
-                postTime = `${new Date(
-                  new Date().getTime() - differenceInHours * 60 * 60 * 1000
-                ).toLocaleDateString("en-GB")}`;
-              }
-              post.likes.map((el: user2) => {
+              const postTime = calculateDateOrTime(post.createdAt);
+              post.likes.map((el: UserData) => {
                 if (el._id === user?._id) {
                   liked = true;
                 }
@@ -270,7 +245,7 @@ const ProfileChecker = ({
         <ModalOpenLikes
           users={openLikesPressed}
           onClick={() => setOpenLikesPressed([])}
-          id={id}
+          id={_id}
         />
       ) : (
         ""

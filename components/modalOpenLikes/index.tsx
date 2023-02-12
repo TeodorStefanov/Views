@@ -2,15 +2,15 @@ import React, { useContext } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { user2 } from "../../app/views/[id]/profileChecker";
+import { UserData } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import { useRouter } from "next/navigation";
-type fields = {
-  users: user2[] | [];
+type Fields = {
+  users: UserData[] | [];
   onClick: () => void;
   id: string;
 };
-const ModalOpenLikes = ({ users, onClick, id }: fields) => {
+const ModalOpenLikes = ({ users, onClick, id }: Fields) => {
   const router = useRouter();
   const context = useContext(UserContext);
   const { user } = context;

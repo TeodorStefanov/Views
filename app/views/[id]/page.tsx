@@ -2,7 +2,7 @@ import User from "../../../models/user";
 import Posts from "../../../models/posts";
 import Comments from "../../../models/comments";
 import Connect from "../../../utils/mongoDBMongooseConnection";
-import ProfileChecker, { posts } from "./profileChecker";
+import ProfileChecker, { PostsType, UserData } from "./profileChecker";
 export const revalidate = 0;
 async function getUser(id: string) {
   try {
@@ -28,24 +28,16 @@ async function getUser(id: string) {
     return null;
   }
 }
-export interface user {
-  _id: string;
-  backgroundPicture: string;
-  picture: string;
-  viewsName: string;
-  friends: [];
-  posts: posts[];
-}
 export default async function Profile({ params }: any) {
   const id = params.id;
-  const userFind: user = await getUser(id);
+  const userFind: UserData = await getUser(id);
   if (!userFind) {
     throw new Error("User not found!");
   }
 
   return (
     <ProfileChecker
-      id={userFind._id}
+      _id={userFind._id}
       backgroundPicture={userFind.backgroundPicture}
       picture={userFind.picture}
       viewsName={userFind.viewsName}

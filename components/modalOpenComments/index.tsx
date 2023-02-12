@@ -2,15 +2,16 @@ import React, { useState, useContext, useTransition } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { user2 } from "../../app/views/[id]/profileChecker";
+import { UserData } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import { useRouter } from "next/navigation";
-type fields = {
-  comments: { user: user2; content: string }[] | [];
+import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
+type Fields = {
+  comments: { user: UserData; content: string; createdAt: Date }[] | [];
   onClick: () => void;
   id: string;
 };
-const ModalOpenComments = ({ comments, onClick, id }: fields) => {
+const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
   const router = useRouter();
   const context = useContext(UserContext);
   const [content, setContent] = useState("");
@@ -45,6 +46,7 @@ const ModalOpenComments = ({ comments, onClick, id }: fields) => {
       <div className={styles.main}>
         <div className={styles.comments}>
           {comments.map((el, index) => {
+            const postTime = calculateDateOrTime(el.createdAt);
             return (
               <div className={styles.comment} key={index}>
                 <div className={styles.content}>
@@ -56,7 +58,8 @@ const ModalOpenComments = ({ comments, onClick, id }: fields) => {
                 </div>
                 <div className={styles.likeAndComment}>
                   <div className={styles.likeComment}>Like</div>
-                  <div className={styles.likeComment}>Comment</div>
+                  <div className={styles.likeComment}>Aswer</div>
+                  <div className={styles.time}>{postTime}</div>
                 </div>
               </div>
             );

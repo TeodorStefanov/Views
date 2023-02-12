@@ -3,16 +3,28 @@ const commentsSchema = new Schema({
   user: {
     type: "ObjectId",
     ref: "User",
-    required: true
+    required: true,
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
   createdAt: {
     type: Date,
-    required: true
+    required: true,
   },
+  likes: [
+    {
+      type: "ObjectId",
+      ref: "User",
+    },
+  ],
+  comments: [
+    {
+      type: "ObjectId",
+      ref: "Comments",
+    },
+  ],
 });
 const Comments = models.Comments || model("Comments", commentsSchema);
 export default Comments;
