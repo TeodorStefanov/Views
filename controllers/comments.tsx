@@ -1,13 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Comments from "../models/comments";
 import Posts from "../models/posts";
-import User from "../models/user";
 import Connect from "../utils/mongoDBMongooseConnection";
+import { ResponseData } from "./user";
 
-type responseData = {
-  message?: string;
-  error?: string;
-};
 type Data = {
   id: string;
   content: string;
@@ -15,7 +11,7 @@ type Data = {
 };
 export const createCommentUpdatePost = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   try {
     const { userId, id, content } = req.body;
@@ -35,6 +31,6 @@ export const createCommentUpdatePost = async (
     );
     res.status(200).send({ message: "Successfully" });
   } catch (err) {
-    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
   }
 };

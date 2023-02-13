@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { loginUser } from "../../controllers/user";
-import { CookieSerializeOptions } from "cookie";
 type responseData = {
   message?: string;
   error?: string;

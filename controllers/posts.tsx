@@ -2,11 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import Posts from "../models/posts";
 import User from "../models/user";
 import Connect from "../utils/mongoDBMongooseConnection";
+import { ResponseData } from "./user";
 
-type responseData = {
-  message?: string;
-  error?: string;
-};
 type Data = {
   content: string;
   imageUrl: string;
@@ -15,7 +12,7 @@ type Data = {
 };
 export const newCart = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   try {
     const { userId, content, imageUrl, videoUrl } = req.body;
@@ -36,15 +33,14 @@ export const newCart = async (
         new: true,
       }
     ).populate("posts");
-    console.log(user);
     res.status(200).send({ message: "Successfully" });
   } catch (err) {
-    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
   }
 };
 export const addLikeToPost = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   const { postId, userId } = req.body;
   try {
@@ -54,14 +50,14 @@ export const addLikeToPost = async (
       { $push: { likes: userId } },
       { new: true }
     );
-    res.status(200).send(user);
+    res.status(200).send({ message: "Successfully" });
   } catch (err) {
-    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
   }
 };
 export const deleteLikeToPost = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   const { postId, userId } = req.body;
   try {
@@ -71,25 +67,8 @@ export const deleteLikeToPost = async (
       { $pull: { likes: userId } },
       { new: true }
     );
-    res.status(200).send(user);
+    res.status(200).send({ message: "Successfully" });
   } catch (err) {
-    console.log(err);
-  }
-};
-export const addComment = async (
-  req: NextApiRequest,
-  res: NextApiResponse<responseData>
-) => {
-  const { postId, userId, content } = req.body;
-  console.log(postId);
-  try {
-    await Connect();
-    const user = await Posts.findOneAndUpdate(
-      { _id: postId },
-      { $push: { comments: { userId, content } } },
-      { new: true }
-    );
-  } catch (err) {
-    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
   }
 };
