@@ -1,4 +1,3 @@
-import React from "react";
 export function calculateDateOrTime(date: Date): string {
   const dateNow = new Date().getTime();
   const postDate = new Date(date).getTime();

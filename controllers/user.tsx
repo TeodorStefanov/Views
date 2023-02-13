@@ -4,7 +4,7 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
-import { UserData } from "../app/views/[id]/profileChecker";
+import { PostsType, UserData } from "../app/views/[id]/profileChecker";
 import { NewLineKind } from "typescript";
 type loginData = {
   userId: string;
@@ -29,16 +29,17 @@ type Data = {
   backgroundPicture: string;
   viewsName: string;
   friends: Array<string>;
-  posts: { content: string; imageUrl: string; videoUrl: string }[];
+  posts: PostsType | [];
 };
-type responseData = {
+export type ResponseData = {
   message?: string;
   error?: string;
+  user?: UserData;
 };
 
 export const saveUser = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   try {
     const { username, password, rePassword, email, viewsName } = req.body;
@@ -92,7 +93,7 @@ export const saveUser = async (
 };
 export const loginUser = async (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
   try {
     const { username, password } = req.body;
@@ -122,34 +123,15 @@ export const loginUser = async (
 };
 export const deleteToken = (
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) => {
-  res.setHeader(
-    "Set-Cookie",
-    "token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-  );
-  res.status(200).send({ message: "Successfully" });
-};
-let likedUser: UserData[] = [];
-let commentsUser: UserData[] = [];
-export const getUser = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    await Connect();
-    const { likes, comments } = req.body;
-    likes.map(async (el: string) => {
-      const user = await User.findById(el);
-      likedUser.push(user);
-    });
-    comments.map(async (el: { userId: string; content: string }) => {
-      const user = await User.findById(el.userId);
-      user["content"] = el.content;
-      commentsUser.push(user);
-    });
-    console.log(likedUser);
-    res.status(200).send({ likedUser, commentsUser });
-    likedUser = [];
-    commentsUser = [];
+    res.setHeader(
+      "Set-Cookie",
+      "token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    );
+    res.status(200).send({ message: "Successfully" });
   } catch (err) {
-    console.log(err);
+    res.status(400).send({ error: "There is an error!" });
   }
 };

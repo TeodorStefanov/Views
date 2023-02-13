@@ -16,7 +16,16 @@ export type PostsType = {
   videoUrl: string;
   createdAt: Date;
   likes: Array<UserData>;
-  comments: { _id: string; user: UserData; content: string; createdAt: Date }[];
+  comments:
+    | {
+        _id: string;
+        user: UserData;
+        content: string;
+        createdAt: Date;
+        likes: [Array<UserData>];
+        comments: [];
+      }[]
+    | [];
 };
 export interface UserData {
   _id: string;

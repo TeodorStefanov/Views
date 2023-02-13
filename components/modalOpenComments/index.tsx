@@ -7,7 +7,9 @@ import UserContext from "../../context/context";
 import { useRouter } from "next/navigation";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 type Fields = {
-  comments: { user: UserData; content: string; createdAt: Date }[] | [];
+  comments:
+    | { user: UserData; content: string; createdAt: Date; comments?: [] }[]
+    | [];
   onClick: () => void;
   id: string;
 };
@@ -28,7 +30,6 @@ const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
         body: JSON.stringify({ userId: user?._id, id, content }),
       }
     );
-    const result = await promise.json();
     if (promise.status === 200) {
       startTransition(() => {
         setContent("");
@@ -47,6 +48,7 @@ const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
         <div className={styles.comments}>
           {comments.map((el, index) => {
             const postTime = calculateDateOrTime(el.createdAt);
+            console.log(el);
             return (
               <div className={styles.comment} key={index}>
                 <div className={styles.content}>

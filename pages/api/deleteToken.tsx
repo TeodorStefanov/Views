@@ -1,12 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { deleteToken } from "../../controllers/user";
-type responseData = {
-  message?: string;
-  error?: string;
-};
+import { deleteToken, ResponseData } from "../../controllers/user";
+
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<responseData>
+  res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "GET") {
     deleteToken(req, res);
