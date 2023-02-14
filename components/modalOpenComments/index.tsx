@@ -4,39 +4,26 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { UserData } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
-import { useRouter } from "next/navigation";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 type Fields = {
   comments:
     | { user: UserData; content: string; createdAt: Date; comments?: [] }[]
     | [];
   onClick: () => void;
-  id: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: () => void;
 };
-const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
-  const router = useRouter();
+const ModalOpenComments = ({
+  comments,
+  onClick,
+  value,
+  onChange,
+  handleSubmit,
+}: Fields) => {
   const context = useContext(UserContext);
-  const [content, setContent] = useState("");
-  const [isPending, startTransition] = useTransition();
   const { user } = context;
-  const handleSubmit = async () => {
-    const promise = await fetch(
-      "http://localhost:3000/api/createCommentUpdatePost",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user?._id, id, content }),
-      }
-    );
-    if (promise.status === 200) {
-      startTransition(() => {
-        setContent("");
-        router.refresh();
-      });
-    }
-  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
     if (e.key === "Enter") {
       handleSubmit();
@@ -48,7 +35,6 @@ const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
         <div className={styles.comments}>
           {comments.map((el, index) => {
             const postTime = calculateDateOrTime(el.createdAt);
-            console.log(el);
             return (
               <div className={styles.comment} key={index}>
                 <div className={styles.content}>
@@ -71,9 +57,8 @@ const ModalOpenComments = ({ comments, onClick, id }: Fields) => {
           <img src={user?.picture} className={styles.postPicture} />
           <input
             className={styles.addComment}
-            onChange={(e) => setContent(e.target.value)}
-            value={content}
-            onSubmit={handleSubmit}
+            onChange={onChange}
+            value={value}
             onKeyDown={handleKeyDown}
           />
         </div>

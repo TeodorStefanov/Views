@@ -6,7 +6,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  if (req.method === "PUT") {
+  if (req.method === "POST") {
     await newCart(req, res);
   }
 }

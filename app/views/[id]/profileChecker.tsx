@@ -56,6 +56,7 @@ const ProfileChecker = ({
     { user: UserData; content: string; createdAt: Date }[] | []
   >([]);
   const [postId, setPostId] = useState<string>("");
+  const [contentComment, setContentComment] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -98,7 +99,7 @@ const ProfileChecker = ({
   const handleClickPost = async (e: React.MouseEvent) => {
     e.preventDefault();
     const promise = await fetch("http://localhost:3000/api/newCart", {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -111,6 +112,7 @@ const ProfileChecker = ({
     });
     if (promise.status === 200) {
       startTransition(() => {
+        setContent("");
         router.refresh();
       });
     }
@@ -144,6 +146,29 @@ const ProfileChecker = ({
     });
     if (promise.status === 200) {
       startTransition(() => {
+        router.refresh();
+      });
+    }
+  };
+  const handleSubmitComment = async (
+    userId: string | undefined,
+    id: string,
+    contentComment: string
+  ) => {
+    const promise = await fetch(
+      "http://localhost:3000/api/createCommentUpdatePost",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, id, contentComment }),
+      }
+    );
+    if (promise.status === 200) {
+      startTransition(() => {
+        setContentComment("");
+        setPostId('')
         router.refresh();
       });
     }
@@ -210,6 +235,7 @@ const ProfileChecker = ({
                 handleClickPicture={handleClickPicture}
                 handleClickVideo={handleClickVideo}
                 handleClickPost={handleClickPost}
+                value={content}
               />
             ) : (
               ""
@@ -263,7 +289,13 @@ const ProfileChecker = ({
         <ModalOpenComments
           comments={openCommentsPressed}
           onClick={() => setPostId("")}
-          id={postId}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setContentComment(e.target.value)
+          }
+          value={contentComment}
+          handleSubmit={() =>
+            handleSubmitComment(user?._id, postId, contentComment)
+          }
         />
       ) : (
         ""
