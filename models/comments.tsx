@@ -11,7 +11,7 @@ const commentsSchema = new Schema({
   },
   createdAt: {
     type: Date,
-    required: true,
+    default: new Date(),
   },
   likes: [
     {

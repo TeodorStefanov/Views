@@ -6,6 +6,7 @@ interface fields {
   handleClickPicture: (e: React.MouseEvent) => void;
   handleClickVideo: (e: React.MouseEvent) => void;
   handleClickPost: (e: React.MouseEvent) => void;
+  value: string;
 }
 const AddPost = ({
   picture,
@@ -13,6 +14,7 @@ const AddPost = ({
   handleClickPicture,
   handleClickVideo,
   handleClickPost,
+  value,
 }: fields) => {
   return (
     <div className={styles.addSomething}>
@@ -22,6 +24,7 @@ const AddPost = ({
           name="Add something"
           className={styles.addSomethingField}
           onChange={onChange}
+          value={value}
         />
       </label>
       <div className={styles.addSomethingButtons}>

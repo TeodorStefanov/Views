@@ -14,12 +14,12 @@ export const createCommentUpdatePost = async (
   res: NextApiResponse<ResponseData>
 ) => {
   try {
-    const { userId, id, content } = req.body;
+    const { userId, id, contentComment } = req.body;
     const createdAt = new Date();
     await Connect();
     const comment = await Comments.create<Data>({
       user: userId,
-      content,
+      content: contentComment,
       createdAt,
     });
     const post = await Posts.findOneAndUpdate(
