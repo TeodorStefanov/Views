@@ -34,6 +34,7 @@ const ModalOpenComments = ({
       <div className={styles.main}>
         <div className={styles.comments}>
           {comments.map((el, index) => {
+            console.log(el);
             const postTime = calculateDateOrTime(el.createdAt);
             return (
               <div className={styles.comment} key={index}>
@@ -49,6 +50,7 @@ const ModalOpenComments = ({
                   <div className={styles.likeComment}>Aswer</div>
                   <div className={styles.time}>{postTime}</div>
                 </div>
+                
               </div>
             );
           })}
