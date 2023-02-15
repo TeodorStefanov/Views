@@ -166,11 +166,14 @@ const ProfileChecker = ({
       }
     );
     if (promise.status === 200) {
+      const result = await promise.json();
       startTransition(() => {
         setContentComment("");
-        setPostId('')
+        setOpenCommentsPressed(result);
         router.refresh();
       });
+    } else {
+      alert("There is an error");
     }
   };
   const openLikes = async (event: React.MouseEvent, post: PostsType) => {
