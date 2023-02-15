@@ -24,47 +24,6 @@
   overflow: auto;
   overflow-x: hidden;
 }
-.comment {
-  width: 100%;
-  margin-bottom: 4px;
-}
-.content {
-  display: flex;
-  align-items: left;
-}
-.picture {
-  width: 34px;
-  height: 34px;
-  margin-top: 2px;
-  margin-left: 10px;
-  margin-right: 4px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.nameContent {
-  width: auto;
-  text-align: left;
-  padding: 10px;
-  border: solid 1px rgb(240, 240, 240);
-  border-radius: 20px;
-  background-color: rgb(240, 240, 240);
-}
-.likeAndComment {
-  display: flex;
-  gap: 10px;
-  margin-left: 60px;
-}
-.likeComment {
-  font-family: inherit;
-  font-weight: bold;
-  color: #65676b;
-}
-.likeComment:hover {
-  text-decoration: underline;
-}
-.time {
-  color: #65676b;
-}
 .commentOfComment {
   box-sizing: border-box;
   margin-left: 40px;
