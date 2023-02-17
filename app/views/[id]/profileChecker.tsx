@@ -16,17 +16,16 @@ export type PostsType = {
   videoUrl: string;
   createdAt: Date;
   likes: Array<UserData>;
-  comments:
-    | {
-        _id: string;
-        user: UserData;
-        content: string;
-        createdAt: Date;
-        likes: [Array<UserData>];
-        comments: [];
-      }[]
-    | [];
+  comments: Array<Comment> | [];
 };
+export interface Comment {
+  _id: string;
+  user: UserData;
+  content: string;
+  createdAt: Date;
+  likes: Array<UserData> | [];
+  comments: Array<Comment> | [];
+}
 export interface UserData {
   _id: string;
   backgroundPicture: string;
@@ -35,7 +34,6 @@ export interface UserData {
   friends: [];
   posts: PostsType[];
 }
-
 const ProfileChecker = ({
   _id,
   backgroundPicture,
@@ -53,11 +51,13 @@ const ProfileChecker = ({
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
   const [openCommentsPressed, setOpenCommentsPressed] = useState<
-    { user: UserData; content: string; createdAt: Date }[] | []
+    Comment[] | []
   >([]);
   const [postId, setPostId] = useState<string>("");
   const [contentComment, setContentComment] = useState<string>("");
   const [isPending, startTransition] = useTransition();
+  const [commentOfCommentContent, setCommentOfCommentContent] =
+    useState<string>("");
   const router = useRouter();
 
   const handleClickPicture = (e: React.MouseEvent) => {
@@ -155,21 +155,44 @@ const ProfileChecker = ({
     id: string,
     contentComment: string
   ) => {
+    if (contentComment) {
+      const promise = await fetch(
+        "http://localhost:3000/api/createCommentUpdatePost",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, id, contentComment }),
+        }
+      );
+      if (promise.status === 200) {
+        const result = await promise.json();
+        startTransition(() => {
+          setContentComment("");
+          setOpenCommentsPressed(result);
+          router.refresh();
+        });
+      } else {
+        alert("There is an error");
+      }
+    }
+  };
+  const handleSubmitCommentOfComment = async (id: string) => {
+    const userId = user?._id;
     const promise = await fetch(
-      "http://localhost:3000/api/createCommentUpdatePost",
+      "http://localhost:3000/api/addCommentOfComment",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, id, contentComment }),
+        body: JSON.stringify({ id, userId, content: commentOfCommentContent }),
       }
     );
     if (promise.status === 200) {
-      const result = await promise.json();
       startTransition(() => {
-        setContentComment("");
-        setOpenCommentsPressed(result);
+        setCommentOfCommentContent("");
         router.refresh();
       });
     } else {
@@ -296,8 +319,15 @@ const ProfileChecker = ({
             setContentComment(e.target.value)
           }
           value={contentComment}
+          commentOfCommentContent={commentOfCommentContent}
           handleSubmit={() =>
             handleSubmitComment(user?._id, postId, contentComment)
+          }
+          handleSubmitCommentOfComment={(id) =>
+            handleSubmitCommentOfComment(id)
+          }
+          commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setCommentOfCommentContent(e.target.value)
           }
         />
       ) : (
