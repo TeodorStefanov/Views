@@ -1,16 +1,20 @@
 import React, { useContext, useState } from "react";
-import { UserData } from "../../app/views/[id]/profileChecker";
+import { Comment, UserData } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import styles from "./index.module.css";
 type Fields = {
-  el: { user: UserData; content: string; createdAt: Date; comments?: [] };
+  el: {
+    user: UserData;
+    content: string;
+    createdAt: Date;
+    likes: Array<UserData> | [];
+    comments: Comment[] | [];
+  };
   answer: boolean;
   postTime: string;
+  onClick?: () => void;
 };
-const CommentFields = ({ el, answer, postTime }: Fields) => {
-  const context = useContext(UserContext);
-  const { user } = context;
-  const [answerPressed, setAnswerPressed] = useState<boolean>(false);
+const CommentFields = ({ el, answer, postTime, onClick }: Fields) => {
   return (
     <div>
       <div className={styles.content}>
@@ -23,10 +27,7 @@ const CommentFields = ({ el, answer, postTime }: Fields) => {
       <div className={styles.likeAndComment}>
         <div className={styles.likeComment}>Like</div>
         {answer ? (
-          <div
-            className={styles.likeComment}
-            onClick={() => setAnswerPressed(true)}
-          >
+          <div className={styles.likeComment} onClick={onClick}>
             Answer
           </div>
         ) : (
@@ -34,14 +35,6 @@ const CommentFields = ({ el, answer, postTime }: Fields) => {
         )}
         <div className={styles.time}>{postTime}</div>
       </div>
-      {answerPressed ? (
-        <div className={styles.postComment}>
-          <img src={user?.picture} className={styles.postPicture} />
-          <input className={styles.addComment} />
-        </div>
-      ) : (
-        ""
-      )}
     </div>
   );
 };

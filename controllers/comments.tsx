@@ -29,14 +29,38 @@ export const createCommentUpdatePost = async (
       {
         new: true,
       }
-    )
-      .populate({
-        path: "comments",
-        model: Comments,
-        populate: { path: "user", model: User },
-      })
-      
+    ).populate({
+      path: "comments",
+      model: Comments,
+      populate: { path: "user", model: User },
+    });
+
     res.status(200).send(post.comments);
+  } catch (err) {
+    res.status(400).send({ error: "There is an error!" });
+  }
+};
+export const addCommentOfComment = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  try {
+    const { id, userId, content } = req.body;
+    const createdAt = new Date();
+    await Connect();
+    const comment = await Comments.create<Data>({
+      user: userId,
+      content,
+      createdAt,
+    });
+    const updatedComment = await Comments.findOneAndUpdate(
+      { _id: id },
+      { $push: { comments: comment._id } },
+      {
+        new: true,
+      }
+    );
+    res.status(200).send({ message: "Successfully" });
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }

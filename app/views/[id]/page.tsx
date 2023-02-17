@@ -16,7 +16,14 @@ async function getUser(id: string) {
           {
             path: "comments",
             model: Comments,
-            populate: { path: "user", model: User },
+            populate: [
+              { path: "user", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: { path: "user", model: User },
+              },
+            ],
           },
         ],
       })
