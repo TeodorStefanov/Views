@@ -2,22 +2,22 @@ import React, { useState, useContext, useTransition } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { Comment, UserData } from "../../app/views/[id]/profileChecker";
+import { PostsType } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import CommentFields from "../commentFields";
 type Fields = {
-  comments: Array<Comment> | [];
+  post: PostsType | undefined;
   onClick: () => void;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: () => void;
-  handleSubmitCommentOfComment: (id: string) => void;
+  handleSubmitCommentOfComment: (id: string, postId: string) => void;
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
 };
 const ModalOpenComments = ({
-  comments,
+  post,
   onClick,
   value,
   onChange,
@@ -29,8 +29,6 @@ const ModalOpenComments = ({
   const context = useContext(UserContext);
   const { user } = context;
   const [answerPressed, setAnswerPressed] = useState<number>();
-  const [content, setContent] = useState<string>("");
-  const [id, setId] = useState<string>("");
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLDivElement>,
@@ -41,7 +39,7 @@ const ModalOpenComments = ({
       if (comment === "comment") {
         handleSubmit();
       } else if (comment === "commentOfComment") {
-        handleSubmitCommentOfComment(id!);
+        handleSubmitCommentOfComment(id!, post!._id);
       }
     }
   };
@@ -50,7 +48,7 @@ const ModalOpenComments = ({
     <div className={styles.container}>
       <div className={styles.main}>
         <div className={styles.comments}>
-          {comments.map((el, index) => {
+          {post?.comments.map((el, index) => {
             const postTime = calculateDateOrTime(el.createdAt);
             return (
               <div className={styles.comment} key={index}>

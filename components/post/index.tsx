@@ -26,6 +26,13 @@ const Post = ({
   openLikes,
   openComments,
 }: fields) => {
+  const calculateComments = () => {
+    let totalComments = 0;
+    post.comments.map((el) => {
+      totalComments += el.comments.length;
+    });
+    return totalComments;
+  };
   return (
     <div className={styles.postContainer}>
       <div className={styles.postContent}>
@@ -79,7 +86,7 @@ const Post = ({
             {post.comments.length > 0 ? (
               <div onClick={openComments}>
                 <FontAwesomeIcon className={styles.likeMark} icon={faComment} />
-                {post.comments.length}
+                {post.comments.length + calculateComments()}
               </div>
             ) : (
               ""

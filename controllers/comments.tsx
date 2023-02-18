@@ -32,10 +32,17 @@ export const createCommentUpdatePost = async (
     ).populate({
       path: "comments",
       model: Comments,
-      populate: { path: "user", model: User },
+      populate: [
+        { path: "user", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: { path: "user", model: User },
+        },
+      ],
     });
 
-    res.status(200).send(post.comments);
+    res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }
@@ -45,7 +52,7 @@ export const addCommentOfComment = async (
   res: NextApiResponse<ResponseData>
 ) => {
   try {
-    const { id, userId, content } = req.body;
+    const { id, userId, content, postId } = req.body;
     const createdAt = new Date();
     await Connect();
     const comment = await Comments.create<Data>({
@@ -53,14 +60,26 @@ export const addCommentOfComment = async (
       content,
       createdAt,
     });
-    const updatedComment = await Comments.findOneAndUpdate(
+    await Comments.findOneAndUpdate(
       { _id: id },
       { $push: { comments: comment._id } },
       {
         new: true,
       }
     );
-    res.status(200).send({ message: "Successfully" });
+    const post = await Posts.findById(postId).populate({
+      path: "comments",
+      model: Comments,
+      populate: [
+        { path: "user", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: { path: "user", model: User },
+        },
+      ],
+    });
+    res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }

@@ -50,9 +50,7 @@ const ProfileChecker = ({
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
-  const [openCommentsPressed, setOpenCommentsPressed] = useState<
-    Comment[] | []
-  >([]);
+  const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
   const [postId, setPostId] = useState<string>("");
   const [contentComment, setContentComment] = useState<string>("");
   const [isPending, startTransition] = useTransition();
@@ -178,7 +176,7 @@ const ProfileChecker = ({
       }
     }
   };
-  const handleSubmitCommentOfComment = async (id: string) => {
+  const handleSubmitCommentOfComment = async (id: string, postId: string) => {
     const userId = user?._id;
     const promise = await fetch(
       "http://localhost:3000/api/addCommentOfComment",
@@ -187,12 +185,19 @@ const ProfileChecker = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, userId, content: commentOfCommentContent }),
+        body: JSON.stringify({
+          id,
+          userId,
+          content: commentOfCommentContent,
+          postId,
+        }),
       }
     );
     if (promise.status === 200) {
+      const result = await promise.json();
       startTransition(() => {
         setCommentOfCommentContent("");
+        setOpenCommentsPressed(result);
         router.refresh();
       });
     } else {
@@ -205,7 +210,7 @@ const ProfileChecker = ({
   };
   const openComments = async (event: React.MouseEvent, post: PostsType) => {
     event.preventDefault();
-    setOpenCommentsPressed(post.comments);
+    setOpenCommentsPressed(post);
     setPostId(post._id);
   };
 
@@ -313,7 +318,7 @@ const ProfileChecker = ({
       )}
       {postId ? (
         <ModalOpenComments
-          comments={openCommentsPressed}
+          post={openCommentsPressed}
           onClick={() => setPostId("")}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setContentComment(e.target.value)
@@ -323,8 +328,8 @@ const ProfileChecker = ({
           handleSubmit={() =>
             handleSubmitComment(user?._id, postId, contentComment)
           }
-          handleSubmitCommentOfComment={(id) =>
-            handleSubmitCommentOfComment(id)
+          handleSubmitCommentOfComment={(id, postId) =>
+            handleSubmitCommentOfComment(id, postId)
           }
           commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCommentOfCommentContent(e.target.value)

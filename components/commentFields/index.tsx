@@ -1,15 +1,9 @@
-import React, { useContext, useState } from "react";
-import { Comment, UserData } from "../../app/views/[id]/profileChecker";
-import UserContext from "../../context/context";
+import React from "react";
+import { Comment } from "../../app/views/[id]/profileChecker";
+
 import styles from "./index.module.css";
 type Fields = {
-  el: {
-    user: UserData;
-    content: string;
-    createdAt: Date;
-    likes: Array<UserData> | [];
-    comments: Comment[] | [];
-  };
+  el: Comment;
   answer: boolean;
   postTime: string;
   onClick?: () => void;
