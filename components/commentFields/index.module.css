@@ -28,6 +28,15 @@
   gap: 10px;
   margin-left: 60px;
 }
+.liked {
+  font-family: inherit;
+  font-weight: bold;
+  color: #1d9bf0;
+  cursor: pointer;
+}
+.liked:hover {
+  text-decoration: underline;
+}
 .likeComment {
   font-family: inherit;
   font-weight: bold;

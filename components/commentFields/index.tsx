@@ -7,8 +7,19 @@ type Fields = {
   answer: boolean;
   postTime: string;
   onClick?: () => void;
+  onClickLike: (e: React.MouseEvent) => void;
+  onClickDeleteLike: (e: React.MouseEvent) => void;
+  liked: boolean;
 };
-const CommentFields = ({ el, answer, postTime, onClick }: Fields) => {
+const CommentFields = ({
+  el,
+  answer,
+  postTime,
+  onClick,
+  onClickLike,
+  onClickDeleteLike,
+  liked,
+}: Fields) => {
   return (
     <div>
       <div className={styles.content}>
@@ -19,7 +30,15 @@ const CommentFields = ({ el, answer, postTime, onClick }: Fields) => {
         </div>
       </div>
       <div className={styles.likeAndComment}>
-        <div className={styles.likeComment}>Like</div>
+        {!liked ? (
+          <div className={styles.likeComment} onClick={onClickLike}>
+            Like
+          </div>
+        ) : (
+          <div className={styles.liked} onClick={onClickDeleteLike}>
+            Like
+          </div>
+        )}
         {answer ? (
           <div className={styles.likeComment} onClick={onClick}>
             Answer

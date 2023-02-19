@@ -6,6 +6,7 @@ import { PostsType } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import CommentFields from "../commentFields";
+import { likeExists } from "../../utils/checkLiked";
 type Fields = {
   post: PostsType | undefined;
   onClick: () => void;
@@ -15,6 +16,7 @@ type Fields = {
   handleSubmitCommentOfComment: (id: string, postId: string) => void;
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
+  setResult: (result: PostsType) => void;
 };
 const ModalOpenComments = ({
   post,
@@ -25,11 +27,57 @@ const ModalOpenComments = ({
   handleSubmitCommentOfComment,
   commentChange,
   commentOfCommentContent,
+  setResult,
 }: Fields) => {
   const context = useContext(UserContext);
   const { user } = context;
   const [answerPressed, setAnswerPressed] = useState<number>();
+  const addLike = async (
+    event: React.MouseEvent,
+    commentId: string,
+    postId: string
+  ) => {
+    event.preventDefault();
+    const userId = user?._id;
+    const promise = await fetch("http://localhost:3000/api/addLikeToComment", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ commentId, userId, postId }),
+    });
+    if (promise.status === 200) {
+      const result = await promise.json();
+      setResult(result);
+    } else {
+      alert("There is an error!");
+    }
+  };
+  const deleteLike = async (
+    event: React.MouseEvent,
+    commentId: string,
+    postId: string
+  ) => {
+    event.preventDefault();
+    const userId = user?._id;
 
+    const promise = await fetch(
+      "http://localhost:3000/api/deleteLikeToComment",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId, userId, postId }),
+      }
+    );
+    if (promise.status === 200) {
+      const result = await promise.json();
+      setResult(result);
+    } else {
+      alert("There is an error!");
+    }
+  };
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLDivElement>,
     comment: string,
@@ -43,12 +91,12 @@ const ModalOpenComments = ({
       }
     }
   };
-
   return (
     <div className={styles.container}>
       <div className={styles.main}>
         <div className={styles.comments}>
           {post?.comments.map((el, index) => {
+            let liked = likeExists(el, user!._id);
             const postTime = calculateDateOrTime(el.createdAt);
             return (
               <div className={styles.comment} key={index}>
@@ -57,8 +105,16 @@ const ModalOpenComments = ({
                   answer={true}
                   postTime={postTime}
                   onClick={() => setAnswerPressed(index)}
+                  onClickLike={(e: React.MouseEvent) =>
+                    addLike(e, el._id, post._id)
+                  }
+                  onClickDeleteLike={(e: React.MouseEvent) =>
+                    deleteLike(e, el._id, post._id)
+                  }
+                  liked={liked}
                 />
                 {el.comments.map((el, index) => {
+                  let liked = likeExists(el, user!._id);
                   const postTime = calculateDateOrTime(el.createdAt);
                   return (
                     <div className={styles.commentOfComment} key={index}>
@@ -66,6 +122,13 @@ const ModalOpenComments = ({
                         el={el}
                         answer={false}
                         postTime={postTime}
+                        onClickLike={(e: React.MouseEvent) =>
+                          addLike(e, el._id, post._id)
+                        }
+                        onClickDeleteLike={(e: React.MouseEvent) =>
+                          deleteLike(e, el._id, post._id)
+                        }
+                        liked={liked}
                       />
                     </div>
                   );
