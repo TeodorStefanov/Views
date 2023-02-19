@@ -84,3 +84,69 @@ export const addCommentOfComment = async (
     res.status(400).send({ error: "There is an error!" });
   }
 };
+export const addLikeToComment = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { commentId, userId, postId } = req.body;
+  try {
+    await Connect();
+    await Comments.findOneAndUpdate(
+      { _id: commentId },
+      { $push: { likes: userId } },
+      { new: true }
+    );
+    const post = await Posts.findById(postId).populate({
+      path: "comments",
+      model: Comments,
+      populate: [
+        { path: "user", model: User },
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "user", model: User },
+            { path: "likes", model: User },
+          ],
+        },
+      ],
+    });
+    res.status(200).send(post);
+  } catch (err) {
+    res.status(400).send({ error: "There is an error!" });
+  }
+};
+export const deleteLikeToComment = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { commentId, userId, postId } = req.body;
+  try {
+    await Connect();
+    await Comments.findOneAndUpdate(
+        { _id: commentId },
+        { $pull: { likes: userId } },
+        { new: true }
+      );
+    const post = await Posts.findById(postId).populate({
+      path: "comments",
+      model: Comments,
+      populate: [
+        { path: "user", model: User },
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "user", model: User },
+            { path: "likes", model: User },
+          ],
+        },
+      ],
+    });
+    res.status(200).send(post);
+  } catch (err) {
+    res.status(400).send({ error: "There is an error!" });
+  }
+};

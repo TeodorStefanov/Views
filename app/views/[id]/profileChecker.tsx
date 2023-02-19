@@ -9,6 +9,7 @@ import ModalProfilePicture from "../../../components/modalProfilePicture";
 import ModalOpenLikes from "../../../components/modalOpenLikes";
 import ModalOpenComments from "../../../components/modalOpenComments";
 import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
+import { likeExists } from "../../../utils/checkLiked";
 export type PostsType = {
   _id: string;
   content: string;
@@ -114,7 +115,6 @@ const ProfileChecker = ({
         router.refresh();
       });
     }
-    const result = await promise.json();
   };
   const addLike = async (event: React.MouseEvent, postId: string) => {
     event.preventDefault();
@@ -272,13 +272,8 @@ const ProfileChecker = ({
               ""
             )}
             {posts.map((post, index) => {
-              let liked = false;
               const postTime = calculateDateOrTime(post.createdAt);
-              post.likes.map((el: UserData) => {
-                if (el._id === user?._id) {
-                  liked = true;
-                }
-              });
+              const liked = likeExists(post, user!._id);
               return (
                 <Post
                   key={index}
@@ -334,6 +329,12 @@ const ProfileChecker = ({
           commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCommentOfCommentContent(e.target.value)
           }
+          setResult={(result) => {
+            startTransition(() => {
+              setOpenCommentsPressed(result);
+              router.refresh();
+            });
+          }}
         />
       ) : (
         ""
