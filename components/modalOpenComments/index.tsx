@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useTransition,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -58,6 +52,7 @@ const ModalOpenComments = ({
     if (promise.status === 200) {
       const result = await promise.json();
       setResult(result);
+      setCommentsToCommentsChanged(true);
     } else {
       alert("There is an error!");
     }
@@ -83,6 +78,7 @@ const ModalOpenComments = ({
     if (promise.status === 200) {
       const result = await promise.json();
       setResult(result);
+      setCommentsToCommentsChanged(true);
     } else {
       alert("There is an error!");
     }

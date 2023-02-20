@@ -4,7 +4,10 @@ export function calculateDateOrTime(date: Date): string {
   const differenceInHours = Number(((dateNow - postDate) / 36e5).toFixed(0));
   let postTime = `${differenceInHours} h`;
   if (differenceInHours === 0) {
-    const minutes = new Date().getMinutes() - new Date(date).getMinutes();
+    let minutes = new Date().getMinutes() - new Date(date).getMinutes();
+    if (new Date().getMinutes() < new Date(date).getMinutes()) {
+      minutes = new Date().getMinutes() + 60 - new Date(date).getMinutes();
+    }
     postTime = `${minutes} m`;
     if (minutes === 0) {
       postTime = "Just now";
