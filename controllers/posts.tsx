@@ -57,7 +57,7 @@ export const newCart = async (
         },
       ],
     });
-    console.log(user);
+
     res.status(200).send(user.posts.reverse());
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
@@ -70,9 +70,9 @@ export const addLikeToPost = async (
   const { postId, userId } = req.body;
   try {
     await Connect();
-    const user = await Posts.findOneAndUpdate(
+    const post = await Posts.findOneAndUpdate(
       { _id: postId },
-      { $push: { likes: userId } },
+      { $addToSet: { likes: userId } },
       { new: true }
     ).populate([
       { path: "likes", model: User },
@@ -95,7 +95,7 @@ export const addLikeToPost = async (
       },
     ]);
 
-    res.status(200).send(user);
+    res.status(200).send(post);
   } catch (err) {
     console.log(err);
     res.status(400).send({ error: "There is an error!" });
@@ -108,7 +108,7 @@ export const deleteLikeToPost = async (
   const { postId, userId } = req.body;
   try {
     await Connect();
-    const user = await Posts.findOneAndUpdate(
+    const post = await Posts.findOneAndUpdate(
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
@@ -132,7 +132,7 @@ export const deleteLikeToPost = async (
         ],
       },
     ]);
-    res.status(200).send(user);
+    res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }

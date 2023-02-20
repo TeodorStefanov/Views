@@ -95,25 +95,28 @@ export const addLikeToComment = async (
     await Connect();
     await Comments.findOneAndUpdate(
       { _id: commentId },
-      { $push: { likes: userId } },
+      { $addToSet: { likes: userId } },
       { new: true }
     );
-    const post = await Posts.findById(postId).populate({
-      path: "comments",
-      model: Comments,
-      populate: [
-        { path: "user", model: User },
-        { path: "likes", model: User },
-        {
-          path: "comments",
-          model: Comments,
-          populate: [
-            { path: "user", model: User },
-            { path: "likes", model: User },
-          ],
-        },
-      ],
-    });
+    const post = await Posts.findById(postId).populate([
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+            ],
+          },
+        ],
+      },
+      { path: "likes", model: User },
+    ]);
     res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });

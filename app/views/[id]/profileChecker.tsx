@@ -1,8 +1,7 @@
 "use client";
-import React, { useContext, useEffect, useState, useTransition } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../../context/context";
 import styles from "./id.module.css";
-import { useRouter } from "next/navigation";
 import Post from "../../../components/post";
 import AddPost from "../../../components/addPost";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
@@ -55,11 +54,8 @@ const ProfileChecker = ({
   const [postId, setPostId] = useState<string>("");
   const [contentComment, setContentComment] = useState<string>("");
   const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
-  const [isPending, startTransition] = useTransition();
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
-  const router = useRouter();
-
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
     const widget = window.cloudinary.createUploadWidget(
@@ -128,7 +124,7 @@ const ProfileChecker = ({
     });
     if (promise.status === 200) {
       const result = await promise.json();
-      const newPosts = allPosts.map((el) =>
+      const newPosts = allPosts.map((el: PostsType) =>
         el._id === result._id ? result : el
       );
 
@@ -147,7 +143,7 @@ const ProfileChecker = ({
     });
     if (promise.status === 200) {
       const result = await promise.json();
-      const newPosts = allPosts.map((el) =>
+      const newPosts = allPosts.map((el: PostsType) =>
         el._id === result._id ? result : el
       );
       setAllPosts(newPosts);
@@ -171,8 +167,12 @@ const ProfileChecker = ({
       );
       if (promise.status === 200) {
         const result = await promise.json();
+        const newPosts = allPosts.map((el: PostsType) =>
+          el._id === result._id ? result : el
+        );
         setContentComment("");
         setOpenCommentsPressed(result);
+        setAllPosts(newPosts);
       } else {
         alert("There is an error");
       }
@@ -197,18 +197,20 @@ const ProfileChecker = ({
     );
     if (promise.status === 200) {
       const result = await promise.json();
+      const newPosts = allPosts.map((el: PostsType) =>
+        el._id === result._id ? result : el
+      );
       setCommentOfCommentContent("");
       setOpenCommentsPressed(result);
+      setAllPosts(newPosts);
     } else {
       alert("There is an error");
     }
   };
-  const openLikes = async (event: React.MouseEvent, post: PostsType) => {
-    event.preventDefault();
+  const openLikes = async (post: PostsType) => {
     setOpenLikesPressed(post.likes);
   };
-  const openComments = async (event: React.MouseEvent, post: PostsType) => {
-    event.preventDefault();
+  const openComments = async (post: PostsType) => {
     setOpenCommentsPressed(post);
     setPostId(post._id);
   };
@@ -283,8 +285,8 @@ const ProfileChecker = ({
                   liked={liked}
                   addLike={(e: React.MouseEvent) => addLike(e, post._id)}
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
-                  openLikes={(e: React.MouseEvent) => openLikes(e, post)}
-                  openComments={(e: React.MouseEvent) => openComments(e, post)}
+                  openLikes={() => openLikes(post)}
+                  openComments={() => openComments(post)}
                 />
               );
             })}
@@ -329,10 +331,11 @@ const ProfileChecker = ({
             setCommentOfCommentContent(e.target.value)
           }
           setResult={(result) => {
-            startTransition(() => {
-              setOpenCommentsPressed(result);
-              router.refresh();
-            });
+            const newPosts: any = allPosts.map((el: PostsType) =>
+              el._id === result._id ? result : el
+            );
+            setOpenCommentsPressed(result);
+            setAllPosts(newPosts);
           }}
         />
       ) : (

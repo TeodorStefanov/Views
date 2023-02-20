@@ -2,7 +2,7 @@ import User from "../../../models/user";
 import Posts from "../../../models/posts";
 import Comments from "../../../models/comments";
 import Connect from "../../../utils/mongoDBMongooseConnection";
-import ProfileChecker, { PostsType, UserData } from "./profileChecker";
+import ProfileChecker, { UserData } from "./profileChecker";
 export const revalidate = 0;
 async function getUser(id: string) {
   try {
