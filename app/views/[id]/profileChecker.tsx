@@ -54,6 +54,7 @@ const ProfileChecker = ({
   const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
   const [postId, setPostId] = useState<string>("");
   const [contentComment, setContentComment] = useState<string>("");
+  const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
   const [isPending, startTransition] = useTransition();
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
@@ -110,10 +111,9 @@ const ProfileChecker = ({
       }),
     });
     if (promise.status === 200) {
-      startTransition(() => {
-        setContent("");
-        router.refresh();
-      });
+      const result = await promise.json();
+      setContent("");
+      setAllPosts(result);
     }
   };
   const addLike = async (event: React.MouseEvent, postId: string) => {
@@ -127,9 +127,12 @@ const ProfileChecker = ({
       body: JSON.stringify({ postId, userId }),
     });
     if (promise.status === 200) {
-      startTransition(() => {
-        router.refresh();
-      });
+      const result = await promise.json();
+      const newPosts = allPosts.map((el) =>
+        el._id === result._id ? result : el
+      );
+
+      setAllPosts(newPosts);
     }
   };
   const deleteLike = async (event: React.MouseEvent, postId: string) => {
@@ -143,9 +146,11 @@ const ProfileChecker = ({
       body: JSON.stringify({ postId, userId }),
     });
     if (promise.status === 200) {
-      startTransition(() => {
-        router.refresh();
-      });
+      const result = await promise.json();
+      const newPosts = allPosts.map((el) =>
+        el._id === result._id ? result : el
+      );
+      setAllPosts(newPosts);
     }
   };
   const handleSubmitComment = async (
@@ -166,11 +171,8 @@ const ProfileChecker = ({
       );
       if (promise.status === 200) {
         const result = await promise.json();
-        startTransition(() => {
-          setContentComment("");
-          setOpenCommentsPressed(result);
-          router.refresh();
-        });
+        setContentComment("");
+        setOpenCommentsPressed(result);
       } else {
         alert("There is an error");
       }
@@ -195,11 +197,8 @@ const ProfileChecker = ({
     );
     if (promise.status === 200) {
       const result = await promise.json();
-      startTransition(() => {
-        setCommentOfCommentContent("");
-        setOpenCommentsPressed(result);
-        router.refresh();
-      });
+      setCommentOfCommentContent("");
+      setOpenCommentsPressed(result);
     } else {
       alert("There is an error");
     }
@@ -271,7 +270,7 @@ const ProfileChecker = ({
             ) : (
               ""
             )}
-            {posts.map((post, index) => {
+            {allPosts.map((post, index) => {
               const postTime = calculateDateOrTime(post.createdAt);
               const liked = likeExists(post, user!._id);
               return (
@@ -320,8 +319,8 @@ const ProfileChecker = ({
           }
           value={contentComment}
           commentOfCommentContent={commentOfCommentContent}
-          handleSubmit={() =>
-            handleSubmitComment(user?._id, postId, contentComment)
+          handleSubmit={async () =>
+            await handleSubmitComment(user?._id, postId, contentComment)
           }
           handleSubmitCommentOfComment={(id, postId) =>
             handleSubmitCommentOfComment(id, postId)

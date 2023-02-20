@@ -39,6 +39,7 @@ export const createCommentUpdatePost = async (
           model: Comments,
           populate: { path: "user", model: User },
         },
+        { path: "likes", model: User },
       ],
     });
 
@@ -77,6 +78,7 @@ export const addCommentOfComment = async (
           model: Comments,
           populate: { path: "user", model: User },
         },
+        { path: "likes", model: User },
       ],
     });
     res.status(200).send(post);
@@ -125,10 +127,10 @@ export const deleteLikeToComment = async (
   try {
     await Connect();
     await Comments.findOneAndUpdate(
-        { _id: commentId },
-        { $pull: { likes: userId } },
-        { new: true }
-      );
+      { _id: commentId },
+      { $pull: { likes: userId } },
+      { new: true }
+    );
     const post = await Posts.findById(postId).populate({
       path: "comments",
       model: Comments,
