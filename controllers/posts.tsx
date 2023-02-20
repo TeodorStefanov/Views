@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import Comments from "../models/comments";
 import Posts from "../models/posts";
 import User from "../models/user";
 import Connect from "../utils/mongoDBMongooseConnection";
@@ -32,8 +33,32 @@ export const newCart = async (
       {
         new: true,
       }
-    ).populate("posts");
-    res.status(200).send({ message: "Successfully" });
+    ).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+                { path: "user", model: User },
+              ],
+            },
+            { path: "user", model: User },
+          ],
+        },
+      ],
+    });
+    console.log(user);
+    res.status(200).send(user.posts.reverse());
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }
@@ -49,9 +74,30 @@ export const addLikeToPost = async (
       { _id: postId },
       { $push: { likes: userId } },
       { new: true }
-    );
-    res.status(200).send({ message: "Successfully" });
+    ).populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+              { path: "user", model: User },
+            ],
+          },
+          { path: "user", model: User },
+        ],
+      },
+    ]);
+
+    res.status(200).send(user);
   } catch (err) {
+    console.log(err);
     res.status(400).send({ error: "There is an error!" });
   }
 };
@@ -66,8 +112,27 @@ export const deleteLikeToPost = async (
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
-    );
-    res.status(200).send({ message: "Successfully" });
+    ).populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+              { path: "user", model: User },
+            ],
+          },
+          { path: "user", model: User },
+        ],
+      },
+    ]);
+    res.status(200).send(user);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }

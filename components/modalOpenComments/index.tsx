@@ -1,4 +1,10 @@
-import React, { useState, useContext, useTransition } from "react";
+import React, {
+  useState,
+  useContext,
+  useTransition,
+  useRef,
+  useEffect,
+} from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +18,7 @@ type Fields = {
   onClick: () => void;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: () => void;
+  handleSubmit: () => Promise<void>;
   handleSubmitCommentOfComment: (id: string, postId: string) => void;
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
@@ -32,6 +38,9 @@ const ModalOpenComments = ({
   const context = useContext(UserContext);
   const { user } = context;
   const [answerPressed, setAnswerPressed] = useState<number>();
+  const [commentsToCommentsChanged, setCommentsToCommentsChanged] =
+    useState<boolean>(false);
+  const container = useRef<HTMLInputElement>(null);
   const addLike = async (
     event: React.MouseEvent,
     commentId: string,
@@ -78,23 +87,31 @@ const ModalOpenComments = ({
       alert("There is an error!");
     }
   };
-  const handleKeyDown = (
+  const handleKeyDown = async (
     e: React.KeyboardEvent<HTMLDivElement>,
     comment: string,
     id?: string
-  ): void => {
+  ) => {
     if (e.key === "Enter") {
       if (comment === "comment") {
-        handleSubmit();
+        await handleSubmit();
       } else if (comment === "commentOfComment") {
         handleSubmitCommentOfComment(id!, post!._id);
+        setCommentsToCommentsChanged(true);
       }
     }
   };
+  useEffect(() => {
+    if (container.current != null && !commentsToCommentsChanged) {
+      container.current.scrollTop = container.current?.scrollHeight;
+    }
+    setCommentsToCommentsChanged(false);
+  }, [post]);
+
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        <div className={styles.comments}>
+        <div className={styles.comments} ref={container}>
           {post?.comments.map((el, index) => {
             let liked = likeExists(el, user!._id);
             const postTime = calculateDateOrTime(el.createdAt);
@@ -147,6 +164,7 @@ const ModalOpenComments = ({
                       onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
                         handleKeyDown(e, "commentOfComment", el._id)
                       }
+                      autoFocus
                     />
                   </div>
                 ) : (
@@ -165,6 +183,7 @@ const ModalOpenComments = ({
             onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
               handleKeyDown(e, "comment")
             }
+            autoFocus
           />
         </div>
       </div>
