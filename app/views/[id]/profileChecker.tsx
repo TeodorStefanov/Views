@@ -207,7 +207,7 @@ const ProfileChecker = ({
       alert("There is an error");
     }
   };
-  const openLikes = async (post: PostsType) => {
+  const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
   };
   const openComments = async (post: PostsType) => {
@@ -336,6 +336,9 @@ const ProfileChecker = ({
             );
             setOpenCommentsPressed(result);
             setAllPosts(newPosts);
+          }}
+          openLikeModal={(like) => {
+            openLikes(like);
           }}
         />
       ) : (

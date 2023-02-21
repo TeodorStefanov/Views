@@ -17,7 +17,7 @@ const ModalOpenLikes = ({ users, onClick, id }: Fields) => {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {users.map((el: any, index: number) => {
+        {users.map((el: UserData, index: number) => {
           return (
             <div className={styles.user} key={index}>
               <div className={styles.userNameAndPicture}>

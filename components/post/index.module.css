@@ -31,13 +31,13 @@
 }
 .postImageUrl {
   margin-bottom: 20px;
-  max-width: 600px;
-  max-height: 550px;
+  max-width: 90%;
+  max-height: 85%;
 }
 .postVideoUrl {
   margin-bottom: 20px;
-  max-width: 505px;
-  max-height: 305px;
+  max-width: 80%;
+  max-height: 50%;
 }
 .likes {
   display: flex;

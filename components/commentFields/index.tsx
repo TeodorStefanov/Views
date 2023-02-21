@@ -1,6 +1,7 @@
 import React from "react";
 import { Comment } from "../../app/views/[id]/profileChecker";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
 type Fields = {
   el: Comment;
@@ -10,6 +11,7 @@ type Fields = {
   onClickLike: (e: React.MouseEvent) => void;
   onClickDeleteLike: (e: React.MouseEvent) => void;
   liked: boolean;
+  openLikeModal: (like: Comment) => void;
 };
 const CommentFields = ({
   el,
@@ -19,6 +21,7 @@ const CommentFields = ({
   onClickLike,
   onClickDeleteLike,
   liked,
+  openLikeModal,
 }: Fields) => {
   return (
     <div>
@@ -26,7 +29,22 @@ const CommentFields = ({
         <img src={el.user.picture} className={styles.picture} />
         <div className={styles.nameContent}>
           <b>{el.user.viewsName}</b>
-          <div>{el.content}</div>
+          <div className={styles.contentContent}>{el.content}</div>
+          {el.likes.length > 0 ? (
+            <div
+              className={styles.commentLikes}
+              onClick={(e) => openLikeModal(el)}
+            >
+              <FontAwesomeIcon className={styles.likeMark} icon={faThumbsUp} />
+              {el.likes.length > 1 ? (
+                <span className={styles.numberOfLikes}>{el.likes.length}</span>
+              ) : (
+                ""
+              )}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <div className={styles.likeAndComment}>
