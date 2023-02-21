@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef, useEffect } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { PostsType } from "../../app/views/[id]/profileChecker";
+import { Comment, PostsType } from "../../app/views/[id]/profileChecker";
 import UserContext from "../../context/context";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import CommentFields from "../commentFields";
@@ -17,6 +17,7 @@ type Fields = {
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
   setResult: (result: PostsType) => void;
+  openLikeModal: ( like: Comment) => void;
 };
 const ModalOpenComments = ({
   post,
@@ -28,6 +29,7 @@ const ModalOpenComments = ({
   commentChange,
   commentOfCommentContent,
   setResult,
+  openLikeModal,
 }: Fields) => {
   const context = useContext(UserContext);
   const { user } = context;
@@ -125,6 +127,7 @@ const ModalOpenComments = ({
                     deleteLike(e, el._id, post._id)
                   }
                   liked={liked}
+                  openLikeModal={openLikeModal}
                 />
                 {el.comments.map((el, index) => {
                   let liked = likeExists(el, user!._id);
@@ -142,6 +145,7 @@ const ModalOpenComments = ({
                           deleteLike(e, el._id, post._id)
                         }
                         liked={liked}
+                        openLikeModal={openLikeModal}
                       />
                     </div>
                   );
