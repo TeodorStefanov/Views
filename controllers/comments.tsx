@@ -29,19 +29,22 @@ export const createCommentUpdatePost = async (
       {
         new: true,
       }
-    ).populate({
-      path: "comments",
-      model: Comments,
-      populate: [
-        { path: "user", model: User },
-        {
-          path: "comments",
-          model: Comments,
-          populate: { path: "user", model: User },
-        },
-        { path: "likes", model: User },
-      ],
-    });
+    ).populate([
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: { path: "user", model: User },
+          },
+          { path: "likes", model: User },
+        ],
+      },
+      { path: "createdBy", model: User },
+    ]);
 
     res.status(200).send(post);
   } catch (err) {
@@ -68,19 +71,22 @@ export const addCommentOfComment = async (
         new: true,
       }
     );
-    const post = await Posts.findById(postId).populate({
-      path: "comments",
-      model: Comments,
-      populate: [
-        { path: "user", model: User },
-        {
-          path: "comments",
-          model: Comments,
-          populate: { path: "user", model: User },
-        },
-        { path: "likes", model: User },
-      ],
-    });
+    const post = await Posts.findById(postId).populate([
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: { path: "user", model: User },
+          },
+          { path: "likes", model: User },
+        ],
+      },
+      { path: "createdBy", model: User },
+    ]);
     res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
@@ -116,6 +122,7 @@ export const addLikeToComment = async (
         ],
       },
       { path: "likes", model: User },
+      { path: "createdBy", model: User },
     ]);
     res.status(200).send(post);
   } catch (err) {
@@ -134,22 +141,25 @@ export const deleteLikeToComment = async (
       { $pull: { likes: userId } },
       { new: true }
     );
-    const post = await Posts.findById(postId).populate({
-      path: "comments",
-      model: Comments,
-      populate: [
-        { path: "user", model: User },
-        { path: "likes", model: User },
-        {
-          path: "comments",
-          model: Comments,
-          populate: [
-            { path: "user", model: User },
-            { path: "likes", model: User },
-          ],
-        },
-      ],
-    });
+    const post = await Posts.findById(postId).populate([
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+            ],
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+    ]);
     res.status(200).send(post);
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });

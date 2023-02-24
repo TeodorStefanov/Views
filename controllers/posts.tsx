@@ -16,13 +16,14 @@ export const newCart = async (
   res: NextApiResponse<ResponseData>
 ) => {
   try {
-    const { userId, content, imageUrl, videoUrl } = req.body;
+    const { userId, content, imageUrl, videoUrl, createdBy } = req.body;
     const createdAt = new Date();
     const data = {
       content,
       imageUrl,
       videoUrl,
       createdAt,
+      createdBy,
     };
 
     await Connect();
@@ -56,7 +57,8 @@ export const newCart = async (
           ],
         },
       ],
-    });
+    })
+
 
     res.status(200).send(user.posts.reverse());
   } catch (err) {
@@ -93,6 +95,7 @@ export const addLikeToPost = async (
           { path: "user", model: User },
         ],
       },
+      { path: "createdBy", model: User },
     ]);
 
     res.status(200).send(post);
@@ -131,6 +134,7 @@ export const deleteLikeToPost = async (
           { path: "user", model: User },
         ],
       },
+      { path: "createdBy", model: User },
     ]);
     res.status(200).send(post);
   } catch (err) {

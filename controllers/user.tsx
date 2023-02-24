@@ -6,6 +6,9 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
 import { PostsType, UserData } from "../app/views/[id]/profileChecker";
 import { NewLineKind } from "typescript";
+import Posts from "../models/posts";
+import Comments from "../models/comments";
+import Notification from "../models/notifications";
 type loginData = {
   userId: string;
   username: string;
@@ -30,6 +33,7 @@ type Data = {
   viewsName: string;
   friends: Array<string>;
   posts: PostsType | [];
+  notifications: [];
 };
 export type ResponseData = {
   message?: string;
@@ -69,6 +73,7 @@ export const saveUser = async (
         viewsName,
         friends: [],
         posts: [],
+        notifications: [],
       };
       await Connect();
       await User.create<Data>(data);
@@ -98,8 +103,39 @@ export const loginUser = async (
   try {
     const { username, password } = req.body;
     await Connect();
-    const user = await User.findOne({ username }).select("+password");
-
+    const user = await User.findOne({ username })
+      .select("+password")
+      .populate([
+        {
+          path: "posts",
+          model: Posts,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                {
+                  path: "comments",
+                  model: Comments,
+                  populate: [
+                    { path: "likes", model: User },
+                    { path: "comments", model: Comments },
+                    { path: "user", model: User },
+                  ],
+                },
+                { path: "user", model: User },
+              ],
+            },
+          ],
+        },
+        {
+          path: "notifications",
+          model: Notification,
+        },
+        { path: "friendRequests", model: User },
+      ]);
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });
       return;
@@ -133,5 +169,84 @@ export const deleteToken = (
     res.status(200).send({ message: "Successfully" });
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
+  }
+};
+export const sendFriendRequest = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { userId, friendId } = req.body;
+  try {
+    await Connect();
+    const user = User.findOneAndUpdate(
+      { _id: friendId },
+      {
+        $push: {
+          notifications: {
+            content: "Friend Request",
+            checked: false,
+            pressed: false,
+          },
+        },
+      },
+      { new: true }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const acceptFriendRequest = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { userId, idFriend, notificationId } = req.body;
+  try {
+    await Connect();
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      [
+        { $addToSet: { friends: idFriend } },
+        { $pull: { notifications: notificationId } },
+      ],
+      { new: true }
+    ).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+      },
+      { path: "friendRequests", model: User },
+    ]);
+    await User.findOneAndUpdate(
+      { _id: idFriend },
+      { $addToSet: { friends: userId } },
+      { new: true }
+    );
+    res.status(200).send(user);
+  } catch (err) {
+    console.log(err);
   }
 };

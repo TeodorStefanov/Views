@@ -23,6 +23,7 @@ const CommentFields = ({
   liked,
   openLikeModal,
 }: Fields) => {
+  
   return (
     <div>
       <div className={styles.content}>

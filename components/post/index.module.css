@@ -20,14 +20,19 @@
   border-radius: 50%;
   cursor: pointer;
 }
+.viewsName {
+  cursor: pointer;
+}
 .postTime {
   color: rgb(120, 119, 119);
 }
 .postTextContent {
   box-sizing: border-box;
   padding-left: 12px;
+  padding-right: 12px;
   width: 100%;
   text-align: left;
+  word-break: break-word;
 }
 .postImageUrl {
   margin-bottom: 20px;

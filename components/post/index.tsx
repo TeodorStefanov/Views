@@ -6,25 +6,23 @@ import { PostsType } from "../../app/views/[id]/profileChecker";
 
 interface fields {
   post: PostsType;
-  picture: string;
-  viewsName: string;
   postTime: string;
   liked: boolean;
   addLike: (e: React.MouseEvent) => void;
   deleteLike: (e: React.MouseEvent) => void;
   openLikes: (e: React.MouseEvent) => void;
   openComments: (e: React.MouseEvent) => void;
+  handleClick: () => void;
 }
 const Post = ({
   post,
-  picture,
-  viewsName,
   postTime,
   liked,
   addLike,
   deleteLike,
   openLikes,
   openComments,
+  handleClick,
 }: fields) => {
   const calculateComments = () => {
     let totalComments = 0;
@@ -36,9 +34,16 @@ const Post = ({
   return (
     <div className={styles.postContainer}>
       <div className={styles.postContent}>
-        <img src={picture} className={styles.postUserPicture} />
+        <img
+          src={post.createdBy.picture}
+          className={styles.postUserPicture}
+          onClick={handleClick}
+        />
         <p>
-          <b>{viewsName}</b> -{" "}
+          <b onClick={handleClick} className={styles.viewsName}>
+            {post.createdBy.viewsName}
+          </b>{" "}
+          -{" "}
         </p>
         <p className={styles.postTime}>{postTime}</p>
       </div>
