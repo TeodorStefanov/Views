@@ -200,14 +200,15 @@ export const acceptFriendRequest = async (
   res: NextApiResponse<ResponseData>
 ) => {
   const { userId, idFriend, notificationId } = req.body;
+  console.log(userId);
   try {
     await Connect();
     const user = await User.findOneAndUpdate(
       { _id: userId },
-      [
-        { $addToSet: { friends: idFriend } },
-        { $pull: { notifications: notificationId } },
-      ],
+      {
+        $addToSet: { friends: idFriend },
+        $pull: { notifications: notificationId },
+      },
       { new: true }
     ).populate([
       {
@@ -240,9 +241,10 @@ export const acceptFriendRequest = async (
       },
       { path: "friendRequests", model: User },
     ]);
+    await Notification.deleteOne({ _id: notificationId });
     await User.findOneAndUpdate(
       { _id: idFriend },
-      { $addToSet: { friends: userId } },
+      { $addToSet: { friends: userId }, $pull: { friendRequests: userId } },
       { new: true }
     );
     res.status(200).send(user);
