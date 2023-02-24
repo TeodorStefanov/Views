@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 import User from "../models/user";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import Connect from "../utils/mongoDBMongooseConnection";
+import Posts from "../models/posts";
+import Notification from "../models/notifications";
 
 type User = {
   _id: string;
@@ -35,7 +37,18 @@ async function getToken() {
     }
     const { username } = decoded;
     await Connect();
-    const user: User | null = await User.findOne({ username }).lean();
+    const user: User | null = await User.findOne({ username })
+      .populate([
+        { path: "posts", model: Posts },
+        {
+          path: "notifications",
+          model: Notification,
+          populate: { path: "sentBy", model: User },
+        },
+        { path: "friendRequests", model: User },
+        
+      ])
+      .lean();
     return JSON.parse(JSON.stringify(user));
   } catch (err) {
     return null;

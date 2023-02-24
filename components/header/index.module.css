@@ -28,6 +28,7 @@
 }
 .windowLogged {
   display: flex;
+  gap: 10px;
 }
 .windowLogin {
   text-decoration: none;
@@ -44,9 +45,41 @@
   text-decoration: none;
   color: white;
 }
+.bell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background-color: #e8f0f4;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.bellMark {
+  font-size: 20px;
+  color: rgb(142, 130, 130);
+}
+
+.notificationsNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  color: rgb(255, 255, 255);
+  background-color: rgb(255, 0, 0);
+  border: solid 1px rgb(255, 0, 0);
+  border-radius: 50%;
+}
 .picture {
   vertical-align: middle;
-  margin-right: 12px;
   width: 40px;
   height: 40px;
   border-radius: 50%;

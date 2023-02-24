@@ -33,6 +33,7 @@ const Login: FC = () => {
     if (promise.status === 200) {
       router.push("/views");
       const result = await promise.json();
+      
       logIn(result);
     }
   };

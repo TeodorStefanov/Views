@@ -9,12 +9,14 @@ import ModalOpenLikes from "../../../components/modalOpenLikes";
 import ModalOpenComments from "../../../components/modalOpenComments";
 import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
 import { likeExists } from "../../../utils/checkLiked";
+import { useRouter } from "next/navigation";
 export type PostsType = {
   _id: string;
   content: string;
   imageUrl: string;
   videoUrl: string;
   createdAt: Date;
+  createdBy: UserData;
   likes: Array<UserData>;
   comments: Array<Comment> | [];
 };
@@ -31,9 +33,19 @@ export interface UserData {
   backgroundPicture: string;
   picture: string;
   viewsName: string;
-  friends: [];
+  friends: UserData[] | [];
+  friendRequests?: UserData[] | [];
   posts: PostsType[];
+  notifications?: Notification[] | [];
 }
+export type Notification = {
+  _id: string;
+  sentBy: UserData;
+  setnTo: UserData;
+  content: string;
+  checked: boolean;
+  pressed: boolean;
+};
 const ProfileChecker = ({
   _id,
   backgroundPicture,
@@ -44,8 +56,9 @@ const ProfileChecker = ({
 }: UserData) => {
   const context = useContext(UserContext);
   const [loggedUser, setLoggedUser] = useState<boolean>(false);
+  const [isFriend, setIsFriend] = useState<boolean>(false);
   const [profilePicture, setProfilePicture] = useState<boolean>(false);
-  const { user } = context;
+  const { user, logIn } = context;
   const [content, setContent] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
@@ -56,6 +69,10 @@ const ProfileChecker = ({
   const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
+  const [receivedFriendRequest, setReceivedFriendRequest] =
+    useState<string>('');
+  const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
+  const router = useRouter();
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
     const widget = window.cloudinary.createUploadWidget(
@@ -100,15 +117,18 @@ const ProfileChecker = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: user?._id,
+        userId: _id,
         content,
         imageUrl,
         videoUrl,
+        createdBy: user!._id,
       }),
     });
     if (promise.status === 200) {
       const result = await promise.json();
       setContent("");
+      setImageUrl("");
+      setVideoUrl("");
       setAllPosts(result);
     }
   };
@@ -207,6 +227,41 @@ const ProfileChecker = ({
       alert("There is an error");
     }
   };
+  const handleClickFollowFriend = async () => {
+    const promise = await fetch(
+      "http://localhost:3000/api/createFriendRequestNotification",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user!._id, friendId: _id }),
+      }
+    );
+    if (promise.status === 200) {
+      const result = await promise.json();
+      logIn(result);
+    }
+  };
+  const handleAcceptFriendRequest = async () => {
+    const promise = await fetch(
+      "http://localhost:3000/api/acceptFriendRequest",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user?._id, idFriend: _id, notificationId: receivedFriendRequest}),
+      }
+    );
+    if (promise.status === 200) {
+      const result = await promise.json();
+      setIsFriend(true);
+      setReceivedFriendRequest('');
+      console.log(isFriend);
+      logIn(result);
+    }
+  };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
   };
@@ -214,13 +269,26 @@ const ProfileChecker = ({
     setOpenCommentsPressed(post);
     setPostId(post._id);
   };
-
   useEffect(() => {
+    const friend = user?.friends.find((el: UserData) => el._id === _id);
     if (user?._id === _id) {
       setLoggedUser(true);
+      setIsFriend(true);
     }
+    if (friend) {
+      setIsFriend(true);
+    }
+    user?.notifications?.map((el: Notification) => {
+      if (el.sentBy._id === _id && el.content === "Friend request") {
+        setReceivedFriendRequest(el._id);
+      }
+    });
+    user?.friendRequests?.map((el) => {
+      if (el._id === _id) { 
+        setSentFriendRequest(true);
+      }
+    });
   }, [user]);
-
   return (
     <div>
       <div className={styles.container}>
@@ -245,10 +313,25 @@ const ProfileChecker = ({
               onClick={() => setProfilePicture(true)}
             ></img>
             <p className={styles.viewsName}>{viewsName}</p>
-            {!loggedUser ? (
-              <button type="button" className={styles.follow}>
-                Follow
-              </button>
+            {!loggedUser || !isFriend ? (
+              receivedFriendRequest ? (
+                <button
+                  className={styles.follow}
+                  onClick={handleAcceptFriendRequest}
+                >
+                  Accept
+                </button>
+              ) : sentFriendRequest ? (
+                <div>Panding</div>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.follow}
+                  onClick={handleClickFollowFriend}
+                >
+                  Follow
+                </button>
+              )
             ) : (
               ""
             )}
@@ -258,7 +341,7 @@ const ProfileChecker = ({
             <p>{friends.length} Following</p>
           </div>
           <div className={styles.content}>
-            {loggedUser ? (
+            {isFriend ? (
               <AddPost
                 picture={user!.picture}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -279,14 +362,19 @@ const ProfileChecker = ({
                 <Post
                   key={index}
                   post={post}
-                  picture={picture}
-                  viewsName={viewsName}
                   postTime={postTime}
                   liked={liked}
                   addLike={(e: React.MouseEvent) => addLike(e, post._id)}
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
                   openLikes={() => openLikes(post)}
                   openComments={() => openComments(post)}
+                  handleClick={() => {
+                    if (_id !== user!._id) {
+                      window.scrollTo(0, 0);
+                    } else {
+                      router.push(`/views/${_id}`);
+                    }
+                  }}
                 />
               );
             })}

@@ -35,13 +35,26 @@ const userSchema = new Schema({
   },
   friends: [
     {
-      type: String,
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "User",
+    },
+  ],
+  friendRequests: [
+    {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "User",
     },
   ],
   posts: [
     {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "Posts",
+    },
+  ],
+  notifications: [
+    {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Notification",
     },
   ],
 });

@@ -18,7 +18,7 @@
 .nameContent {
   position: relative;
   width: auto;
-  max-width: 100%;
+  max-width: 84%;
   height: auto;
   text-align: left;
   padding: 10px;
@@ -27,9 +27,7 @@
   background-color: rgb(240, 240, 240);
 }
 .contentContent {
-  box-sizing: border-box;
-  max-width: 90%;
-  height: auto;
+  word-break: break-word;
 }
 .likeAndComment {
   display: flex;
@@ -63,7 +61,7 @@
   align-items: center;
   position: absolute;
   bottom: 2px;
-  left: 94%;
+  left: 98%;
   color: #1d9bf0;
   box-shadow: 0 0 1px 1px #ccc;
   border-radius: 20px;

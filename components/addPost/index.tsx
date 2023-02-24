@@ -18,15 +18,17 @@ const AddPost = ({
 }: fields) => {
   return (
     <div className={styles.addSomething}>
-      <img src={picture} className={styles.addSomethingPicture}></img>
-      <label htmlFor="Add something">
-        <input
-          name="Add something"
-          className={styles.addSomethingField}
-          onChange={onChange}
-          value={value}
-        />
-      </label>
+      <div className={styles.imageInput}>
+        <img src={picture} className={styles.addSomethingPicture}></img>
+        
+          <input
+            name="Add something"
+            className={styles.addSomethingField}
+            onChange={onChange}
+            value={value}
+          />
+        
+      </div>
       <div className={styles.addSomethingButtons}>
         <button
           className={styles.addSomethingButton}

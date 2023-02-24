@@ -13,6 +13,10 @@ const postSchema = new Schema({
     type: Date,
     default: new Date(),
   },
+  createdBy: {
+    type: "ObjectId",
+    ref: "User",
+  },
   likes: [
     {
       type: "ObjectId",

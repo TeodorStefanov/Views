@@ -17,7 +17,7 @@ type Fields = {
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
   setResult: (result: PostsType) => void;
-  openLikeModal: ( like: Comment) => void;
+  openLikeModal: (like: Comment) => void;
 };
 const ModalOpenComments = ({
   post,
