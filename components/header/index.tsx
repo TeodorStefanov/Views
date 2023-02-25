@@ -5,7 +5,8 @@ import styles from "./index.module.css";
 import UserContext from "../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { Notification } from "../../app/views/[id]/profileChecker";
+import { Notification, UserData } from "../../app/views/[id]/profileChecker";
+import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 const Header = () => {
   const [notifications, setNotifications] = useState<Number>(0);
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
@@ -94,9 +95,24 @@ const Header = () => {
         )}
       </div>
       {notificationMenu ? (
-        <div>
-          {notificationPressed?.map((el) => {
-            return <div></div>;
+        <div className={styles.notificationsContainer}>
+          {notificationPressed?.map((el: Notification, index) => {
+            const postDate = calculateDateOrTime(el.createdAt);
+            return (
+              <div className={styles.notification} key={index}>
+                <img
+                  src={el.sentBy.picture}
+                  className={styles.notificationPicture}
+                />
+                <div className={styles.notificationTop}>
+                  <div className={styles.notificationViewsName}>
+                    {el.sentBy.viewsName}
+                  </div>
+                  <div>{el.content}</div>
+                  <div>{postDate}</div>
+                </div>
+              </div>
+            );
           })}
         </div>
       ) : (

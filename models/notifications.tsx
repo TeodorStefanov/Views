@@ -24,6 +24,11 @@ const notificationSchema = new Schema({
     default: false,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: new Date(),
+    required: true,
+  },
 });
 const Notification =
   models.Notification || model("Notification", notificationSchema);
