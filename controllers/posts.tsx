@@ -56,9 +56,9 @@ export const newCart = async (
             { path: "user", model: User },
           ],
         },
+        { path: "createdBy", model: User },
       ],
-    })
-
+    });
 
     res.status(200).send(user.posts.reverse());
   } catch (err) {

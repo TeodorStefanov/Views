@@ -45,6 +45,7 @@ export type Notification = {
   content: string;
   checked: boolean;
   pressed: boolean;
+  createdAt: Date;
 };
 const ProfileChecker = ({
   _id,
@@ -70,7 +71,7 @@ const ProfileChecker = ({
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
   const [receivedFriendRequest, setReceivedFriendRequest] =
-    useState<string>('');
+    useState<string>("");
   const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
   const router = useRouter();
   const handleClickPicture = (e: React.MouseEvent) => {
@@ -251,13 +252,17 @@ const ProfileChecker = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: user?._id, idFriend: _id, notificationId: receivedFriendRequest}),
+        body: JSON.stringify({
+          userId: user?._id,
+          idFriend: _id,
+          notificationId: receivedFriendRequest,
+        }),
       }
     );
     if (promise.status === 200) {
       const result = await promise.json();
       setIsFriend(true);
-      setReceivedFriendRequest('');
+      setReceivedFriendRequest("");
       console.log(isFriend);
       logIn(result);
     }
@@ -278,17 +283,19 @@ const ProfileChecker = ({
     if (friend) {
       setIsFriend(true);
     }
+
     user?.notifications?.map((el: Notification) => {
       if (el.sentBy._id === _id && el.content === "Friend request") {
         setReceivedFriendRequest(el._id);
       }
     });
     user?.friendRequests?.map((el) => {
-      if (el._id === _id) { 
+      if (el._id === _id) {
         setSentFriendRequest(true);
       }
     });
   }, [user]);
+
   return (
     <div>
       <div className={styles.container}>
@@ -313,7 +320,7 @@ const ProfileChecker = ({
               onClick={() => setProfilePicture(true)}
             ></img>
             <p className={styles.viewsName}>{viewsName}</p>
-            {!loggedUser || !isFriend ? (
+            {!loggedUser && !isFriend ? (
               receivedFriendRequest ? (
                 <button
                   className={styles.follow}

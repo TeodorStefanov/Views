@@ -12,6 +12,7 @@ type Data = {
   content: string;
   checked: boolean;
   pressed: boolean;
+  createdAt: Date;
 };
 export const createFriendRequestNotification = async (
   req: NextApiRequest,
@@ -25,6 +26,7 @@ export const createFriendRequestNotification = async (
       content: "Friend request",
       checked: false,
       pressed: false,
+      createdAt: new Date(),
     };
     await Connect();
     const notification = await Notification.create<Data>(data);

@@ -8,16 +8,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import Connect from "../utils/mongoDBMongooseConnection";
 import Posts from "../models/posts";
 import Notification from "../models/notifications";
-
-type User = {
-  _id: string;
-  username: string;
-  email: string;
-  backgroundPicture: string;
-  picture: string;
-  viewsName: string;
-  friends: Array<string>;
-};
+import { UserData } from "./views/[id]/profileChecker";
 
 export const revalidate = 0;
 async function getToken() {
@@ -37,7 +28,7 @@ async function getToken() {
     }
     const { username } = decoded;
     await Connect();
-    const user: User | null = await User.findOne({ username })
+    const user: UserData | null = await User.findOne({ username })
       .populate([
         { path: "posts", model: Posts },
         {
@@ -46,7 +37,7 @@ async function getToken() {
           populate: { path: "sentBy", model: User },
         },
         { path: "friendRequests", model: User },
-        
+        { path: "friends", model: User },
       ])
       .lean();
     return JSON.parse(JSON.stringify(user));
