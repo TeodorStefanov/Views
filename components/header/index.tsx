@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import styles from "./index.module.css";
 import UserContext from "../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Notification, UserData } from "../../app/views/[id]/profileChecker";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
+
 const Header = () => {
   const [notifications, setNotifications] = useState<Number>(0);
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
@@ -15,6 +16,7 @@ const Header = () => {
   const [notificationPressed, setNotificationPressed] = useState<
     Notification[] | [] | undefined
   >(user?.notifications);
+  const notificationMenuRef = useRef(null);
   const handleClick = async () => {
     if (user) {
       const promise = await fetch(
@@ -33,6 +35,7 @@ const Header = () => {
       }
     }
   };
+  const handleClickOutsidetheNotificationMenu = () => {};
   useEffect(() => {
     if (user) {
       const notCheckedNotifications = user.notifications!.filter(
@@ -42,6 +45,11 @@ const Header = () => {
       const notPressedNotifications = user.notifications!.filter(
         (el) => !el.pressed
       );
+      window.onclick = (event: any) => {
+        if (!event.target?.contains(notificationMenuRef.current)) {
+          setNotificationMenu(false);
+        }
+      };
     }
   }, []);
   return (
@@ -95,7 +103,10 @@ const Header = () => {
         )}
       </div>
       {notificationMenu ? (
-        <div className={styles.notificationsContainer}>
+        <div
+          className={styles.notificationsContainer}
+          ref={notificationMenuRef}
+        >
           {notificationPressed?.map((el: Notification, index) => {
             const postDate = calculateDateOrTime(el.createdAt);
             return (
@@ -109,7 +120,7 @@ const Header = () => {
                     {el.sentBy.viewsName}
                   </div>
                   <div>{el.content}</div>
-                  <div>{postDate}</div>
+                  <div className={styles.date}>{postDate}</div>
                 </div>
               </div>
             );
