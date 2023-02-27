@@ -200,7 +200,7 @@ export const acceptFriendRequest = async (
   res: NextApiResponse<ResponseData>
 ) => {
   const { userId, idFriend, notificationId } = req.body;
-  console.log(userId);
+  console.log(notificationId);
   try {
     await Connect();
     const user = await User.findOneAndUpdate(
@@ -240,11 +240,67 @@ export const acceptFriendRequest = async (
         model: Notification,
       },
       { path: "friendRequests", model: User },
+      { path: "friends", model: User },
     ]);
     await Notification.deleteOne({ _id: notificationId });
     await User.findOneAndUpdate(
       { _id: idFriend },
       { $addToSet: { friends: userId }, $pull: { friendRequests: userId } },
+      { new: true }
+    );
+    res.status(200).send(user);
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const removeFriendRequest = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { userId, friendId, notificationId } = req.body;
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $pull: { notifications: notificationId },
+      },
+      { new: true }
+    ).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+      },
+      { path: "friendRequests", model: User },
+      { path: "friends", model: User },
+    ]);
+    await Notification.deleteOne({ _id: notificationId });
+    await User.findOneAndUpdate(
+      { _id: friendId },
+      { $pull: { friendRequests: userId } },
       { new: true }
     );
     res.status(200).send(user);
