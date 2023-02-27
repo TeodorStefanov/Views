@@ -241,6 +241,7 @@ const ProfileChecker = ({
     );
     if (promise.status === 200) {
       const result = await promise.json();
+      setSentFriendRequest(true);
       logIn(result);
     }
   };
