@@ -10,10 +10,10 @@ import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const [notifications, setNotifications] = useState<Number>(0);
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
   const context = useContext(UserContext);
-  const { loggedIn, user, logIn, logOut } = context;
+  const { loggedIn, user, logIn, logOut, notifications, setNotifications } =
+    context;
   const [notificationPressed, setNotificationPressed] = useState<
     Notification[] | [] | undefined
   >(user?.notifications);
@@ -67,7 +67,6 @@ const Header = () => {
     friendId: string,
     notificationId: string
   ) => {
-    console.log(friendId);
     const promise = await fetch(
       "http://localhost:3000/api/removeFriendRequest",
       {
@@ -84,21 +83,38 @@ const Header = () => {
       logIn(result);
     }
   };
-  useEffect(() => {
-    if (user) {
-      const notCheckedNotifications = user.notifications!.filter(
-        (el) => !el.checked
-      );
-      setNotifications(notCheckedNotifications.length);
-      const notPressedNotifications = user.notifications!.filter(
-        (el) => !el.pressed
-      );
-      window.onclick = (event: any) => {
-        if (!event.target?.contains(notificationMenuRef.current)) {
-          setNotificationMenu(false);
-        }
-      };
+  const handleClickNotification = async (
+    id: string,
+    content: string,
+    sentById: string
+  ) => {
+    const promise = await fetch(
+      "http://localhost:3000/api/userNotificationPressed",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user?._id, id }),
+      }
+    );
+    if (promise.status === 200) {
+      const result = await promise.json();
+      if (content === "Friend request") {
+        router.push(`/views/${sentById}`);
+      } else if (content === "posted on your wall") {
+        router.push(`/views/${user?._id}`);
+      }
+      console.log(result);
+      setNotificationPressed(result);
     }
+  };
+  useEffect(() => {
+    window.onclick = (event: any) => {
+      if (!event.target?.contains(notificationMenuRef.current)) {
+        setNotificationMenu(false);
+      }
+    };
   }, []);
   return (
     <div className={styles.container}>
@@ -134,8 +150,18 @@ const Header = () => {
               className={styles.picture}
               alt=""
             />
-            <div className={styles.bell} onClick={handleClick}>
-              <FontAwesomeIcon className={styles.bellMark} icon={faBell} />
+            <div
+              className={`${styles.bell} ${
+                notificationMenu ? styles.bellPressed : ""
+              }`}
+              onClick={handleClick}
+            >
+              <FontAwesomeIcon
+                className={`${styles.bellMark} ${
+                  notificationMenu ? styles.bellMarkPressed : ""
+                }`}
+                icon={faBell}
+              />
               {notifications > 0 ? (
                 <div className={styles.notificationsNumber}>
                   {notifications.toFixed(0)}
@@ -159,25 +185,28 @@ const Header = () => {
             const postDate = calculateDateOrTime(el.createdAt);
             return (
               <div
-                className={styles.notification}
+                className={`${styles.notification} ${
+                  !el.pressed ? styles.notificationNotPressed : ""
+                }`}
                 key={index}
-                onClick={() => router.push(`/views/${el.sentBy._id}`)}
+                onClick={() =>
+                  handleClickNotification(el._id, el.content, el.sentBy._id)
+                }
               >
                 <img
                   src={el.sentBy.picture}
                   className={styles.notificationPicture}
                 />
                 <div className={styles.notificationTop}>
-                  <div className={styles.notificationViewsName}>
-                    {el.sentBy.viewsName}
+                  <div className={styles.viewsNameContent}>
+                    <b>{el.sentBy.viewsName}</b> {el.content}
                   </div>
-                  <div>{el.content}</div>
                   <div className={styles.date}>{postDate}</div>
                   {el.content === "Friend request" ? (
                     <div className={styles.friendRequestButtons}>
                       <button
                         className={styles.friendRequestButton}
-                        onClick={(event) =>
+                        onClick={() =>
                           handleAcceptRequest(el.sentBy._id, el._id)
                         }
                       >
@@ -185,7 +214,7 @@ const Header = () => {
                       </button>
                       <button
                         className={styles.friendRequestButton}
-                        onClick={(event) =>
+                        onClick={() =>
                           handleRemoveRequest(el.sentBy._id, el._id)
                         }
                       >

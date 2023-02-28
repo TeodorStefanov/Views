@@ -34,6 +34,7 @@ const Login: FC = () => {
       const result = await promise.json();
       logIn(result);
       router.push("/views");
+      console.log(result);
     }
   };
   return (
