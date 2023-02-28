@@ -13,7 +13,12 @@ const UserApp = (props: Props): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<UserData | null>(null);
   const [error, setError] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<number>(0);
   const logIn = (user: UserData): void => {
+    const notCheckedNotifications = user.notifications!.filter(
+      (el) => !el.checked
+    );
+    setNotifications(notCheckedNotifications.length);
     setLoggedIn(true);
     setUser(user);
   };
@@ -45,6 +50,8 @@ const UserApp = (props: Props): JSX.Element | null => {
         user,
         logIn,
         logOut,
+        notifications,
+        setNotifications
       }}
     >
       {props.children}

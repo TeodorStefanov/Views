@@ -1,5 +1,6 @@
 import { create } from "domain";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { UserData } from "../app/views/[id]/profileChecker";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
 import Posts from "../models/posts";
@@ -62,6 +63,30 @@ export const userNotificationsChecked = async (
     );
 
     res.status(200).send({ message: "Successfully" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const userNotificationPressed = async (
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) => {
+  const { userId, id } = req.body;
+  try {
+    await Connect();
+    await Notification.findOneAndUpdate(
+      { _id: id },
+      { pressed: true },
+      {
+        new: true,
+      }
+    );
+    const user = await User.findOne({ _id: userId }).populate({
+      path: "notifications",
+      model: Notification,
+      populate: { path: "sentBy", model: User },
+    });
+    res.status(200).send(user.notifications);
   } catch (err) {
     console.log(err);
   }

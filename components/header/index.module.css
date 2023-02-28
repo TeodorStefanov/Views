@@ -57,11 +57,16 @@
   border-radius: 50%;
   cursor: pointer;
 }
+.bellPressed {
+  background-color: #b1dbf0;
+}
 .bellMark {
   font-size: 20px;
   color: rgb(142, 130, 130);
 }
-
+.bellMarkPressed {
+  color: #1d9bf0;
+}
 .notificationsNumber {
   display: flex;
   justify-content: center;
@@ -86,33 +91,43 @@
   cursor: pointer;
 }
 .notificationsContainer {
-  width: 20%;
-  height: 600px;
+  width: 18%;
+  min-height: 100px;
+  max-height: 600px;
   position: relative;
   top: 100%;
   left: 80%;
   z-index: 20;
   box-sizing: border-box;
   background-color: rgb(255, 255, 255);
+  border-radius: 12px;
+  overflow-y: auto;
 }
 .notification {
   display: flex;
   position: relative;
+  box-sizing: border-box;
+  height: 100px;
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 20px;
-  box-sizing: border-box;
-  min-height: 18%;
   cursor: pointer;
 }
 .notification:hover {
   background-color: rgb(223, 215, 215);
+}
+.notificationNotPressed {
+  background-color: rgb(184, 198, 205);
 }
 .notificationTop {
   width: 70%;
   margin-top: 4%;
   box-sizing: border-box;
   text-align: left;
+}
+.viewsNameContent {
+  margin-right: 4px;
+  box-sizing: border-box;
 }
 .notificationPicture {
   width: 70px;
