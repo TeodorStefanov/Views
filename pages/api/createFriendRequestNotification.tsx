@@ -7,6 +7,6 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "POST") {
-    await createFriendRequestNotification(req, res);
+    
   }
 }

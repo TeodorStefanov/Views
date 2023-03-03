@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { UserData } from "../app/views/[id]/profileChecker";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
 import Posts from "../models/posts";
@@ -21,11 +22,13 @@ type NotificationData = {
   createdAt: Date;
 };
 export const newCart = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId: string,
+  content: string,
+  imageUrl: string,
+  videoUrl: string,
+  createdBy: string
 ) => {
   try {
-    const { userId, content, imageUrl, videoUrl, createdBy } = req.body;
     const createdAt = new Date();
     const data = {
       content,
@@ -92,17 +95,12 @@ export const newCart = async (
         { path: "createdBy", model: User },
       ],
     });
-
-    res.status(200).send(user.posts.reverse());
+    return user.posts.reverse();
   } catch (err) {
-    res.status(400).send({ error: "There is an error!" });
+    console.log(err);
   }
 };
-export const addLikeToPost = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) => {
-  const { postId, userId } = req.body;
+export const addLikeToPost = async (postId: string, userId: string) => {
   try {
     await Connect();
     const post = await Posts.findOneAndUpdate(
@@ -130,21 +128,16 @@ export const addLikeToPost = async (
       },
       { path: "createdBy", model: User },
     ]);
-
-    res.status(200).send(post);
+    console.log(post)
+    return post;
   } catch (err) {
     console.log(err);
-    res.status(400).send({ error: "There is an error!" });
   }
 };
-export const deleteLikeToPost = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) => {
-  const { postId, userId } = req.body;
+export const deleteLikeToPost = async (postId: string, userId: string) => {
   try {
     await Connect();
-    const post = await Posts.findOneAndUpdate(
+    const post = await Posts.findOneAndUpdate( 
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
@@ -169,8 +162,8 @@ export const deleteLikeToPost = async (
       },
       { path: "createdBy", model: User },
     ]);
-    res.status(200).send(post);
+    return post;
   } catch (err) {
-    res.status(400).send({ error: "There is an error!" });
+    console.log(err);
   }
 };

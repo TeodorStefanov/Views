@@ -105,6 +105,7 @@ export const loginUser = async (
     await Connect();
     const user = await User.findOne({ username })
       .select("+password")
+      .select("+username")
       .populate([
         {
           path: "posts",
@@ -135,7 +136,7 @@ export const loginUser = async (
           model: Notification,
         },
         { path: "friendRequests", model: User },
-      ]);
+      ])
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });
       return;

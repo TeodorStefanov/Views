@@ -44,7 +44,6 @@ async function getUser(id: string) {
         },
         { path: "friendRequests", model: User },
       ])
-
       .lean();
     return JSON.parse(JSON.stringify(user));
   } catch (err) {

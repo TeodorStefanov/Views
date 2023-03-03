@@ -8,14 +8,14 @@ import { ResponseData } from "./user";
 type Data = {
   id: string;
   content: string;
-  date: Date;
+  createdAt: Date;
 };
 export const createCommentUpdatePost = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId: string,
+  id: string,
+  contentComment: string
 ) => {
   try {
-    const { userId, id, contentComment } = req.body;
     const createdAt = new Date();
     await Connect();
     const comment = await Comments.create<Data>({
@@ -43,25 +43,27 @@ export const createCommentUpdatePost = async (
           { path: "likes", model: User },
         ],
       },
+      { path: "likes", model: User },
       { path: "createdBy", model: User },
     ]);
 
-    res.status(200).send(post);
+    return post;
   } catch (err) {
-    res.status(400).send({ error: "There is an error!" });
+    console.log(err);
   }
 };
 export const addCommentOfComment = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId: string,
+  id: string,
+  contentComment: string,
+  postId: string
 ) => {
   try {
-    const { id, userId, content, postId } = req.body;
     const createdAt = new Date();
     await Connect();
     const comment = await Comments.create<Data>({
       user: userId,
-      content,
+      content: contentComment,
       createdAt,
     });
     await Comments.findOneAndUpdate(
@@ -85,11 +87,12 @@ export const addCommentOfComment = async (
           { path: "likes", model: User },
         ],
       },
+      { path: "likes", model: User },
       { path: "createdBy", model: User },
-    ]);
-    res.status(200).send(post);
+    ])
+    return post;
   } catch (err) {
-    res.status(400).send({ error: "There is an error!" });
+    console.log(err);
   }
 };
 export const addLikeToComment = async (

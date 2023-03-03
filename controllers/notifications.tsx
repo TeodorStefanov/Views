@@ -16,10 +16,9 @@ type Data = {
   createdAt: Date;
 };
 export const createFriendRequestNotification = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId: string,
+  friendId: string
 ) => {
-  const { userId, friendId } = req.body;
   try {
     const data: Data = {
       sentBy: userId,
@@ -37,15 +36,46 @@ export const createFriendRequestNotification = async (
       {
         new: true,
       }
-    );
+    ).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+        populate: { path: "sentBy", model: User },
+      },
+      { path: "friendRequests", model: User },
+    ]);
     await User.findOneAndUpdate(
       { _id: friendId },
       { $addToSet: { notifications: notification } },
       {
         new: true,
       }
-    );
-    res.status(200).send(user);
+    )
+    return user;
   } catch (err) {
     console.log(err);
   }

@@ -105,7 +105,6 @@ const Header = () => {
       } else if (content === "posted on your wall") {
         router.push(`/views/${user?._id}`);
       }
-      console.log(result);
       setNotificationPressed(result);
     }
   };
