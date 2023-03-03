@@ -10,6 +10,9 @@ import ModalOpenComments from "../../../components/modalOpenComments";
 import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
 import { likeExists } from "../../../utils/checkLiked";
 import { useRouter } from "next/navigation";
+import type { Socket } from "socket.io-client";
+import io from "socket.io-client";
+let socket: undefined | Socket;
 export type PostsType = {
   _id: string;
   content: string;
@@ -112,62 +115,31 @@ const ProfileChecker = ({
   };
   const handleClickPost = async (e: React.MouseEvent) => {
     e.preventDefault();
-    const promise = await fetch("http://localhost:3000/api/newCart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: _id,
-        content,
-        imageUrl,
-        videoUrl,
-        createdBy: user!._id,
-      }),
-    });
-    if (promise.status === 200) {
-      const result = await promise.json();
-      setContent("");
-      setImageUrl("");
-      setVideoUrl("");
-      setAllPosts(result);
+    const userId = _id;
+    const createdBy = user?._id;
+    if (content || imageUrl || videoUrl) {
+      if (socket !== undefined) {
+        socket.emit("allPosts", userId, content, imageUrl, videoUrl, createdBy);
+        setContent("");
+        setImageUrl("");
+        setVideoUrl("");
+      }
     }
   };
-  const addLike = async (event: React.MouseEvent, postId: string) => {
+  const addLike = (event: React.MouseEvent, postId: string) => {
     event.preventDefault();
     const userId = user?._id;
-    const promise = await fetch("http://localhost:3000/api/addLikeToPost", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ postId, userId }),
-    });
-    if (promise.status === 200) {
-      const result = await promise.json();
-      const newPosts = allPosts.map((el: PostsType) =>
-        el._id === result._id ? result : el
-      );
 
-      setAllPosts(newPosts);
+    if (socket !== undefined) {
+      socket.emit("addLike", postId, userId, "add");
     }
   };
-  const deleteLike = async (event: React.MouseEvent, postId: string) => {
+  const deleteLike = (event: React.MouseEvent, postId: string) => {
     event.preventDefault();
     const userId = user?._id;
-    const promise = await fetch("http://localhost:3000/api/deleteLikeToPost", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ postId, userId }),
-    });
-    if (promise.status === 200) {
-      const result = await promise.json();
-      const newPosts = allPosts.map((el: PostsType) =>
-        el._id === result._id ? result : el
-      );
-      setAllPosts(newPosts);
+
+    if (socket !== undefined) {
+      socket.emit("addLike", postId, userId);
     }
   };
   const handleSubmitComment = async (
@@ -176,73 +148,27 @@ const ProfileChecker = ({
     contentComment: string
   ) => {
     if (contentComment) {
-      const promise = await fetch(
-        "http://localhost:3000/api/createCommentUpdatePost",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId, id, contentComment }),
-        }
-      );
-      if (promise.status === 200) {
-        const result = await promise.json();
-        const newPosts = allPosts.map((el: PostsType) =>
-          el._id === result._id ? result : el
-        );
+      if (socket !== undefined) {
+        socket.emit("allComments", userId, id, contentComment);
         setContentComment("");
-        setOpenCommentsPressed(result);
-        setAllPosts(newPosts);
-      } else {
-        alert("There is an error");
       }
     }
   };
   const handleSubmitCommentOfComment = async (id: string, postId: string) => {
     const userId = user?._id;
-    const promise = await fetch(
-      "http://localhost:3000/api/addCommentOfComment",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id,
-          userId,
-          content: commentOfCommentContent,
-          postId,
-        }),
+    if (commentOfCommentContent) {
+      if (socket !== undefined) {
+        socket.emit("allComments", userId, id, commentOfCommentContent, postId);
+        setCommentOfCommentContent("");
       }
-    );
-    if (promise.status === 200) {
-      const result = await promise.json();
-      const newPosts = allPosts.map((el: PostsType) =>
-        el._id === result._id ? result : el
-      );
-      setCommentOfCommentContent("");
-      setOpenCommentsPressed(result);
-      setAllPosts(newPosts);
-    } else {
-      alert("There is an error");
     }
   };
   const handleClickFollowFriend = async () => {
-    const promise = await fetch(
-      "http://localhost:3000/api/createFriendRequestNotification",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user!._id, friendId: _id }),
-      }
-    );
-    if (promise.status === 200) {
-      const result = await promise.json();
-      setSentFriendRequest(true);
-      logIn(result);
+    const userId = user?._id;
+    const friendId = _id;
+
+    if (socket !== undefined) {
+      socket.emit("sentFriendRequest", userId, friendId);
     }
   };
   const handleAcceptFriendRequest = async () => {
@@ -275,6 +201,43 @@ const ProfileChecker = ({
     setOpenCommentsPressed(post);
     setPostId(post._id);
   };
+  const socketInitializer = async () => {
+    await fetch(`http://localhost:3000/api/socket`);
+    socket = io();
+
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+
+    socket.on("allPosts", (posts) => {
+      setAllPosts(posts);
+    });
+    socket.on("addLike", (post) => {
+      const isPost = allPosts.find((el) => el._id === post._id);
+      if (!isPost) {
+        allPosts.unshift(post);
+      }
+      const newPosts = allPosts.map((el: PostsType) =>
+        el._id === post._id ? post : el
+      );
+      setAllPosts(newPosts);
+    });
+    socket.on("allComments", (post) => {
+      const isPost = allPosts.find((el) => el._id === post._id);
+      if (!isPost) {
+        allPosts.unshift(post);
+      }
+      const newPosts = allPosts.map((el: PostsType) =>
+        el._id === post._id ? post : el
+      );
+      setOpenCommentsPressed(post);
+      setAllPosts(newPosts);
+    });
+    socket.on("sentFriendRequest", (user) => {
+      logIn(user);
+      setSentFriendRequest(true);
+    });
+  };
   useEffect(() => {
     const friend = user?.friends.find((el: UserData) => el._id === _id);
     if (user?._id === _id) {
@@ -286,6 +249,7 @@ const ProfileChecker = ({
     }
 
     user?.notifications?.map((el: Notification) => {
+      console.log(user);
       if (el.sentBy._id === _id && el.content === "Friend request") {
         setReceivedFriendRequest(el._id);
       }
@@ -295,8 +259,8 @@ const ProfileChecker = ({
         setSentFriendRequest(true);
       }
     });
+    socketInitializer();
   }, [user]);
-
   return (
     <div>
       <div className={styles.container}>
