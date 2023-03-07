@@ -131,7 +131,7 @@ const ProfileChecker = ({
     const userId = user?._id;
 
     if (socket !== undefined) {
-      socket.emit("addLike", postId, userId, "add");
+      socket.emit("addLike", postId, userId, "add", _id);
     }
   };
   const deleteLike = (event: React.MouseEvent, postId: string) => {
@@ -139,7 +139,7 @@ const ProfileChecker = ({
     const userId = user?._id;
 
     if (socket !== undefined) {
-      socket.emit("addLike", postId, userId);
+      socket.emit("addLike", postId, userId, "delete", _id);
     }
   };
   const handleSubmitComment = async (
@@ -149,7 +149,7 @@ const ProfileChecker = ({
   ) => {
     if (contentComment) {
       if (socket !== undefined) {
-        socket.emit("allComments", userId, id, contentComment);
+        socket.emit("allComments", userId, id, contentComment, _id);
         setContentComment("");
       }
     }
@@ -158,7 +158,14 @@ const ProfileChecker = ({
     const userId = user?._id;
     if (commentOfCommentContent) {
       if (socket !== undefined) {
-        socket.emit("allComments", userId, id, commentOfCommentContent, postId);
+        socket.emit(
+          "allComments",
+          userId,
+          id,
+          commentOfCommentContent,
+          _id,
+          postId
+        );
         setCommentOfCommentContent("");
       }
     }
@@ -202,9 +209,8 @@ const ProfileChecker = ({
     setPostId(post._id);
   };
   const socketInitializer = async () => {
-    await fetch(`http://localhost:3000/api/socket`);
+    await fetch(`http://localhost:3000/api/socket?id=${_id}`);
     socket = io();
-
     socket.on("connect", () => {
       console.log("connected");
     });
@@ -237,6 +243,7 @@ const ProfileChecker = ({
       logIn(user);
       setSentFriendRequest(true);
     });
+    return null;
   };
   useEffect(() => {
     const friend = user?.friends.find((el: UserData) => el._id === _id);
@@ -249,7 +256,6 @@ const ProfileChecker = ({
     }
 
     user?.notifications?.map((el: Notification) => {
-      console.log(user);
       if (el.sentBy._id === _id && el.content === "Friend request") {
         setReceivedFriendRequest(el._id);
       }
@@ -259,7 +265,12 @@ const ProfileChecker = ({
         setSentFriendRequest(true);
       }
     });
-    socketInitializer();
+    if (user) {
+      socketInitializer();
+    }
+    return () => {
+      socket?.disconnect()
+    };
   }, [user]);
   return (
     <div>

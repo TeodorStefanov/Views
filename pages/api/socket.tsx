@@ -31,18 +31,25 @@ interface SocketWithIO extends NetSocket {
 interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
+let serverId: string = "";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
+  const id = req.query.id;
+
   if (res.socket.server.io) {
-    console.log("Socket is already running");
+    console.log("Socket is already running")
     res.socket.setMaxListeners(100);
   } else {
     console.log("Server is initiializing");
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
+      serverId = socket.id;
+      if (id) {
+        socket.join(id);
+      }
       socket.on(
         "allPosts",
         async (userId, content, imageUrl, videoUrl, createdBy) => {
@@ -56,24 +63,25 @@ export default async function handler(
             );
 
             if (posts) {
-              socket.broadcast.emit("allPosts", posts);
+              socket.in(userId).emit("allPosts", posts);
             }
           } catch (err) {
             console.log(err);
           }
         }
       );
-      socket.on("addLike", async (postId, userId, method) => {
+      socket.on("addLike", async (postId, userId, method, roomId) => {
         try {
           if (method === "add") {
             const post = await addLikeToPost(postId, userId);
             if (post) {
-              socket.broadcast.emit("addLike", post);
+              socket.in(roomId).emit("addLike", post);
+              console.log("roomId", roomId);
             }
           } else {
             const post = await deleteLikeToPost(postId, userId);
             if (post) {
-              socket.broadcast.emit("addLike", post);
+              socket.in(roomId).emit("addLike", post);
             }
           }
         } catch (err) {
@@ -86,6 +94,7 @@ export default async function handler(
           userId: string,
           id: string,
           contentComment: string,
+          roomId: string,
           postId: string
         ) => {
           if (!postId) {
@@ -95,7 +104,7 @@ export default async function handler(
               contentComment
             );
             if (post) {
-              socket.broadcast.emit("allComments", post);
+              socket.in(roomId).emit("allComments", post);
             }
           } else {
             const post = await addCommentOfComment(
@@ -105,15 +114,15 @@ export default async function handler(
               postId
             );
             if (post) {
-              socket.broadcast.emit("allComments", post);
+              socket.in(roomId).emit("allComments", post);
             }
           }
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {
-        const user = await createFriendRequestNotification(userId, friendId)
+        const user = await createFriendRequestNotification(userId, friendId);
         if (user) {
-          socket.broadcast.emit("sentFriendRequest", user);
+          socket.in(friendId).emit("sentFriendRequest", user);
         }
       });
     });

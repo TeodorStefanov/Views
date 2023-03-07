@@ -128,7 +128,7 @@ export const addLikeToPost = async (postId: string, userId: string) => {
       },
       { path: "createdBy", model: User },
     ]);
-    console.log(post)
+
     return post;
   } catch (err) {
     console.log(err);
@@ -137,7 +137,7 @@ export const addLikeToPost = async (postId: string, userId: string) => {
 export const deleteLikeToPost = async (postId: string, userId: string) => {
   try {
     await Connect();
-    const post = await Posts.findOneAndUpdate( 
+    const post = await Posts.findOneAndUpdate(
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
