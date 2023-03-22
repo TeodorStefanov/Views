@@ -36,20 +36,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
 ) {
-  const id = req.query.id;
-
   if (res.socket.server.io) {
-    console.log("Socket is already running")
-    res.socket.setMaxListeners(100);
+    res.socket.setMaxListeners(20);
   } else {
     console.log("Server is initiializing");
+
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
-      serverId = socket.id;
-      if (id) {
-        socket.join(id);
-      }
+      console.log("server is connected");
+      socket.on("joinRoom", (id) => {
+        socket.join(`${id}`);
+      });
       socket.on(
         "allPosts",
         async (userId, content, imageUrl, videoUrl, createdBy) => {
@@ -73,15 +71,16 @@ export default async function handler(
       socket.on("addLike", async (postId, userId, method, roomId) => {
         try {
           if (method === "add") {
+            
             const post = await addLikeToPost(postId, userId);
             if (post) {
-              socket.in(roomId).emit("addLike", post);
               console.log("roomId", roomId);
+              socket.in(`${roomId}`).emit("addLike", post);
             }
-          } else {
+          } else { 
             const post = await deleteLikeToPost(postId, userId);
             if (post) {
-              socket.in(roomId).emit("addLike", post);
+              socket.in(`${roomId}`).emit("addLike", post);
             }
           }
         } catch (err) {

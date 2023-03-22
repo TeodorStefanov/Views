@@ -76,7 +76,9 @@ const ProfileChecker = ({
   const [receivedFriendRequest, setReceivedFriendRequest] =
     useState<string>("");
   const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const router = useRouter();
+
   const handleClickPicture = (e: React.MouseEvent) => {
     e.preventDefault();
     const widget = window.cloudinary.createUploadWidget(
@@ -213,6 +215,7 @@ const ProfileChecker = ({
     socket = io();
     socket.on("connect", () => {
       console.log("connected");
+      setIsConnected(true);
     });
 
     socket.on("allPosts", (posts) => {
@@ -220,6 +223,7 @@ const ProfileChecker = ({
     });
     socket.on("addLike", (post) => {
       const isPost = allPosts.find((el) => el._id === post._id);
+      console.log(post);
       if (!isPost) {
         allPosts.unshift(post);
       }
@@ -265,13 +269,22 @@ const ProfileChecker = ({
         setSentFriendRequest(true);
       }
     });
-    if (user) {
-      socketInitializer();
-    }
+    console.log();
+
+    socketInitializer();
+
     return () => {
-      socket?.disconnect()
+      socket?.disconnect();
     };
   }, [user]);
+  useEffect(() => {
+    console.log("pesho");
+    console.log(isConnected);
+    if (isConnected) {
+      console.log("dddd");
+      socket?.emit("joinRoom", _id);
+    }
+  }, [socket, isConnected]);
   return (
     <div>
       <div className={styles.container}>
