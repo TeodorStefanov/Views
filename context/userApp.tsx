@@ -51,7 +51,7 @@ const UserApp = (props: Props): JSX.Element | null => {
         logIn,
         logOut,
         notifications,
-        setNotifications
+        setNotifications,
       }}
     >
       {props.children}
