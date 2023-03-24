@@ -199,7 +199,6 @@ const ProfileChecker = ({
       const result = await promise.json();
       setIsFriend(true);
       setReceivedFriendRequest("");
-      console.log(isFriend);
       logIn(result);
     }
   };
@@ -223,7 +222,6 @@ const ProfileChecker = ({
     });
     socket.on("addLike", (post) => {
       const isPost = allPosts.find((el) => el._id === post._id);
-      console.log(post);
       if (!isPost) {
         allPosts.unshift(post);
       }
@@ -269,7 +267,6 @@ const ProfileChecker = ({
         setSentFriendRequest(true);
       }
     });
-    console.log();
 
     socketInitializer();
 
@@ -278,10 +275,7 @@ const ProfileChecker = ({
     };
   }, [user]);
   useEffect(() => {
-    console.log("pesho");
-    console.log(isConnected);
     if (isConnected) {
-      console.log("dddd");
       socket?.emit("joinRoom", _id);
     }
   }, [socket, isConnected]);

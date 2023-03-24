@@ -4,11 +4,6 @@ import type { Server as HTTPServer } from "http";
 import type { Socket as NetSocket } from "net";
 import type { Server as IOServer } from "socket.io";
 
-import Posts from "../../models/posts";
-import Connect from "../../utils/mongoDBMongooseConnection";
-import User from "../../models/user";
-import Comments from "../../models/comments";
-import { PostsType } from "../../app/views/[id]/profileChecker";
 import {
   addCommentOfComment,
   createCommentUpdatePost,
@@ -46,7 +41,7 @@ export default async function handler(
     io.on("connection", (socket) => {
       console.log("server is connected");
       socket.on("joinRoom", (id) => {
-        socket.join(`${id}`);
+        socket.join(id);
       });
       socket.on(
         "allPosts",
@@ -61,7 +56,7 @@ export default async function handler(
             );
 
             if (posts) {
-              socket.in(userId).emit("allPosts", posts);
+              io.in(userId).emit("allPosts", posts);
             }
           } catch (err) {
             console.log(err);
@@ -71,16 +66,14 @@ export default async function handler(
       socket.on("addLike", async (postId, userId, method, roomId) => {
         try {
           if (method === "add") {
-            
             const post = await addLikeToPost(postId, userId);
             if (post) {
-              console.log("roomId", roomId);
-              socket.in(`${roomId}`).emit("addLike", post);
+              io.in(roomId).emit("addLike", post)
             }
-          } else { 
+          } else {
             const post = await deleteLikeToPost(postId, userId);
             if (post) {
-              socket.in(`${roomId}`).emit("addLike", post);
+              io.in(roomId).emit("addLike", post);
             }
           }
         } catch (err) {
@@ -103,7 +96,7 @@ export default async function handler(
               contentComment
             );
             if (post) {
-              socket.in(roomId).emit("allComments", post);
+              io.in(roomId).emit("allComments", post);
             }
           } else {
             const post = await addCommentOfComment(
@@ -113,7 +106,7 @@ export default async function handler(
               postId
             );
             if (post) {
-              socket.in(roomId).emit("allComments", post);
+              io.in(roomId).emit("allComments", post);
             }
           }
         }
@@ -121,7 +114,7 @@ export default async function handler(
       socket.on("sentFriendRequest", async (userId, friendId) => {
         const user = await createFriendRequestNotification(userId, friendId);
         if (user) {
-          socket.in(friendId).emit("sentFriendRequest", user);
+          io.in(friendId).emit("sentFriendRequest", user);
         }
       });
     });
