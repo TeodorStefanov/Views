@@ -3,17 +3,10 @@ import { Server } from "socket.io";
 import type { Server as HTTPServer } from "http";
 import type { Socket as NetSocket } from "net";
 import type { Server as IOServer } from "socket.io";
-
-import {
-  addCommentOfComment,
-  createCommentUpdatePost,
-} from "../../controllers/comments";
-import {
-  addLikeToPost,
-  deleteLikeToPost,
-  newCart,
-} from "../../controllers/posts";
 import { createFriendRequestNotification } from "../../controllers/notifications";
+import { likes } from "../../utils/socket/likes";
+import { comments } from "../../utils/socket/comments";
+import { posts } from "../../utils/socket/posts"
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -26,7 +19,6 @@ interface SocketWithIO extends NetSocket {
 interface NextApiResponseWithSocket extends NextApiResponse {
   socket: SocketWithIO;
 }
-let serverId: string = "";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponseWithSocket
@@ -46,39 +38,17 @@ export default async function handler(
       socket.on(
         "allPosts",
         async (userId, content, imageUrl, videoUrl, createdBy) => {
-          try {
-            const posts = await newCart(
-              userId,
-              content,
-              imageUrl,
-              videoUrl,
-              createdBy
-            );
-
-            if (posts) {
-              io.in(userId).emit("allPosts", posts);
-            }
-          } catch (err) {
-            console.log(err);
-          }
+          io.in(userId).emit(
+            "allPosts",
+            await posts(userId, content, imageUrl, videoUrl, createdBy)
+          );
         }
       );
       socket.on("addLike", async (postId, userId, method, roomId) => {
-        try {
-          if (method === "add") {
-            const post = await addLikeToPost(postId, userId);
-            if (post) {
-              io.in(roomId).emit("addLike", post)
-            }
-          } else {
-            const post = await deleteLikeToPost(postId, userId);
-            if (post) {
-              io.in(roomId).emit("addLike", post);
-            }
-          }
-        } catch (err) {
-          console.log(err);
-        }
+        io.in(roomId).emit(
+          "addLike",
+          await likes(postId, userId, method, roomId)
+        );
       });
       socket.on(
         "allComments",
@@ -89,26 +59,10 @@ export default async function handler(
           roomId: string,
           postId: string
         ) => {
-          if (!postId) {
-            const post = await createCommentUpdatePost(
-              userId,
-              id,
-              contentComment
-            );
-            if (post) {
-              io.in(roomId).emit("allComments", post);
-            }
-          } else {
-            const post = await addCommentOfComment(
-              userId,
-              id,
-              contentComment,
-              postId
-            );
-            if (post) {
-              io.in(roomId).emit("allComments", post);
-            }
-          }
+          io.in(roomId).emit(
+            "allComments",
+            await comments(userId, id, contentComment, roomId, postId)
+          );
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {

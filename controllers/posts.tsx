@@ -100,69 +100,89 @@ export const newCart = async (
     console.log(err);
   }
 };
-export const addLikeToPost = async (postId: string, userId: string) => {
+export const addLikeToPost = async (
+  postId: string,
+  userId: string,
+  roomId: string
+) => {
   try {
     await Connect();
-    const post = await Posts.findOneAndUpdate(
+    await Posts.findOneAndUpdate(
       { _id: postId },
       { $addToSet: { likes: userId } },
       { new: true }
-    ).populate([
-      { path: "likes", model: User },
-      {
-        path: "comments",
-        model: Comments,
-        populate: [
-          { path: "likes", model: User },
-          {
-            path: "comments",
-            model: Comments,
-            populate: [
-              { path: "likes", model: User },
-              { path: "comments", model: Comments },
-              { path: "user", model: User },
-            ],
-          },
-          { path: "user", model: User },
-        ],
-      },
-      { path: "createdBy", model: User },
-    ]);
-
-    return post;
+    );
+    const user = await User.findById(roomId).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+                { path: "user", model: User },
+              ],
+            },
+            { path: "user", model: User },
+          ],
+        },
+        { path: "createdBy", model: User },
+      ],
+    });
+    return user.posts.reverse();
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
 };
-export const deleteLikeToPost = async (postId: string, userId: string) => {
+export const deleteLikeToPost = async (
+  postId: string,
+  userId: string,
+  roomId: string
+) => {
   try {
     await Connect();
-    const post = await Posts.findOneAndUpdate(
+    await Posts.findOneAndUpdate(
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
-    ).populate([
-      { path: "likes", model: User },
-      {
-        path: "comments",
-        model: Comments,
-        populate: [
-          { path: "likes", model: User },
-          {
-            path: "comments",
-            model: Comments,
-            populate: [
-              { path: "likes", model: User },
-              { path: "comments", model: Comments },
-              { path: "user", model: User },
-            ],
-          },
-          { path: "user", model: User },
-        ],
-      },
-      { path: "createdBy", model: User },
-    ]);
-    return post;
+    )
+    const user = await User.findById(roomId).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+                { path: "user", model: User },
+              ],
+            },
+            { path: "user", model: User },
+          ],
+        },
+        {
+          path: "createdBy",
+          model: User,
+        },
+      ],
+    });
+    return user.posts.reverse();
   } catch (err) {
     console.log(err);
   }
