@@ -221,25 +221,11 @@ const ProfileChecker = ({
       setAllPosts(posts);
     });
     socket.on("addLike", (post) => {
-      const isPost = allPosts.find((el) => el._id === post._id);
-      if (!isPost) {
-        allPosts.unshift(post);
-      }
-      const newPosts = allPosts.map((el: PostsType) =>
-        el._id === post._id ? post : el
-      );
-      setAllPosts(newPosts);
+      setAllPosts(post);
     });
-    socket.on("allComments", (post) => {
-      const isPost = allPosts.find((el) => el._id === post._id);
-      if (!isPost) {
-        allPosts.unshift(post);
-      }
-      const newPosts = allPosts.map((el: PostsType) =>
-        el._id === post._id ? post : el
-      );
-      setOpenCommentsPressed(post);
-      setAllPosts(newPosts);
+    socket.on("allComments", (posts) => {
+      setOpenCommentsPressed(posts.post)
+      setAllPosts(posts.posts);
     });
     socket.on("sentFriendRequest", (user) => {
       logIn(user);

@@ -13,7 +13,8 @@ type Data = {
 export const createCommentUpdatePost = async (
   userId: string,
   id: string,
-  contentComment: string
+  contentComment: string,
+  roomId: string
 ) => {
   try {
     const createdAt = new Date();
@@ -46,8 +47,28 @@ export const createCommentUpdatePost = async (
       { path: "likes", model: User },
       { path: "createdBy", model: User },
     ]);
-
-    return post;
+    const user = await User.findById(roomId).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "user", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: { path: "user", model: User },
+            },
+            { path: "likes", model: User },
+          ],
+        },
+        { path: "likes", model: User },
+        { path: "createdBy", model: User },
+      ],
+    });
+    return { post, posts: user.posts.reverse() };
   } catch (err) {
     console.log(err);
   }
@@ -56,6 +77,7 @@ export const addCommentOfComment = async (
   userId: string,
   id: string,
   contentComment: string,
+  roomId: string,
   postId: string
 ) => {
   try {
@@ -82,15 +104,44 @@ export const addCommentOfComment = async (
           {
             path: "comments",
             model: Comments,
-            populate: { path: "user", model: User },
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
           },
           { path: "likes", model: User },
         ],
       },
       { path: "likes", model: User },
       { path: "createdBy", model: User },
-    ])
-    return post;
+    ]);
+    const user = await User.findById(roomId).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "user", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "user", model: User },
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+              ],
+            },
+            { path: "likes", model: User },
+          ],
+        },
+        { path: "likes", model: User },
+        { path: "createdBy", model: User },
+      ],
+    })
+    return { post, posts: user.posts.reverse() };
   } catch (err) {
     console.log(err);
   }
