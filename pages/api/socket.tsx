@@ -6,7 +6,9 @@ import type { Server as IOServer } from "socket.io";
 import { createFriendRequestNotification } from "../../controllers/notifications";
 import { likes } from "../../utils/socket/likes";
 import { comments } from "../../utils/socket/comments";
-import { posts } from "../../utils/socket/posts"
+import { newCart } from "../../controllers/posts";
+import { acceptFriendRequest } from "../../controllers/user";
+import { addLikeToComment } from "../../controllers/comments";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -40,7 +42,7 @@ export default async function handler(
         async (userId, content, imageUrl, videoUrl, createdBy) => {
           io.in(userId).emit(
             "allPosts",
-            await posts(userId, content, imageUrl, videoUrl, createdBy)
+            await newCart(userId, content, imageUrl, videoUrl, createdBy)
           );
         }
       );
@@ -66,10 +68,25 @@ export default async function handler(
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {
-        const user = await createFriendRequestNotification(userId, friendId);
-        if (user) {
-          io.in(friendId).emit("sentFriendRequest", user);
+        io.in(friendId).emit(
+          "sentFriendRequest",
+          await createFriendRequestNotification(userId, friendId)
+        );
+      });
+      socket.on(
+        "acceptFriendRequest",
+        async (userId, friendId, notificationId) => {
+          io.in(friendId).emit(
+            "acceptFriendRequest",
+            await acceptFriendRequest(userId, friendId, notificationId)
+          );
         }
+      );
+      socket.on("addLikeToComment", async (commentId, userId, postId, id) => {
+        io.in(id).emit(
+          "addLikeToComment",
+          await addLikeToComment(commentId, userId, postId, id)
+        );
       });
     });
   }

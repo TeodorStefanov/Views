@@ -136,7 +136,7 @@ export const loginUser = async (
           model: Notification,
         },
         { path: "friendRequests", model: User },
-      ])
+      ]);
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });
       return;
@@ -197,17 +197,17 @@ export const sendFriendRequest = async (
   }
 };
 export const acceptFriendRequest = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId:string,
+  friendId: string,
+  notificationId: string
 ) => {
-  const { userId, idFriend, notificationId } = req.body;
-  console.log(notificationId);
+  
   try {
     await Connect();
     const user = await User.findOneAndUpdate(
       { _id: userId },
       {
-        $addToSet: { friends: idFriend },
+        $addToSet: { friends: friendId },
         $pull: { notifications: notificationId },
       },
       { new: true }
@@ -245,11 +245,11 @@ export const acceptFriendRequest = async (
     ]);
     await Notification.deleteOne({ _id: notificationId });
     await User.findOneAndUpdate(
-      { _id: idFriend },
+      { _id: friendId },
       { $addToSet: { friends: userId }, $pull: { friendRequests: userId } },
       { new: true }
     );
-    res.status(200).send(user);
+    return user
   } catch (err) {
     console.log(err);
   }

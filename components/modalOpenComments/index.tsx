@@ -7,6 +7,9 @@ import UserContext from "../../context/context";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import CommentFields from "../commentFields";
 import { likeExists } from "../../utils/checkLiked";
+import type { Socket } from "socket.io-client";
+import io from "socket.io-client";
+let socket: undefined | Socket;
 type Fields = {
   post: PostsType | undefined;
   onClick: () => void;
@@ -18,6 +21,7 @@ type Fields = {
   commentOfCommentContent: string;
   setResult: (result: PostsType) => void;
   openLikeModal: (like: Comment) => void;
+  id: string;
 };
 const ModalOpenComments = ({
   post,
@@ -30,6 +34,7 @@ const ModalOpenComments = ({
   commentOfCommentContent,
   setResult,
   openLikeModal,
+  id,
 }: Fields) => {
   const context = useContext(UserContext);
   const { user } = context;
@@ -44,20 +49,11 @@ const ModalOpenComments = ({
   ) => {
     event.preventDefault();
     const userId = user?._id;
-    const promise = await fetch("http://localhost:3000/api/addLikeToComment", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ commentId, userId, postId }),
-    });
-    if (promise.status === 200) {
-      const result = await promise.json();
-      setResult(result);
-      setCommentsToCommentsChanged(true);
-    } else {
-      alert("There is an error!");
+    socket = io()
+    if (socket !== undefined) {
+      socket.emit("addLikeToComment", commentId, userId, postId, id);
     }
+    setCommentsToCommentsChanged(true);
   };
   const deleteLike = async (
     event: React.MouseEvent,

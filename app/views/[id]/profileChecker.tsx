@@ -181,26 +181,11 @@ const ProfileChecker = ({
     }
   };
   const handleAcceptFriendRequest = async () => {
-    const promise = await fetch(
-      "http://localhost:3000/api/acceptFriendRequest",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?._id,
-          idFriend: _id,
-          notificationId: receivedFriendRequest,
-        }),
-      }
-    );
-    if (promise.status === 200) {
-      const result = await promise.json();
-      setIsFriend(true);
-      setReceivedFriendRequest("");
-      logIn(result);
+    const userId = user?._id;
+    if (socket !== undefined) {
+      socket.emit("acceptFriendRequest", userId, _id, receivedFriendRequest);
     }
+    setReceivedFriendRequest("");
   };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
@@ -224,12 +209,20 @@ const ProfileChecker = ({
       setAllPosts(post);
     });
     socket.on("allComments", (posts) => {
-      setOpenCommentsPressed(posts.post)
+      setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
     });
     socket.on("sentFriendRequest", (user) => {
       logIn(user);
       setSentFriendRequest(true);
+    });
+    socket.on("acceptFriendRequest", (user) => {
+      setIsFriend(true);
+      logIn(user);
+    });
+    socket.on("addLikeToComment", (posts) => {
+      setOpenCommentsPressed(posts.post);
+      setAllPosts(posts.posts)
     });
     return null;
   };
@@ -404,6 +397,7 @@ const ProfileChecker = ({
           openLikeModal={(like) => {
             openLikes(like);
           }}
+          id={_id}
         />
       ) : (
         ""
