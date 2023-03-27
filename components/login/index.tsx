@@ -6,14 +6,17 @@ import styles from "./index.module.css";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import React, { FC, useContext } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import UserContext from "../../context/context";
-
+import type { Socket } from "socket.io-client";
+import { io } from "socket.io-client";
+let socket: undefined | Socket;
 interface IFormInputs {
   username: string;
   password: string;
 }
 const Login: FC = () => {
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const { logIn } = useContext(UserContext);
   const router = useRouter();
   const {
@@ -28,14 +31,30 @@ const Login: FC = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    })
+    });
 
     if (promise.status === 200) {
       const result = await promise.json();
+      socket = io();
+      if (socket !== undefined) {
+        socket.emit("login", result._id);
+      }
       logIn(result);
       router.push("/views");
     }
   };
+  const socketInitializer = async () => {
+    await fetch(`http://localhost:3000/api/socket`);
+    socket = io();
+    socket.on("connect", () => {
+      console.log("connected");
+      setIsConnected(true);
+    });
+    return null;
+  };
+  useEffect(() => {
+    socketInitializer();
+  }, []);
   return (
     <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
       <FontAwesomeIcon
