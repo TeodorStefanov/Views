@@ -17,8 +17,7 @@ type Data = {
 };
 export const createFriendRequestNotification = async (
   userId: string,
-  friendId: string,
-  user: string
+  friendId: string
 ) => {
   try {
     const data: Data = {
@@ -69,49 +68,14 @@ export const createFriendRequestNotification = async (
       },
       { path: "friendRequests", model: User },
     ]);
-    const friendUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { _id: friendId },
       { $addToSet: { notifications: notification } },
       {
         new: true,
       }
-    ).populate([
-      {
-        path: "posts",
-        model: Posts,
-        populate: [
-          { path: "likes", model: User },
-          {
-            path: "comments",
-            model: Comments,
-            populate: [
-              { path: "likes", model: User },
-              {
-                path: "comments",
-                model: Comments,
-                populate: [
-                  { path: "likes", model: User },
-                  { path: "comments", model: Comments },
-                  { path: "user", model: User },
-                ],
-              },
-              { path: "user", model: User },
-            ],
-          },
-        ],
-      },
-      {
-        path: "notifications",
-        model: Notification,
-        populate: { path: "sentBy", model: User },
-      },
-      { path: "friendRequests", model: User },
-    ]);
-    if (user === "user") {
-      return user;
-    } else {
-      return { friendUser, notificationId: notification._id }
-    }
+    )
+    return user;
   } catch (err) {
     console.log(err);
   }
