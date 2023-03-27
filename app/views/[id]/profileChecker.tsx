@@ -179,6 +179,9 @@ const ProfileChecker = ({
     if (socket !== undefined) {
       socket.emit("sentFriendRequest", userId, friendId);
     }
+    if (socket !== undefined) {
+      socket.emit("friendNotification", userId, friendId);
+    }
   };
   const handleAcceptFriendRequest = async () => {
     const userId = user?._id;
@@ -195,13 +198,8 @@ const ProfileChecker = ({
     setPostId(post._id);
   };
   const socketInitializer = async () => {
-    await fetch(`http://localhost:3000/api/socket?id=${_id}`);
     socket = io();
-    socket.on("connect", () => {
-      console.log("connected");
-      setIsConnected(true);
-    });
-
+    socket.emit("joinRoom", _id);
     socket.on("allPosts", (posts) => {
       setAllPosts(posts);
     });
@@ -216,13 +214,18 @@ const ProfileChecker = ({
       logIn(user);
       setSentFriendRequest(true);
     });
-    socket.on("acceptFriendRequest", (user) => {
-      setIsFriend(true);
-      logIn(user);
+    socket.on("friendNotification", (user) => {
+      console.log(1)
+      logIn(user.user);
+      setReceivedFriendRequest(user.notificationId);
     });
-    socket.on("addLikeToComment", (posts) => {
+    socket.on("acceptFriendRequest", (user) => {
+      logIn(user);
+      setIsFriend(true);
+    });
+    socket.on("likeToComment", (posts) => {
       setOpenCommentsPressed(posts.post);
-      setAllPosts(posts.posts)
+      setAllPosts(posts.posts);
     });
     return null;
   };
@@ -246,18 +249,12 @@ const ProfileChecker = ({
         setSentFriendRequest(true);
       }
     });
-
     socketInitializer();
-
     return () => {
       socket?.disconnect();
     };
   }, [user]);
-  useEffect(() => {
-    if (isConnected) {
-      socket?.emit("joinRoom", _id);
-    }
-  }, [socket, isConnected]);
+
   return (
     <div>
       <div className={styles.container}>
@@ -387,13 +384,6 @@ const ProfileChecker = ({
           commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCommentOfCommentContent(e.target.value)
           }
-          setResult={(result) => {
-            const newPosts: any = allPosts.map((el: PostsType) =>
-              el._id === result._id ? result : el
-            );
-            setOpenCommentsPressed(result);
-            setAllPosts(newPosts);
-          }}
           openLikeModal={(like) => {
             openLikes(like);
           }}
