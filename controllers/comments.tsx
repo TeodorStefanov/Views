@@ -240,7 +240,34 @@ export const deleteLikeToComment = async (
       },
       { path: "createdBy", model: User },
     ]);
-    res.status(200).send(post);
+
+    const user = await User.findById(id).populate({
+      path: "posts",
+      model: Posts,
+      populate: [
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+                { path: "user", model: User },
+              ],
+            },
+            { path: "user", model: User },
+          ],
+        },
+        { path: "createdBy", model: User },
+      ],
+    });
+    return { post, posts: user.posts.reverse() }
+
   } catch (err) {
     res.status(400).send({ error: "There is an error!" });
   }
