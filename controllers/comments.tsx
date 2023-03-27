@@ -266,7 +266,7 @@ export const deleteLikeToComment = async (
         { path: "createdBy", model: User },
       ],
     });
-    return { post, posts: user.posts.reverse() };
+    return { post, posts: user.posts.reverse() }
   } catch (err) {
     console.log(err)
   }
