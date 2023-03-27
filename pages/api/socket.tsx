@@ -75,13 +75,17 @@ export default async function handler(
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {
-        socket.to(`${userId}-room`).emit(
+        socket
+          .to(`${userId}-room`)
+          .emit(
             "sentFriendRequest",
             await createFriendRequestNotification(userId, friendId, "user")
           );
       });
       socket.on("friendNotification", async (userId, friendId) => {
-        socket.to(`${friendId}-room`).emit(
+        socket
+          .to(`${friendId}-room`)
+          .emit(
             "sentFriendRequest",
             await createFriendRequestNotification(userId, friendId, "friend")
           );
@@ -89,6 +93,7 @@ export default async function handler(
       socket.on(
         "acceptFriendRequest",
         async (userId, friendId, notificationId) => {
+          
           io.in(friendId)
             .in(userId)
             .emit(
