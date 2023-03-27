@@ -19,7 +19,7 @@ type Fields = {
   handleSubmitCommentOfComment: (id: string, postId: string) => void;
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
-
+  setResult: (result: PostsType) => void;
   openLikeModal: (like: Comment) => void;
   id: string;
 };
@@ -32,7 +32,7 @@ const ModalOpenComments = ({
   handleSubmitCommentOfComment,
   commentChange,
   commentOfCommentContent,
-
+  setResult,
   openLikeModal,
   id,
 }: Fields) => {
@@ -49,9 +49,9 @@ const ModalOpenComments = ({
   ) => {
     event.preventDefault();
     const userId = user?._id;
-    socket = io();
+    socket = io()
     if (socket !== undefined) {
-      socket.emit("likeToComment", commentId, userId, postId, id, "add");
+      socket.emit("addLikeToComment", commentId, userId, postId, id);
     }
     setCommentsToCommentsChanged(true);
   };
@@ -62,12 +62,24 @@ const ModalOpenComments = ({
   ) => {
     event.preventDefault();
     const userId = user?._id;
-    socket = io();
-    if (socket !== undefined) {
-      socket.emit("likeToComment", commentId, userId, postId, id, "delete");
-    }
 
-    setCommentsToCommentsChanged(true);
+    const promise = await fetch(
+      "http://localhost:3000/api/deleteLikeToComment",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId, userId, postId }),
+      }
+    );
+    if (promise.status === 200) {
+      const result = await promise.json();
+      setResult(result);
+      setCommentsToCommentsChanged(true);
+    } else {
+      alert("There is an error!");
+    }
   };
   const handleKeyDown = async (
     e: React.KeyboardEvent<HTMLDivElement>,

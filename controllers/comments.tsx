@@ -206,15 +206,14 @@ export const addLikeToComment = async (
     });
     return { post, posts: user.posts.reverse() };
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
 };
 export const deleteLikeToComment = async (
-  commentId: string,
-  userId: string,
-  postId: string,
-  id: string
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
 ) => {
+  const { commentId, userId, postId } = req.body;
   try {
     await Connect();
     await Comments.findOneAndUpdate(
@@ -241,33 +240,8 @@ export const deleteLikeToComment = async (
       },
       { path: "createdBy", model: User },
     ]);
-    const user = await User.findById(id).populate({
-      path: "posts",
-      model: Posts,
-      populate: [
-        { path: "likes", model: User },
-        {
-          path: "comments",
-          model: Comments,
-          populate: [
-            { path: "likes", model: User },
-            {
-              path: "comments",
-              model: Comments,
-              populate: [
-                { path: "likes", model: User },
-                { path: "comments", model: Comments },
-                { path: "user", model: User },
-              ],
-            },
-            { path: "user", model: User },
-          ],
-        },
-        { path: "createdBy", model: User },
-      ],
-    });
-    return { post, posts: user.posts.reverse() };
+    res.status(200).send(post);
   } catch (err) {
-    console.log(err)
+    res.status(400).send({ error: "There is an error!" });
   }
-}
+};
