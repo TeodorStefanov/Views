@@ -8,11 +8,7 @@ import { likes } from "../../utils/socket/likes";
 import { comments } from "../../utils/socket/comments";
 import { newCart } from "../../controllers/posts";
 import { acceptFriendRequest } from "../../controllers/user";
-import {
-  addLikeToComment,
-  deleteLikeToComment,
-} from "../../controllers/comments";
-import { likeToComment } from "../../utils/socket/likeToComment";
+import { addLikeToComment } from "../../controllers/comments";
 
 interface SocketServer extends HTTPServer {
   io?: IOServer | undefined;
@@ -38,9 +34,6 @@ export default async function handler(
     res.socket.server.io = io;
     io.on("connection", (socket) => {
       console.log("server is connected");
-      socket.on("login", (id) => {
-        socket.join(`${id}-room`);
-      });
       socket.on("joinRoom", (id) => {
         socket.join(id);
       });
@@ -75,6 +68,7 @@ export default async function handler(
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {
+
         socket
           .to(`${userId}-room`)
           .emit(
@@ -89,10 +83,12 @@ export default async function handler(
             "sentFriendRequest",
             await createFriendRequestNotification(userId, friendId, "friend")
           );
+
       });
       socket.on(
         "acceptFriendRequest",
         async (userId, friendId, notificationId) => {
+
           
           io.in(friendId)
             .in(userId)
@@ -108,9 +104,16 @@ export default async function handler(
           io.in(id).emit(
             "likeToComment",
             await likeToComment(commentId, userId, postId, id, method)
+
           );
         }
       );
+      socket.on("addLikeToComment", async (commentId, userId, postId, id) => {
+        io.in(id).emit(
+          "addLikeToComment",
+          await addLikeToComment(commentId, userId, postId, id)
+        );
+      });
     });
   }
   res.end();
