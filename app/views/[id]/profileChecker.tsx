@@ -179,9 +179,6 @@ const ProfileChecker = ({
     if (socket !== undefined) {
       socket.emit("sentFriendRequest", userId, friendId);
     }
-    if (socket !== undefined) {
-      socket.emit("friendNotification", userId, friendId);
-    }
   };
   const handleAcceptFriendRequest = async () => {
     const userId = user?._id;
@@ -211,12 +208,13 @@ const ProfileChecker = ({
       setAllPosts(posts.posts);
     });
     socket.on("sentFriendRequest", (user) => {
-      logIn(user);
+      console.log(user);
+      logIn(user.user);
       setSentFriendRequest(true);
     });
     socket.on("friendNotification", (user) => {
-      console.log(1) 
-      logIn(user.user);
+      console.log(1);
+      logIn(user.friendUser);
       setReceivedFriendRequest(user.notificationId);
     });
     socket.on("acceptFriendRequest", (user) => {

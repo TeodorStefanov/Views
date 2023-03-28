@@ -16,7 +16,7 @@ interface IFormInputs {
   password: string;
 }
 const Login: FC = () => {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<string>("");
   const { logIn } = useContext(UserContext);
   const router = useRouter();
   const {
@@ -35,7 +35,6 @@ const Login: FC = () => {
 
     if (promise.status === 200) {
       const result = await promise.json();
-      socket = io();
       if (socket !== undefined) {
         socket.emit("login", result._id);
       }
@@ -48,13 +47,12 @@ const Login: FC = () => {
     socket = io();
     socket.on("connect", () => {
       console.log("connected");
-      setIsConnected(true);
     });
     return null;
   };
   useEffect(() => {
-    socketInitializer();
-  }, []);
+    socketInitializer()
+  }, [])
   return (
     <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
       <FontAwesomeIcon

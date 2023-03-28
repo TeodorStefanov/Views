@@ -17,8 +17,7 @@ type Data = {
 };
 export const createFriendRequestNotification = async (
   userId: string,
-  friendId: string,
-  user: string
+  friendId: string
 ) => {
   try {
     const data: Data = {
@@ -107,11 +106,8 @@ export const createFriendRequestNotification = async (
       },
       { path: "friendRequests", model: User },
     ]);
-    if (user === "user") {
-      return user;
-    } else {
-      return { friendUser, notificationId: notification._id }
-    }
+
+    return { user, friendUser, notificationId: notification._id };
   } catch (err) {
     console.log(err);
   }

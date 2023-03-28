@@ -35,6 +35,7 @@ export default async function handler(
     io.on("connection", (socket) => {
       console.log("server is connected");
       socket.on("login", (id) => {
+        console.log("1");
         socket.join(`${id}-room`);
       });
       socket.on("joinRoom", (id) => {
@@ -71,16 +72,12 @@ export default async function handler(
         }
       );
       socket.on("sentFriendRequest", async (userId, friendId) => {
-        socket.to(`${userId}-room`).emit(
-            "sentFriendRequest",
-            await createFriendRequestNotification(userId, friendId, "user")
-          );
-      });
-      socket.on("friendNotification", async (userId, friendId) => {
-        socket.to(`${friendId}-room`).emit(
-            "sentFriendRequest",
-            await createFriendRequestNotification(userId, friendId, "friend")
-          );
+        const user = await createFriendRequestNotification(userId, friendId);
+        io.in(`${userId}-room`).emit("sentFriendRequest", user?.user);
+        io.in(`${friendId}-room`).emit("friendNotification", {
+          friendUser: user?.friendUser,
+          notificationId: user?.notificationId,
+        });
       });
       socket.on(
         "acceptFriendRequest",
