@@ -196,6 +196,7 @@ const ProfileChecker = ({
   };
   const socketInitializer = async () => {
     socket = io();
+    socket.emit("login", user?._id);
     socket.emit("joinRoom", _id);
     socket.on("allPosts", (posts) => {
       setAllPosts(posts);
@@ -208,8 +209,7 @@ const ProfileChecker = ({
       setAllPosts(posts.posts);
     });
     socket.on("sentFriendRequest", (user) => {
-      console.log(user);
-      logIn(user.user);
+      logIn(user);
       setSentFriendRequest(true);
     });
     socket.on("friendNotification", (user) => {
