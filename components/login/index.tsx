@@ -16,7 +16,6 @@ interface IFormInputs {
   password: string;
 }
 const Login: FC = () => {
-  const [isConnected, setIsConnected] = useState<string>("");
   const { logIn } = useContext(UserContext);
   const router = useRouter();
   const {
@@ -24,6 +23,14 @@ const Login: FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInputs>();
+  const socketInitializer = async () => {
+    await fetch(`http://localhost:3000/api/socket`);
+    socket = io();
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+    return null;
+  };
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
     const promise = await fetch("/api/loginUser", {
       method: "POST",
@@ -35,24 +42,11 @@ const Login: FC = () => {
 
     if (promise.status === 200) {
       const result = await promise.json();
-      if (socket !== undefined) {
-        socket.emit("login", result._id);
-      }
+      await socketInitializer();
       logIn(result);
       router.push("/views");
     }
   };
-  const socketInitializer = async () => {
-    await fetch(`http://localhost:3000/api/socket`);
-    socket = io();
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-    return null;
-  };
-  useEffect(() => {
-    socketInitializer()
-  }, [])
   return (
     <form className={styles.fields} onSubmit={handleSubmit(handleInput)}>
       <FontAwesomeIcon

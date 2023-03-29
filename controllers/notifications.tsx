@@ -64,7 +64,10 @@ export const createFriendRequestNotification = async (
       {
         path: "notifications",
         model: Notification,
-        populate: { path: "sentBy", model: User },
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
       },
       { path: "friendRequests", model: User },
     ]);
@@ -106,7 +109,6 @@ export const createFriendRequestNotification = async (
       },
       { path: "friendRequests", model: User },
     ]);
-
     return { user, friendUser, notificationId: notification._id };
   } catch (err) {
     console.log(err);

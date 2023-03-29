@@ -113,7 +113,7 @@ const Header = () => {
       if (!event.target?.contains(notificationMenuRef.current)) {
         setNotificationMenu(false);
       }
-    };
+    }
   }, []);
   return (
     <div className={styles.container}>
