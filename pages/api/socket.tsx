@@ -35,7 +35,6 @@ export default async function handler(
     io.on("connection", (socket) => {
       console.log("server is connected");
       socket.on("login", (id) => {
-        console.log("1");
         socket.join(`${id}-room`);
       });
       socket.on("joinRoom", (id) => {
@@ -82,12 +81,16 @@ export default async function handler(
       socket.on(
         "acceptFriendRequest",
         async (userId, friendId, notificationId) => {
-          io.in(friendId)
-            .in(userId)
-            .emit(
-              "acceptFriendRequest",
-              await acceptFriendRequest(userId, friendId, notificationId)
-            );
+          const user = await acceptFriendRequest(
+            userId,
+            friendId,
+            notificationId
+          );
+          io.in(`${userId}-room`).emit("acceptFriendRequest", user?.user);
+          io.in(`${friendId}-room`).emit(
+            "acceptFriendNotification",
+            user?.friendUser
+          );
         }
       );
       socket.on(
