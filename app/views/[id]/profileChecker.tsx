@@ -213,11 +213,14 @@ const ProfileChecker = ({
       setSentFriendRequest(true);
     });
     socket.on("friendNotification", (user) => {
-      console.log(1);
       logIn(user.friendUser);
       setReceivedFriendRequest(user.notificationId);
     });
     socket.on("acceptFriendRequest", (user) => {
+      logIn(user);
+      setIsFriend(true);
+    });
+    socket.on("acceptFriendNotification", (user) => {
       logIn(user);
       setIsFriend(true);
     });

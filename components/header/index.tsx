@@ -112,7 +112,7 @@ const Header = () => {
         setNotificationMenu(false);
       }
     };
-  }, []);
+  }, [])
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>

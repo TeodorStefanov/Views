@@ -35,6 +35,14 @@ type Data = {
   posts: PostsType | [];
   notifications: [];
 };
+type NotificationType = {
+  sentBy: string;
+  sentTo: string;
+  content: string;
+  checked: boolean;
+  pressed: boolean;
+  createdAt: Date;
+};
 export type ResponseData = {
   message?: string;
   error?: string;
@@ -172,38 +180,21 @@ export const deleteToken = (
     res.status(400).send({ error: "There is an error!" });
   }
 };
-export const sendFriendRequest = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) => {
-  const { userId, friendId } = req.body;
-  try {
-    await Connect();
-    const user = User.findOneAndUpdate(
-      { _id: friendId },
-      {
-        $push: {
-          notifications: {
-            content: "Friend Request",
-            checked: false,
-            pressed: false,
-          },
-        },
-      },
-      { new: true }
-    );
-  } catch (err) {
-    console.log(err);
-  }
-};
 export const acceptFriendRequest = async (
-  userId:string,
+  userId: string,
   friendId: string,
   notificationId: string
 ) => {
-  
   try {
-    await Connect();
+    await Connect()
+    const data: NotificationType = {
+      sentBy: userId,
+      sentTo: friendId,
+      content: "Friend request accepted",
+      checked: false,
+      pressed: false,
+      createdAt: new Date(),
+    };
     const user = await User.findOneAndUpdate(
       { _id: userId },
       {
@@ -239,17 +230,62 @@ export const acceptFriendRequest = async (
       {
         path: "notifications",
         model: Notification,
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
       },
       { path: "friendRequests", model: User },
       { path: "friends", model: User },
     ]);
+
+    const notification = await Notification.create<Data>(data);
     await Notification.deleteOne({ _id: notificationId });
-    await User.findOneAndUpdate(
+    const friendUser = await User.findOneAndUpdate(
       { _id: friendId },
-      { $addToSet: { friends: userId }, $pull: { friendRequests: userId } },
+      {
+        $addToSet: { friends: userId },
+        $push: { notifications: notification },
+        $pull: { friendRequests: userId },
+      },
       { new: true }
-    );
-    return user
+    ).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
+      },
+      { path: "friendRequests", model: User },
+      { path: "friends", model: User },
+    ]);
+    return { user, friendUser };
   } catch (err) {
     console.log(err);
   }
