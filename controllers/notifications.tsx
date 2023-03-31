@@ -108,7 +108,7 @@ export const createFriendRequestNotification = async (
         populate: { path: "sentBy", model: User },
       },
       { path: "friendRequests", model: User },
-    ]);
+    ])
     return { user, friendUser, notificationId: notification._id };
   } catch (err) {
     console.log(err);
@@ -145,12 +145,39 @@ export const userNotificationPressed = async (
         new: true,
       }
     );
-    const user = await User.findOne({ _id: userId }).populate({
-      path: "notifications",
-      model: Notification,
-      populate: { path: "sentBy", model: User },
-    });
-    res.status(200).send(user.notifications);
+    const user = await User.findOne({ _id: userId }).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+        populate: { path: "sentBy", model: User },
+      },
+      { path: "friendRequests", model: User },
+    ])
+    res.status(200).send(user);
   } catch (err) {
     console.log(err);
   }

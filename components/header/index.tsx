@@ -14,9 +14,7 @@ const Header = () => {
   const context = useContext(UserContext);
   const { loggedIn, user, logIn, logOut, notifications, setNotifications } =
     context;
-  const [notificationPressed, setNotificationPressed] = useState<
-    Notification[] | [] | undefined
-  >(user?.notifications);
+
   const router = useRouter();
   const notificationMenuRef = useRef(null);
   const handleClick = async () => {
@@ -59,7 +57,7 @@ const Header = () => {
     );
     if (promise.status === 200) {
       const result = await promise.json();
-      setNotificationPressed(result.notifications);
+
       logIn(result);
     }
   };
@@ -79,7 +77,7 @@ const Header = () => {
     );
     if (promise.status === 200) {
       const result: UserData = await promise.json();
-      setNotificationPressed(result.notifications);
+
       logIn(result);
     }
   };
@@ -105,7 +103,7 @@ const Header = () => {
       } else if (content === "posted on your wall") {
         router.push(`/views/${user?._id}`);
       }
-      setNotificationPressed(result);
+      logIn(result);
     }
   };
   useEffect(() => {
@@ -113,7 +111,7 @@ const Header = () => {
       if (!event.target?.contains(notificationMenuRef.current)) {
         setNotificationMenu(false);
       }
-    }
+    };
   }, []);
   return (
     <div className={styles.container}>
@@ -180,7 +178,7 @@ const Header = () => {
           className={styles.notificationsContainer}
           ref={notificationMenuRef}
         >
-          {notificationPressed?.map((el: Notification, index) => {
+          {user?.notifications?.map((el: Notification, index) => {
             const postDate = calculateDateOrTime(el.createdAt);
             return (
               <div
