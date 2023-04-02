@@ -108,7 +108,7 @@ export const createFriendRequestNotification = async (
         populate: { path: "sentBy", model: User },
       },
       { path: "friendRequests", model: User },
-    ])
+    ]);
     return { user, friendUser, notificationId: notification._id };
   } catch (err) {
     console.log(err);
@@ -131,11 +131,7 @@ export const userNotificationsChecked = async (
     console.log(err);
   }
 };
-export const userNotificationPressed = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) => {
-  const { userId, id } = req.body;
+export const userNotificationPressed = async (userId: string, id: string) => {
   try {
     await Connect();
     await Notification.findOneAndUpdate(
@@ -168,6 +164,7 @@ export const userNotificationPressed = async (
               { path: "user", model: User },
             ],
           },
+          { path: "createdBy", model: User },
         ],
       },
       {
@@ -176,8 +173,8 @@ export const userNotificationPressed = async (
         populate: { path: "sentBy", model: User },
       },
       { path: "friendRequests", model: User },
-    ])
-    res.status(200).send(user);
+    ]);
+    return user;
   } catch (err) {
     console.log(err);
   }

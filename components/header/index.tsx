@@ -8,7 +8,9 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Notification, UserData } from "../../app/views/[id]/profileChecker";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
-
+import type { Socket } from "socket.io-client";
+import { io } from "socket.io-client";
+let socket: undefined | Socket;
 const Header = () => {
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
   const context = useContext(UserContext);
@@ -86,25 +88,21 @@ const Header = () => {
     content: string,
     sentById: string
   ) => {
-    const promise = await fetch(
-      "http://localhost:3000/api/userNotificationPressed",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user?._id, id }),
-      }
-    );
-    if (promise.status === 200) {
-      const result = await promise.json();
-      if (content === "Friend request") {
-        router.push(`/views/${sentById}`);
-      } else if (content === "posted on your wall") {
-        router.push(`/views/${user?._id}`);
-      }
-      logIn(result);
+    if (socket !== undefined) {
+      socket.emit("userNotificationPressed", user?._id, id);
     }
+    if (content === "Friend request") {
+      router.push(`/views/${sentById}`);
+    } else if (content === "posted on your wall") {
+      router.push(`/views/${user?._id}`);
+    }
+  };
+  const socketInitializer = async () => {
+    socket = io();
+    socket.emit("login", user?._id)
+    socket.on("userNotificationPressed", (user) => {
+      logIn(user);
+    });
   };
   useEffect(() => {
     window.onclick = (event: any) => {
@@ -112,7 +110,8 @@ const Header = () => {
         setNotificationMenu(false);
       }
     };
-  }, [])
+    socketInitializer();
+  }, []);
   return (
     <div className={styles.container}>
       <Link href="/" className={styles.logo}>
