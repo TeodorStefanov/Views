@@ -3,7 +3,10 @@ import { Server } from "socket.io";
 import type { Server as HTTPServer } from "http";
 import type { Socket as NetSocket } from "net";
 import type { Server as IOServer } from "socket.io";
-import { createFriendRequestNotification } from "../../controllers/notifications";
+import {
+  createFriendRequestNotification,
+  userNotificationPressed,
+} from "../../controllers/notifications";
 import { likes } from "../../utils/socket/likes";
 import { comments } from "../../utils/socket/comments";
 import { newCart } from "../../controllers/posts";
@@ -102,6 +105,12 @@ export default async function handler(
           );
         }
       );
+      socket.on("userNotificationPressed", async (userId, id) => {
+        io.in(`${userId}-room`).emit(
+          "userNotificationPressed",
+          await userNotificationPressed(userId, id)
+        );
+      });
     });
   }
   res.end();
