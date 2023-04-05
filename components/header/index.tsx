@@ -78,7 +78,16 @@ const Header = () => {
   };
   const socketInitializer = async () => {
     socket = io();
-    socket.emit("login", user?._id)
+    socket.emit("login", user?._id);
+    socket.on("friendNotification", (user) => {
+      logIn(user.friendUser);
+    })
+    socket.on("removeFriendNotification", (user) => {
+      logIn(user);
+    });
+    socket.on("userNotificationPressed", (user) => {
+      logIn(user);
+    });
   };
   useEffect(() => {
     window.onclick = (event: any) => {
