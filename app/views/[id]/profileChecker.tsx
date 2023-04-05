@@ -222,24 +222,18 @@ const ProfileChecker = ({
     socket.on("acceptFriendNotification", (user) => {
       logIn(user);
     });
+    socket.on("removeFriendRequest", (user) => {
+      logIn(user);
+    })
     socket.on("likeToComment", (posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
     });
-    socket.on("removeFriendRequest", (user) => {
-      logIn(user);
-      setReceivedFriendRequest("");
-    });
-    socket.on("removeFriendNotification", (user) => {
-      logIn(user);
-      setSentFriendRequest(false);
-    });
-    socket.on("userNotificationPressed", (user) => {
-      logIn(user);
-    });
     return null;
   };
   useEffect(() => {
+    setReceivedFriendRequest("");
+    setSentFriendRequest(false);
     const friend = user?.friends.find((el: UserData) => el._id === _id);
     if (user?._id === _id) {
       setLoggedUser(true);
