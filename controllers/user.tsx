@@ -186,7 +186,7 @@ export const acceptFriendRequest = async (
   notificationId: string
 ) => {
   try {
-    await Connect()
+    await Connect();
     const data: NotificationType = {
       sentBy: userId,
       sentTo: friendId,
@@ -291,10 +291,10 @@ export const acceptFriendRequest = async (
   }
 };
 export const removeFriendRequest = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  userId: string,
+  friendId: string,
+  notificationId: string
 ) => {
-  const { userId, friendId, notificationId } = req.body;
   try {
     const user = await User.findOneAndUpdate(
       { _id: userId },
@@ -330,17 +330,56 @@ export const removeFriendRequest = async (
       {
         path: "notifications",
         model: Notification,
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
       },
       { path: "friendRequests", model: User },
       { path: "friends", model: User },
     ]);
     await Notification.deleteOne({ _id: notificationId });
-    await User.findOneAndUpdate(
+    const friendUser = await User.findOneAndUpdate(
       { _id: friendId },
       { $pull: { friendRequests: userId } },
       { new: true }
-    );
-    res.status(200).send(user);
+    ).populate([
+      {
+        path: "posts",
+        model: Posts,
+        populate: [
+          { path: "likes", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "likes", model: User },
+              {
+                path: "comments",
+                model: Comments,
+                populate: [
+                  { path: "likes", model: User },
+                  { path: "comments", model: Comments },
+                  { path: "user", model: User },
+                ],
+              },
+              { path: "user", model: User },
+            ],
+          },
+        ],
+      },
+      {
+        path: "notifications",
+        model: Notification,
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
+      },
+      { path: "friendRequests", model: User },
+      { path: "friends", model: User },
+    ]);
+    return { user, friendUser }
   } catch (err) {
     console.log(err);
   }

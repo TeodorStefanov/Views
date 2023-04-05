@@ -218,15 +218,24 @@ const ProfileChecker = ({
     });
     socket.on("acceptFriendRequest", (user) => {
       logIn(user);
-      setIsFriend(true);
     });
     socket.on("acceptFriendNotification", (user) => {
       logIn(user);
-      setIsFriend(true);
     });
     socket.on("likeToComment", (posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
+    });
+    socket.on("removeFriendRequest", (user) => {
+      logIn(user);
+      setReceivedFriendRequest("");
+    });
+    socket.on("removeFriendNotification", (user) => {
+      logIn(user);
+      setSentFriendRequest(false);
+    });
+    socket.on("userNotificationPressed", (user) => {
+      logIn(user);
     });
     return null;
   };
@@ -251,9 +260,6 @@ const ProfileChecker = ({
       }
     });
     socketInitializer();
-    return () => {
-      socket?.disconnect();
-    };
   }, [user]);
 
   return (
