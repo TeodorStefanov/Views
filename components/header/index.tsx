@@ -40,47 +40,26 @@ const Header = () => {
     }
   };
   const handleAcceptRequest = async (
+    event: React.MouseEvent<HTMLButtonElement>,
     friendId: string,
     notificationId: string
   ) => {
-    const promise = await fetch(
-      "http://localhost:3000/api/acceptFriendRequest",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?._id,
-          idFriend: friendId,
-          notificationId: notificationId,
-        }),
-      }
-    );
-    if (promise.status === 200) {
-      const result = await promise.json();
-
-      logIn(result);
+    event.stopPropagation();
+    const userId = user?._id;
+    if (socket !== undefined) {
+      socket.emit("acceptFriendRequest", userId, friendId, notificationId);
     }
   };
+
   const handleRemoveRequest = async (
+    event: React.MouseEvent<HTMLButtonElement>,
     friendId: string,
     notificationId: string
   ) => {
-    const promise = await fetch(
-      "http://localhost:3000/api/removeFriendRequest",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user?._id, friendId, notificationId }),
-      }
-    );
-    if (promise.status === 200) {
-      const result: UserData = await promise.json();
-
-      logIn(result);
+    event.stopPropagation();
+    const userId = user?._id;
+    if (socket !== undefined) {
+      socket.emit("removeFriendRequest", userId, friendId, notificationId);
     }
   };
   const handleClickNotification = async (
@@ -100,9 +79,6 @@ const Header = () => {
   const socketInitializer = async () => {
     socket = io();
     socket.emit("login", user?._id)
-    socket.on("userNotificationPressed", (user) => {
-      logIn(user);
-    });
   };
   useEffect(() => {
     window.onclick = (event: any) => {
@@ -202,16 +178,16 @@ const Header = () => {
                     <div className={styles.friendRequestButtons}>
                       <button
                         className={styles.friendRequestButton}
-                        onClick={() =>
-                          handleAcceptRequest(el.sentBy._id, el._id)
+                        onClick={(e) =>
+                          handleAcceptRequest(e, el.sentBy._id, el._id)
                         }
                       >
                         Accept
                       </button>
                       <button
                         className={styles.friendRequestButton}
-                        onClick={() =>
-                          handleRemoveRequest(el.sentBy._id, el._id)
+                        onClick={(e) =>
+                          handleRemoveRequest(e, el.sentBy._id, el._id)
                         }
                       >
                         Remove

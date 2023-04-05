@@ -10,7 +10,10 @@ import {
 import { likes } from "../../utils/socket/likes";
 import { comments } from "../../utils/socket/comments";
 import { newCart } from "../../controllers/posts";
-import { acceptFriendRequest } from "../../controllers/user";
+import {
+  acceptFriendRequest,
+  removeFriendRequest,
+} from "../../controllers/user";
 import { likeToComment } from "../../utils/socket/likeToComment";
 
 interface SocketServer extends HTTPServer {
@@ -92,6 +95,21 @@ export default async function handler(
           io.in(`${userId}-room`).emit("acceptFriendRequest", user?.user);
           io.in(`${friendId}-room`).emit(
             "acceptFriendNotification",
+            user?.friendUser
+          );
+        }
+      );
+      socket.on(
+        "removeFriendRequest",
+        async (userId, friendId, notificationId) => {
+          const user = await removeFriendRequest(
+            userId,
+            friendId,
+            notificationId
+          );
+          io.in(`${userId}-room`).emit("removeFriendRequest", user?.user);
+          io.in(`${friendId}-room`).emit(
+            "removeFriendNotification",
             user?.friendUser
           );
         }
