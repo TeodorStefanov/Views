@@ -76,7 +76,6 @@
 .follow:hover {
   background-color: rgb(78, 71, 71);
 }
-
 .content {
   display: flex;
   justify-content: center;
@@ -89,8 +88,24 @@
   text-align: center;
   align-items: center;
 }
-
 .right {
   width: 20%;
   height: 100%;
+}
+.pandingFriend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+  top: 80%;
+  left: 80%;
+  width: 100px;
+  height: 28px;
+  border: solid 1px rgb(0, 0, 0);
+  border-radius: 20px;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  text-align: center;
 }

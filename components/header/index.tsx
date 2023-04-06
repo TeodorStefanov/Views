@@ -70,7 +70,7 @@ const Header = () => {
     if (socket !== undefined) {
       socket.emit("userNotificationPressed", user?._id, id);
     }
-    if (content === "Friend request") {
+    if (content === "Friend request" || content === "Friend request accepted") {
       router.push(`/views/${sentById}`);
     } else if (content === "posted on your wall") {
       router.push(`/views/${user?._id}`);
@@ -81,7 +81,17 @@ const Header = () => {
     socket.emit("login", user?._id);
     socket.on("friendNotification", (user) => {
       logIn(user.friendUser);
-    })
+    });
+    socket.on("acceptFriendRequest", (user) => {
+      logIn(user);
+    });
+    socket.on("acceptFriendNotification", (user) => {
+      logIn(user);
+    });
+    socket.on("removeFriendRequest", (user) => {
+      logIn(user);
+      setNotificationMenu(false);
+    });
     socket.on("removeFriendNotification", (user) => {
       logIn(user);
     });

@@ -76,7 +76,6 @@ const ProfileChecker = ({
   const [receivedFriendRequest, setReceivedFriendRequest] =
     useState<string>("");
   const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
   const router = useRouter();
 
   const handleClickPicture = (e: React.MouseEvent) => {
@@ -216,15 +215,7 @@ const ProfileChecker = ({
       logIn(user.friendUser);
       setReceivedFriendRequest(user.notificationId);
     });
-    socket.on("acceptFriendRequest", (user) => {
-      logIn(user);
-    });
-    socket.on("acceptFriendNotification", (user) => {
-      logIn(user);
-    });
-    socket.on("removeFriendRequest", (user) => {
-      logIn(user);
-    })
+
     socket.on("likeToComment", (posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
@@ -289,7 +280,7 @@ const ProfileChecker = ({
                   Accept
                 </button>
               ) : sentFriendRequest ? (
-                <div>Panding</div>
+                <div className={styles.pandingFriend}>Panding</div>
               ) : (
                 <button
                   type="button"
@@ -335,11 +326,12 @@ const ProfileChecker = ({
                   deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
                   openLikes={() => openLikes(post)}
                   openComments={() => openComments(post)}
-                  handleClick={() => {
-                    if (_id !== user!._id) {
+                  handleClick={(e) => {
+                    e.preventDefault();
+                    if (post.createdBy._id !== user!._id) {
                       window.scrollTo(0, 0);
                     } else {
-                      router.push(`/views/${_id}`);
+                      router.push(`/views/${post.createdBy._id}`);
                     }
                   }}
                 />

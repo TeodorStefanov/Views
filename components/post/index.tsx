@@ -12,7 +12,7 @@ interface fields {
   deleteLike: (e: React.MouseEvent) => void;
   openLikes: (e: React.MouseEvent) => void;
   openComments: (e: React.MouseEvent) => void;
-  handleClick: () => void;
+  handleClick: (e: React.MouseEvent) => void;
 }
 const Post = ({
   post,
