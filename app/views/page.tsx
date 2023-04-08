@@ -1,69 +1,51 @@
-"use client";
-import React, { FC, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useForm, SubmitHandler } from "react-hook-form";
-import styles from "./index.module.css";
-import getNavigation from "../../navigation";
-interface IFormInputs {
-  searchMenu: string;
-}
-const Views: FC = () => {
-  const [pressedButton, setPressedButton] = useState<string>("All");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormInputs>();
-  const links = getNavigation();
-  const handleClick = () => {};
-  return (
-    <div className={styles.container}>
-      <div className={styles.left}></div>
-      <div className={styles.middle}>
-        <div>
-          <label htmlFor="searchMenu">
-            <input
-              {...register("searchMenu")}
-              id="searchMenu"
-              type="text"
-              placeholder="Search in Views"
-              className={styles.searchMenu}
-            />
-          </label>
-          <FontAwesomeIcon
-            className={styles.searchButton}
-            icon={faMagnifyingGlass}
-            onClick={handleClick}
-          />
-        </div>
-        <div className={styles.navigation}>
-          {links.map((el, index) => {
-            return (
-              <div
-                className={`${styles.navigationLink} ${
-                  pressedButton === el.title ? styles.pressedButton : ""
-                }`}
-                key={index}
-                onClick={(e) => setPressedButton(el.title)}
-              >
-                {el.title}
-              </div>
-            );
-          })}
-        </div>
-        <div className={styles.share}>
-          <label>
-            Share
-            <input className={styles.shareField} />
-          </label>
-          <div>Picture</div>
-          <div>Video</div>
-        </div>
-      </div>
-      <div className={styles.right}></div>
-    </div>
-  );
-};
+import Comments from "../../models/comments";
+import Posts from "../../models/posts";
+import User from "../../models/user";
+import Connect from "../../utils/mongoDBMongooseConnection";
+import ViewsPage from "./viewsPage";
+import { PostsType } from "./[id]/profileChecker";
 
-export default Views;
+export const revalidate = 0;
+async function getPosts() {
+  try {
+    await Connect();
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+
+    return JSON.parse(JSON.stringify(posts));
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+export default async function MainPage() {
+  const posts: PostsType[] = await getPosts()
+  if (!posts) {
+    throw new Error("User not found!");
+  }
+
+  return <ViewsPage posts={posts} />;
+}

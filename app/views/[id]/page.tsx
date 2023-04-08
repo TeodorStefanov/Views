@@ -35,6 +35,7 @@ async function getUser(id: string) {
               ],
             },
             { path: "createdBy", model: User },
+            { path: "createdTo", model: User },
           ],
         },
         {

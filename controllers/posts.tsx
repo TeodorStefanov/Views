@@ -1,11 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { UserData } from "../app/views/[id]/profileChecker";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
 import Posts from "../models/posts";
 import User from "../models/user";
 import Connect from "../utils/mongoDBMongooseConnection";
-import { ResponseData } from "./user";
 
 type Data = {
   content: string;
@@ -36,6 +33,7 @@ export const newCart = async (
       videoUrl,
       createdAt,
       createdBy,
+      createdTo: userId,
     };
     const notificationData: NotificationData = {
       sentBy: createdBy,
@@ -139,7 +137,7 @@ export const addLikeToPost = async (
     });
     return user.posts.reverse();
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 };
 export const deleteLikeToPost = async (
@@ -153,7 +151,7 @@ export const deleteLikeToPost = async (
       { _id: postId },
       { $pull: { likes: userId } },
       { new: true }
-    )
+    );
     const user = await User.findById(roomId).populate({
       path: "posts",
       model: Posts,

@@ -17,6 +17,10 @@ const postSchema = new Schema({
     type: "ObjectId",
     ref: "User",
   },
+  createdTo: {
+    type: "ObjectId",
+    ref: "User",
+  },
   likes: [
     {
       type: "ObjectId",

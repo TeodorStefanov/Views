@@ -20,6 +20,7 @@ export type PostsType = {
   videoUrl: string;
   createdAt: Date;
   createdBy: UserData;
+  createdTo: UserData;
   likes: Array<UserData>;
   comments: Array<Comment> | [];
 };
