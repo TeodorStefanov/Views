@@ -39,7 +39,10 @@ export default async function handler(
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
-      console.log("server is connected");
+      console.log("server is connected")
+      socket.on('main', () => {
+        socket.join('main')
+      })
       socket.on("login", (id) => {
         socket.join(`${id}-room`);
       });
@@ -56,7 +59,7 @@ export default async function handler(
         }
       );
       socket.on("addLike", async (postId, userId, method, roomId) => {
-        io.in(roomId).emit(
+        io.in([roomId, "main"]).emit(
           "addLike",
           await likes(postId, userId, method, roomId)
         );

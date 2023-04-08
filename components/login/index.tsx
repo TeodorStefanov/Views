@@ -30,7 +30,7 @@ const Login: FC = () => {
       console.log("connected");
     });
     return null;
-  };
+  }
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
     const promise = await fetch("/api/loginUser", {
       method: "POST",

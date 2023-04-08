@@ -140,6 +140,10 @@ const Header = () => {
               }
               className={styles.picture}
               alt=""
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/views/${user?._id}`);
+              }}
             />
             <div
               className={`${styles.bell} ${
