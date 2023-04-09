@@ -20,6 +20,7 @@ const Header = () => {
   const router = useRouter();
   const notificationMenuRef = useRef(null);
   const handleClick = async () => {
+    console.log(1)
     if (user) {
       const promise = await fetch(
         "http://localhost:3000/api/userNotificationsChecked",
@@ -109,7 +110,7 @@ const Header = () => {
   }, []);
   return (
     <div className={styles.container}>
-      <Link href="/" className={styles.logo}>
+      <Link href="/views" className={styles.logo}>
         Views
       </Link>
 

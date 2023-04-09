@@ -126,7 +126,7 @@ export const userNotificationsChecked = async (
       { $set: { checked: true } }
     );
 
-    res.status(200).send({ message: "Successfully" });
+    res.status(200).send({ message: "Successfully" })
   } catch (err) {
     console.log(err);
   }

@@ -93,7 +93,32 @@ export const newCart = async (
         { path: "createdBy", model: User },
       ],
     });
-    return user.posts.reverse();
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+    return { postsUser: user.posts.reverse(), posts: posts.reverse() };
   } catch (err) {
     console.log(err);
   }
@@ -135,7 +160,32 @@ export const addLikeToPost = async (
         { path: "createdBy", model: User },
       ],
     });
-    return user.posts.reverse();
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+    return { postsUser: user.posts.reverse(), posts: posts.reverse() };
   } catch (err) {
     console.log(err);
   }
@@ -180,7 +230,32 @@ export const deleteLikeToPost = async (
         },
       ],
     });
-    return user.posts.reverse();
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+    return { postsUser: user.posts.reverse(), posts: posts.reverse() };
   } catch (err) {
     console.log(err);
   }
