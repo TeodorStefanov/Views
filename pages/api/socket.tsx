@@ -32,17 +32,17 @@ export default async function handler(
   res: NextApiResponseWithSocket
 ) {
   if (res.socket.server.io) {
-    res.socket.setMaxListeners(20);
+    res.socket.setMaxListeners(100);
   } else {
     console.log("Server is initiializing");
 
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
-      console.log("server is connected")
-      socket.on('main', () => {
-        socket.join('main')
-      })
+      console.log("server is connected");
+      socket.on("main", () => {
+        socket.join("main");
+      });
       socket.on("login", (id) => {
         socket.join(`${id}-room`);
       });
@@ -52,17 +52,21 @@ export default async function handler(
       socket.on(
         "allPosts",
         async (userId, content, imageUrl, videoUrl, createdBy) => {
-          io.in(userId).emit(
-            "allPosts",
-            await newCart(userId, content, imageUrl, videoUrl, createdBy)
+          const user = await newCart(
+            userId,
+            content,
+            imageUrl,
+            videoUrl,
+            createdBy
           );
+          io.in(userId).emit("allPosts", user?.postsUser);
+          io.in("main").emit("posts", user?.posts);
         }
       );
       socket.on("addLike", async (postId, userId, method, roomId) => {
-        io.in([roomId, "main"]).emit(
-          "addLike",
-          await likes(postId, userId, method, roomId)
-        );
+        const posts = await likes(postId, userId, method, roomId);
+        io.in(roomId).emit("addLike", posts?.postsUser);
+        io.in("main").emit("likes", posts?.posts)
       });
       socket.on(
         "allComments",
@@ -73,7 +77,7 @@ export default async function handler(
           roomId: string,
           postId: string
         ) => {
-          io.in(roomId).emit(
+          io.in([roomId, "main"]).emit(
             "allComments",
             await comments(userId, id, contentComment, roomId, postId)
           );

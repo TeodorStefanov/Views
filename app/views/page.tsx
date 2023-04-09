@@ -33,7 +33,7 @@ async function getPosts() {
       },
       { path: "createdBy", model: User },
       { path: "createdTo", model: User },
-    ]);
+    ])
 
     return JSON.parse(JSON.stringify(posts));
   } catch (err) {
@@ -42,10 +42,10 @@ async function getPosts() {
   }
 }
 export default async function MainPage() {
-  const posts: PostsType[] = await getPosts()
+  const posts: PostsType[] = await getPosts();
   if (!posts) {
     throw new Error("User not found!");
   }
 
-  return <ViewsPage posts={posts} />;
+  return <ViewsPage posts={posts.reverse()} />;
 }

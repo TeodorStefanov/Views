@@ -97,11 +97,11 @@ const ViewsPage = ({ posts }: any) => {
   };
   const socketInitializer = async () => {
     socket = io();
-    socket.emit("main")
-    socket.on("allPosts", (posts) => {
+    socket.emit("main");
+    socket.on("posts", (posts) => {
       setAllPosts(posts);
     });
-    socket.on("addLike", (post) => {
+    socket.on("likes", (post) => {
       setAllPosts(post);
     });
   };
@@ -114,7 +114,7 @@ const ViewsPage = ({ posts }: any) => {
   };
   useEffect(() => {
     socketInitializer();
-  }, [])
+  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.left}></div>
@@ -176,12 +176,8 @@ const ViewsPage = ({ posts }: any) => {
               openLikes={() => openLikes(post)}
               openComments={() => openComments(post)}
               handleClick={(e) => {
-                e.preventDefault();
-                if (post.createdBy._id !== user!._id) {
-                  window.scrollTo(0, 0);
-                } else {
-                  router.push(`/views/${post.createdBy._id}`);
-                }
+                e.preventDefault()
+                router.push(`/views/${post.createdBy._id}`);
               }}
             />
           );

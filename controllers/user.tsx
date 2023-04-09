@@ -378,7 +378,7 @@ export const removeFriendRequest = async (
       },
       { path: "friendRequests", model: User },
       { path: "friends", model: User },
-    ]);
+    ])
     return { user, friendUser }
   } catch (err) {
     console.log(err);
