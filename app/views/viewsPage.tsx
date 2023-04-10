@@ -104,6 +104,10 @@ const ViewsPage = ({ posts }: any) => {
     socket.on("likes", (post) => {
       setAllPosts(post);
     });
+    socket.on("allComments", (posts) => {
+      setOpenCommentsPressed(posts.post)
+      setAllPosts(posts.posts)
+    });
   };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
@@ -176,7 +180,7 @@ const ViewsPage = ({ posts }: any) => {
               openLikes={() => openLikes(post)}
               openComments={() => openComments(post)}
               handleClick={(e) => {
-                e.preventDefault()
+                e.preventDefault();
                 router.push(`/views/${post.createdBy._id}`);
               }}
             />

@@ -206,7 +206,7 @@ const ProfileChecker = ({
     });
     socket.on("allComments", (posts) => {
       setOpenCommentsPressed(posts.post);
-      setAllPosts(posts.posts);
+      setAllPosts(posts.postsUser)
     });
     socket.on("sentFriendRequest", (user) => {
       logIn(user);

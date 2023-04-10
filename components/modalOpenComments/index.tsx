@@ -15,8 +15,12 @@ type Fields = {
   onClick: () => void;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (id:string) => Promise<void>;
-  handleSubmitCommentOfComment: (id: string, postId: string, userId: string) => void;
+  handleSubmit: (id: string) => Promise<void>;
+  handleSubmitCommentOfComment: (
+    id: string,
+    postId: string,
+    userId: string
+  ) => void;
   commentChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   commentOfCommentContent: string;
 
@@ -72,14 +76,13 @@ const ModalOpenComments = ({
   const handleKeyDown = async (
     e: React.KeyboardEvent<HTMLDivElement>,
     comment: string,
-    id?: string,
     userId?: string
   ) => {
     if (e.key === "Enter") {
       if (comment === "comment") {
         await handleSubmit(userId!);
       } else if (comment === "commentOfComment") {
-        handleSubmitCommentOfComment(id!, post!._id, userId!);
+        handleSubmitCommentOfComment(userId!, post!._id, post!.createdTo._id);
         setCommentsToCommentsChanged(true);
       }
     }
@@ -147,12 +150,7 @@ const ModalOpenComments = ({
                       onChange={commentChange}
                       value={commentOfCommentContent}
                       onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
-                        handleKeyDown(
-                          e,
-                          "commentOfComment",
-                          el._id,
-                          el.user._id
-                        )
+                        handleKeyDown(e, "commentOfComment", el._id)
                       }
                       autoFocus
                     />
@@ -171,7 +169,7 @@ const ModalOpenComments = ({
             onChange={onChange}
             value={value}
             onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
-              handleKeyDown(e, "comment")
+              handleKeyDown(e, "comment", post?.createdTo._id)
             }
             autoFocus
           />

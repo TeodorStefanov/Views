@@ -68,7 +68,32 @@ export const createCommentUpdatePost = async (
         { path: "createdBy", model: User },
       ],
     });
-    return { post, posts: user.posts.reverse() };
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+    return { post, postsUser: user.posts.reverse(), posts: posts.reverse() };
   } catch (err) {
     console.log(err);
   }
@@ -141,7 +166,32 @@ export const addCommentOfComment = async (
         { path: "createdBy", model: User },
       ],
     });
-    return { post, posts: user.posts.reverse() };
+    const posts = await Posts.find().populate([
+      { path: "likes", model: User },
+      {
+        path: "comments",
+        model: Comments,
+        populate: [
+          { path: "user", model: User },
+          {
+            path: "comments",
+            model: Comments,
+            populate: [
+              { path: "user", model: User },
+              { path: "likes", model: User },
+              { path: "comments", model: Comments },
+            ],
+          },
+          {
+            path: "likes",
+            model: User,
+          },
+        ],
+      },
+      { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
+    ]);
+    return { post, postsUser: user.posts.reverse(), posts: posts.reverse() }
   } catch (err) {
     console.log(err);
   }
@@ -268,6 +318,6 @@ export const deleteLikeToComment = async (
     });
     return { post, posts: user.posts.reverse() };
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
-}
+};

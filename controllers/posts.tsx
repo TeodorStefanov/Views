@@ -184,7 +184,7 @@ export const addLikeToPost = async (
       },
       { path: "createdBy", model: User },
       { path: "createdTo", model: User },
-    ]);
+    ])
     return { postsUser: user.posts.reverse(), posts: posts.reverse() };
   } catch (err) {
     console.log(err);
