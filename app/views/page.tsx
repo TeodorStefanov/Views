@@ -3,7 +3,7 @@ import Posts from "../../models/posts";
 import User from "../../models/user";
 import Connect from "../../utils/mongoDBMongooseConnection";
 import ViewsPage from "./viewsPage";
-import { PostsType } from "./[id]/profileChecker";
+import { PostsType } from "../../utils/types";
 
 export const revalidate = 0;
 async function getPosts() {
@@ -33,7 +33,7 @@ async function getPosts() {
       },
       { path: "createdBy", model: User },
       { path: "createdTo", model: User },
-    ])
+    ]);
 
     return JSON.parse(JSON.stringify(posts));
   } catch (err) {

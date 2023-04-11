@@ -1,5 +1,5 @@
 import React from "react";
-import { UserData } from "../app/views/[id]/profileChecker";
+import { UserData } from "../utils/types"
 
 interface userContextInterface {
   loggedIn: boolean;

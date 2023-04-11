@@ -5,7 +5,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./index.module.css";
 import getNavigation from "../../navigation";
-import { Comment, PostsType, UserData } from "./[id]/profileChecker";
+import { Comment, PostsType, UserData } from "../../utils/types";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { likeExists } from "../../utils/checkLiked";
 import UserContext from "../../context/context";
@@ -17,22 +17,29 @@ import ModalOpenLikes from "../../components/modalOpenLikes";
 import ModalOpenComments from "../../components/modalOpenComments";
 import AddPost from "../../components/addPost";
 import { handleClickPicture, handleClickVideo } from "../../utils/cloudinary";
+import {
+  handleClickPost,
+  addLike,
+  deleteLike,
+  handleSubmitComment,
+  handleSubmitCommentOfComment,
+} from "../../utils/socket/socketEmits";
 let socket: undefined | Socket;
 interface IFormInputs {
   searchMenu: string;
 }
 const ViewsPage = ({ posts }: any) => {
-  const [pressedButton, setPressedButton] = useState<string>("All");
-  const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
-  const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
+  const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([])
   const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
+  const [pressedButton, setPressedButton] = useState<string>("All");
   const [contentComment, setContentComment] = useState<string>("");
-  const [commentOfCommentContent, setCommentOfCommentContent] =
-    useState<string>("");
   const [postId, setPostId] = useState<PostsType | "">("");
-  const [content, setContent] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
+  const [commentOfCommentContent, setCommentOfCommentContent] =
+    useState<string>("");
   const context = useContext(UserContext);
   const router = useRouter();
   const { user } = context;
@@ -43,76 +50,7 @@ const ViewsPage = ({ posts }: any) => {
   } = useForm<IFormInputs>();
   const links = getNavigation();
   const handleClick = () => {};
-  const handleClickPost = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    const userId = user?._id
-    const createdBy = user?._id;
-    if (content || imageUrl || videoUrl) {
-      if (socket !== undefined) {
-        socket.emit("allPosts", userId, content, imageUrl, videoUrl, createdBy);
-        setContent("");
-        setImageUrl("");
-        setVideoUrl("");
-      }
-    }
-  };
-  const addLike = (
-    event: React.MouseEvent,
-    postId: string,
-    createdBy: string
-  ) => {
-    event.preventDefault();
-    const userId = user?._id;
 
-    if (socket !== undefined) {
-      socket.emit("addLike", postId, userId, "add", createdBy);
-    }
-  };
-  const deleteLike = (
-    event: React.MouseEvent,
-    postId: string,
-    createdBy: string
-  ) => {
-    event.preventDefault();
-    const userId = user?._id;
-
-    if (socket !== undefined) {
-      socket.emit("addLike", postId, userId, "delete", createdBy);
-    }
-  };
-  const handleSubmitComment = async (
-    roomId: string,
-    userId: string | undefined,
-    id: string,
-    contentComment: string
-  ) => {
-    if (contentComment) {
-      if (socket !== undefined) {
-        socket.emit("allComments", userId, id, contentComment, roomId);
-        setContentComment("");
-      }
-    }
-  };
-  const handleSubmitCommentOfComment = async (
-    id: string,
-    postId: string,
-    roomId: string
-  ) => {
-    const userId = user?._id;
-    if (commentOfCommentContent) {
-      if (socket !== undefined) {
-        socket.emit(
-          "allComments",
-          userId,
-          id,
-          commentOfCommentContent,
-          roomId,
-          postId
-        );
-        setCommentOfCommentContent("");
-      }
-    }
-  };
   const socketInitializer = async () => {
     socket = io();
     socket.emit("main");
@@ -184,7 +122,17 @@ const ViewsPage = ({ posts }: any) => {
             }
             handleClickPicture={() => handleClickPicture(setImageUrl)}
             handleClickVideo={() => handleClickVideo(setVideoUrl)}
-            handleClickPost={handleClickPost}
+            handleClickPost={() => {
+              handleClickPost(
+                user!._id,
+                user!._id,
+                content,
+                imageUrl,
+                videoUrl
+              );
+              setContent(""), setImageUrl("");
+              setVideoUrl("");
+            }}
             value={content}
           />
         </div>
@@ -197,11 +145,9 @@ const ViewsPage = ({ posts }: any) => {
               post={post}
               postTime={postTime}
               liked={liked}
-              addLike={(e: React.MouseEvent) =>
-                addLike(e, post._id, post.createdBy._id)
-              }
-              deleteLike={(e: React.MouseEvent) =>
-                deleteLike(e, post._id, post.createdBy._id)
+              addLike={() => addLike(user!._id, post._id, post.createdBy._id)}
+              deleteLike={() =>
+                deleteLike(user!._id, post._id, post.createdBy._id)
               }
               openLikes={() => openLikes(post)}
               openComments={() => openComments(post)}
@@ -230,17 +176,25 @@ const ViewsPage = ({ posts }: any) => {
             }
             value={contentComment}
             commentOfCommentContent={commentOfCommentContent}
-            handleSubmit={async (roomId) =>
-              await handleSubmitComment(
-                roomId,
+            handleSubmit={(roomId) => {
+              handleSubmitComment(
                 user?._id,
                 postId._id,
-                contentComment
-              )
-            }
-            handleSubmitCommentOfComment={(id, postId, roomId) =>
-              handleSubmitCommentOfComment(id, postId, roomId)
-            }
+                contentComment,
+                roomId
+              );
+              setContentComment("");
+            }}
+            handleSubmitCommentOfComment={(id, postId, roomId) => {
+              handleSubmitCommentOfComment(
+                user!._id,
+                id,
+                postId,
+                commentOfCommentContent,
+                roomId
+              );
+              setCommentOfCommentContent("");
+            }}
             commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setCommentOfCommentContent(e.target.value)
             }

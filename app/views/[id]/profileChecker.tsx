@@ -16,45 +16,23 @@ import {
   handleClickPicture,
   handleClickVideo,
 } from "../../../utils/cloudinary";
+import {
+  handleClickPost,
+  addLike,
+  deleteLike,
+  handleSubmitComment,
+  handleSubmitCommentOfComment,
+  handleClickFollowFriend,
+  handleAcceptFriendRequest,
+} from "../../../utils/socket/socketEmits";
+import {
+  Comment,
+  Notification,
+  PostsType,
+  UserData,
+} from "../../../utils/types";
 let socket: undefined | Socket;
-export type PostsType = {
-  _id: string;
-  content: string;
-  imageUrl: string;
-  videoUrl: string;
-  createdAt: Date;
-  createdBy: UserData;
-  createdTo: UserData;
-  likes: Array<UserData>;
-  comments: Array<Comment> | [];
-};
-export interface Comment {
-  _id: string;
-  user: UserData;
-  content: string;
-  createdAt: Date;
-  likes: Array<UserData> | [];
-  comments: Array<Comment> | [];
-}
-export interface UserData {
-  _id: string;
-  backgroundPicture: string;
-  picture: string;
-  viewsName: string;
-  friends: UserData[] | [];
-  friendRequests?: UserData[] | [];
-  posts: PostsType[];
-  notifications?: Notification[] | [];
-}
-export type Notification = {
-  _id: string;
-  sentBy: UserData;
-  setnTo: UserData;
-  content: string;
-  checked: boolean;
-  pressed: boolean;
-  createdAt: Date;
-};
+
 const ProfileChecker = ({
   _id,
   backgroundPicture,
@@ -63,97 +41,26 @@ const ProfileChecker = ({
   friends,
   posts,
 }: UserData) => {
-  const context = useContext(UserContext);
-  const [loggedUser, setLoggedUser] = useState<boolean>(false);
-  const [isFriend, setIsFriend] = useState<boolean>(false);
-  const [profilePicture, setProfilePicture] = useState<boolean>(false);
-  const { user, logIn } = context;
-  const [content, setContent] = useState<string>("");
-  const [imageUrl, setImageUrl] = useState<string>("");
-  const [videoUrl, setVideoUrl] = useState<string>("");
   const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
   const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
-  const [postId, setPostId] = useState<string>("");
+  const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
+  const [profilePicture, setProfilePicture] = useState<boolean>(false);
   const [contentComment, setContentComment] = useState<string>("");
+  const [loggedUser, setLoggedUser] = useState<boolean>(false);
   const [allPosts, setAllPosts] = useState<PostsType[]>(posts);
+  const [isFriend, setIsFriend] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [postId, setPostId] = useState<string>("");
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
   const [receivedFriendRequest, setReceivedFriendRequest] =
     useState<string>("");
-  const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
+  const context = useContext(UserContext);
+  const { user, logIn } = context;
   const router = useRouter();
-  const handleClickPost = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    const userId = _id;
-    const createdBy = user?._id;
-    if (content || imageUrl || videoUrl) {
-      if (socket !== undefined) {
-        socket.emit("allPosts", userId, content, imageUrl, videoUrl, createdBy);
-        setContent("");
-        setImageUrl("");
-        setVideoUrl("");
-      }
-    }
-  }
-  const addLike = (event: React.MouseEvent, postId: string) => {
-    event.preventDefault();
-    const userId = user?._id;
 
-    if (socket !== undefined) {
-      socket.emit("addLike", postId, userId, "add", _id);
-    }
-  };
-  const deleteLike = (event: React.MouseEvent, postId: string) => {
-    event.preventDefault();
-    const userId = user?._id;
-
-    if (socket !== undefined) {
-      socket.emit("addLike", postId, userId, "delete", _id);
-    }
-  };
-  const handleSubmitComment = async (
-    userId: string | undefined,
-    id: string,
-    contentComment: string
-  ) => {
-    if (contentComment) {
-      if (socket !== undefined) {
-        socket.emit("allComments", userId, id, contentComment, _id);
-        setContentComment("");
-      }
-    }
-  };
-  const handleSubmitCommentOfComment = async (id: string, postId: string) => {
-    const userId = user?._id;
-    if (commentOfCommentContent) {
-      if (socket !== undefined) {
-        socket.emit(
-          "allComments",
-          userId,
-          id,
-          commentOfCommentContent,
-          _id,
-          postId
-        );
-        setCommentOfCommentContent("");
-      }
-    }
-  };
-  const handleClickFollowFriend = async () => {
-    const userId = user?._id;
-    const friendId = _id;
-
-    if (socket !== undefined) {
-      socket.emit("sentFriendRequest", userId, friendId);
-    }
-  };
-  const handleAcceptFriendRequest = async () => {
-    const userId = user?._id;
-    if (socket !== undefined) {
-      socket.emit("acceptFriendRequest", userId, _id, receivedFriendRequest);
-    }
-    setReceivedFriendRequest("");
-  };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
   };
@@ -207,7 +114,7 @@ const ProfileChecker = ({
         setReceivedFriendRequest(el._id);
       }
     });
-    user?.friendRequests?.map((el) => {
+    user?.friendRequests?.map((el: UserData) => {
       if (el._id === _id) {
         setSentFriendRequest(true);
       }
@@ -243,7 +150,14 @@ const ProfileChecker = ({
               receivedFriendRequest ? (
                 <button
                   className={styles.follow}
-                  onClick={handleAcceptFriendRequest}
+                  onClick={() => {
+                    handleAcceptFriendRequest(
+                      user!._id,
+                      _id,
+                      receivedFriendRequest
+                    );
+                    setReceivedFriendRequest("");
+                  }}
                 >
                   Accept
                 </button>
@@ -253,7 +167,9 @@ const ProfileChecker = ({
                 <button
                   type="button"
                   className={styles.follow}
-                  onClick={handleClickFollowFriend}
+                  onClick={() => {
+                    handleClickFollowFriend(user!._id, _id);
+                  }}
                 >
                   Follow
                 </button>
@@ -275,7 +191,11 @@ const ProfileChecker = ({
                 }
                 handleClickPicture={() => handleClickPicture(setImageUrl)}
                 handleClickVideo={() => handleClickVideo(setVideoUrl)}
-                handleClickPost={handleClickPost}
+                handleClickPost={() => {
+                  handleClickPost(_id, user!._id, content, imageUrl, videoUrl);
+                  setContent(""), setImageUrl("");
+                  setVideoUrl("");
+                }}
                 value={content}
               />
             ) : (
@@ -290,8 +210,8 @@ const ProfileChecker = ({
                   post={post}
                   postTime={postTime}
                   liked={liked}
-                  addLike={(e: React.MouseEvent) => addLike(e, post._id)}
-                  deleteLike={(e: React.MouseEvent) => deleteLike(e, post._id)}
+                  addLike={() => addLike(user!._id, post._id, _id)}
+                  deleteLike={() => deleteLike(user!._id, post._id, _id)}
                   openLikes={() => openLikes(post)}
                   openComments={() => openComments(post)}
                   handleClick={(e) => {
@@ -336,12 +256,20 @@ const ProfileChecker = ({
           }
           value={contentComment}
           commentOfCommentContent={commentOfCommentContent}
-          handleSubmit={async () =>
-            await handleSubmitComment(user?._id, postId, contentComment)
-          }
-          handleSubmitCommentOfComment={(id, postId) =>
-            handleSubmitCommentOfComment(id, postId)
-          }
+          handleSubmit={() => {
+            handleSubmitComment(user?._id, postId, contentComment, _id);
+            setContentComment("");
+          }}
+          handleSubmitCommentOfComment={(id, postId) => {
+            handleSubmitCommentOfComment(
+              user!._id,
+              id,
+              postId,
+              commentOfCommentContent,
+              _id
+            );
+            setCommentOfCommentContent("")
+          }}
           commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCommentOfCommentContent(e.target.value)
           }

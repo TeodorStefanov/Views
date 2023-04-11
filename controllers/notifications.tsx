@@ -1,6 +1,4 @@
-import { create } from "domain";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { UserData } from "../app/views/[id]/profileChecker";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
 import Posts from "../models/posts";
@@ -126,7 +124,7 @@ export const userNotificationsChecked = async (
       { $set: { checked: true } }
     );
 
-    res.status(200).send({ message: "Successfully" })
+    res.status(200).send({ message: "Successfully" });
   } catch (err) {
     console.log(err);
   }
