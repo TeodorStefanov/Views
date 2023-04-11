@@ -15,6 +15,8 @@ import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import ModalOpenLikes from "../../components/modalOpenLikes";
 import ModalOpenComments from "../../components/modalOpenComments";
+import AddPost from "../../components/addPost";
+import { handleClickPicture, handleClickVideo } from "../../utils/cloudinary";
 let socket: undefined | Socket;
 interface IFormInputs {
   searchMenu: string;
@@ -28,6 +30,9 @@ const ViewsPage = ({ posts }: any) => {
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
   const [postId, setPostId] = useState<PostsType | "">("");
+  const [content, setContent] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const context = useContext(UserContext);
   const router = useRouter();
   const { user } = context;
@@ -38,6 +43,19 @@ const ViewsPage = ({ posts }: any) => {
   } = useForm<IFormInputs>();
   const links = getNavigation();
   const handleClick = () => {};
+  const handleClickPost = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const userId = user?._id
+    const createdBy = user?._id;
+    if (content || imageUrl || videoUrl) {
+      if (socket !== undefined) {
+        socket.emit("allPosts", userId, content, imageUrl, videoUrl, createdBy);
+        setContent("");
+        setImageUrl("");
+        setVideoUrl("");
+      }
+    }
+  };
   const addLike = (
     event: React.MouseEvent,
     postId: string,
@@ -105,8 +123,12 @@ const ViewsPage = ({ posts }: any) => {
       setAllPosts(post);
     });
     socket.on("allComments", (posts) => {
-      setOpenCommentsPressed(posts.post)
-      setAllPosts(posts.posts)
+      setOpenCommentsPressed(posts.post);
+      setAllPosts(posts.posts);
+    });
+    socket.on("likeToComment", (posts) => {
+      setOpenCommentsPressed(posts.post);
+      setAllPosts(posts.posts);
     });
   };
   const openLikes = async (post: PostsType | Comment) => {
@@ -155,12 +177,16 @@ const ViewsPage = ({ posts }: any) => {
           })}
         </div>
         <div className={styles.share}>
-          <label>
-            Share
-            <input className={styles.shareField} />
-          </label>
-          <div>Picture</div>
-          <div>Video</div>
+          <AddPost
+            picture={user!.picture}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setContent(e.target.value)
+            }
+            handleClickPicture={() => handleClickPicture(setImageUrl)}
+            handleClickVideo={() => handleClickVideo(setVideoUrl)}
+            handleClickPost={handleClickPost}
+            value={content}
+          />
         </div>
         {allPosts.map((post, index) => {
           const postTime = calculateDateOrTime(post.createdAt);

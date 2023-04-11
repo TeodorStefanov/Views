@@ -12,6 +12,10 @@ import { likeExists } from "../../../utils/checkLiked";
 import { useRouter } from "next/navigation";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
+import {
+  handleClickPicture,
+  handleClickVideo,
+} from "../../../utils/cloudinary";
 let socket: undefined | Socket;
 export type PostsType = {
   _id: string;
@@ -78,43 +82,6 @@ const ProfileChecker = ({
     useState<string>("");
   const [sentFriendRequest, setSentFriendRequest] = useState<boolean>(false);
   const router = useRouter();
-
-  const handleClickPicture = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const widget = window.cloudinary.createUploadWidget(
-      {
-        cloudName: "daqcaszkf",
-        uploadPreset: "softuni",
-      },
-      (error: any, result: any) => {
-        if (error) {
-          console.log("Error:", error);
-        }
-        if (result.event === "success") {
-          setImageUrl(result.info.url);
-        }
-      }
-    );
-    widget.open();
-  };
-  const handleClickVideo = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const widget = window.cloudinary.createUploadWidget(
-      {
-        cloudName: "daqcaszkf",
-        uploadPreset: "softuni",
-      },
-      (error: any, result: any) => {
-        if (error) {
-          console.log("Error:", error);
-        }
-        if (result.event === "success") {
-          setVideoUrl(result.info.url);
-        }
-      }
-    );
-    widget.open();
-  };
   const handleClickPost = async (e: React.MouseEvent) => {
     e.preventDefault();
     const userId = _id;
@@ -127,7 +94,7 @@ const ProfileChecker = ({
         setVideoUrl("");
       }
     }
-  };
+  }
   const addLike = (event: React.MouseEvent, postId: string) => {
     event.preventDefault();
     const userId = user?._id;
@@ -206,7 +173,7 @@ const ProfileChecker = ({
     });
     socket.on("allComments", (posts) => {
       setOpenCommentsPressed(posts.post);
-      setAllPosts(posts.postsUser)
+      setAllPosts(posts.postsUser);
     });
     socket.on("sentFriendRequest", (user) => {
       logIn(user);
@@ -219,7 +186,7 @@ const ProfileChecker = ({
 
     socket.on("likeToComment", (posts) => {
       setOpenCommentsPressed(posts.post);
-      setAllPosts(posts.posts);
+      setAllPosts(posts.postsUser);
     });
     return null;
   };
@@ -306,8 +273,8 @@ const ProfileChecker = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setContent(e.target.value)
                 }
-                handleClickPicture={handleClickPicture}
-                handleClickVideo={handleClickVideo}
+                handleClickPicture={() => handleClickPicture(setImageUrl)}
+                handleClickVideo={() => handleClickVideo(setVideoUrl)}
                 handleClickPost={handleClickPost}
                 value={content}
               />

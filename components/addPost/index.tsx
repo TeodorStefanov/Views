@@ -3,7 +3,7 @@ import styles from "./index.module.css";
 interface fields {
   picture: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClickPicture: (e: React.MouseEvent) => void;
+  handleClickPicture: () => void;
   handleClickVideo: (e: React.MouseEvent) => void;
   handleClickPost: (e: React.MouseEvent) => void;
   value: string;
