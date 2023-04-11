@@ -66,7 +66,7 @@ export default async function handler(
       socket.on("addLike", async (postId, userId, method, roomId) => {
         const posts = await likes(postId, userId, method, roomId);
         io.in(roomId).emit("addLike", posts?.postsUser);
-        io.in("main").emit("likes", posts?.posts)
+        io.in("main").emit("likes", posts?.posts);
       });
       socket.on(
         "allComments",
@@ -124,7 +124,7 @@ export default async function handler(
       socket.on(
         "likeToComment",
         async (commentId, userId, postId, id, method) => {
-          io.in(id).emit(
+          io.in([id, "main"]).emit(
             "likeToComment",
             await likeToComment(commentId, userId, postId, id, method)
           );
