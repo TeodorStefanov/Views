@@ -4,8 +4,7 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
-import { PostsType, UserData } from "../app/views/[id]/profileChecker";
-import { NewLineKind } from "typescript";
+import { PostsType, UserData } from "../utils/types"
 import Posts from "../models/posts";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
@@ -378,8 +377,8 @@ export const removeFriendRequest = async (
       },
       { path: "friendRequests", model: User },
       { path: "friends", model: User },
-    ])
-    return { user, friendUser }
+    ]);
+    return { user, friendUser };
   } catch (err) {
     console.log(err);
   }

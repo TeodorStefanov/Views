@@ -5,7 +5,7 @@ import styles from "./index.module.css";
 import UserContext from "../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { Notification, UserData } from "../../app/views/[id]/profileChecker";
+import { Notification, UserData } from "../../utils/types";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
 import type { Socket } from "socket.io-client";
@@ -20,7 +20,7 @@ const Header = () => {
   const router = useRouter();
   const notificationMenuRef = useRef(null);
   const handleClick = async () => {
-    console.log(1)
+    console.log(1);
     if (user) {
       const promise = await fetch(
         "http://localhost:3000/api/userNotificationsChecked",
@@ -177,7 +177,7 @@ const Header = () => {
           className={styles.notificationsContainer}
           ref={notificationMenuRef}
         >
-          {user?.notifications?.map((el: Notification, index) => {
+          {user?.notifications?.map((el: Notification, index: number) => {
             const postDate = calculateDateOrTime(el.createdAt);
             return (
               <div

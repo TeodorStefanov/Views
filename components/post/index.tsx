@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
-import { PostsType } from "../../app/views/[id]/profileChecker";
+import { PostsType } from "../../utils/types"
 
 interface fields {
   post: PostsType;

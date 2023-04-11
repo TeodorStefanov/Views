@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef, useEffect } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { Comment, PostsType } from "../../app/views/[id]/profileChecker";
+import { Comment, PostsType } from "../../utils/types";
 import UserContext from "../../context/context";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import CommentFields from "../commentFields";
@@ -15,7 +15,7 @@ type Fields = {
   onClick: () => void;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (id: string) => Promise<void>;
+  handleSubmit: (id: string) => void;
   handleSubmitCommentOfComment: (
     id: string,
     postId: string,

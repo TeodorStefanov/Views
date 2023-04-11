@@ -8,7 +8,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import Connect from "../utils/mongoDBMongooseConnection";
 import Posts from "../models/posts";
 import Notification from "../models/notifications";
-import { UserData } from "./views/[id]/profileChecker";
+import { UserData } from "../utils/types";
 
 export const revalidate = 0;
 async function getToken() {
