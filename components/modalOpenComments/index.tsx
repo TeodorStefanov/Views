@@ -80,7 +80,7 @@ const ModalOpenComments = ({
   ) => {
     if (e.key === "Enter") {
       if (comment === "comment") {
-        await handleSubmit(userId!);
+        handleSubmit(userId!);
       } else if (comment === "commentOfComment") {
         handleSubmitCommentOfComment(userId!, post!._id, post!.createdTo._id);
         setCommentsToCommentsChanged(true);

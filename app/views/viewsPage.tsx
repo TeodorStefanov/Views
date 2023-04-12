@@ -1,22 +1,22 @@
 "use client";
-import React, { FC, useContext, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useContext, useState, useEffect } from "react";
+import { handleClickPicture, handleClickVideo } from "../../utils/cloudinary";
+import { Comment, Posts, PostsType, UserData } from "../../utils/types";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useForm, SubmitHandler } from "react-hook-form";
-import styles from "./index.module.css";
-import getNavigation from "../../navigation";
-import { Comment, PostsType, UserData } from "../../utils/types";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
+import ModalOpenComments from "../../components/modalOpenComments";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ModalOpenLikes from "../../components/modalOpenLikes";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { likeExists } from "../../utils/checkLiked";
 import UserContext from "../../context/context";
-import Post from "../../components/post";
 import type { Socket } from "socket.io-client";
-import { io } from "socket.io-client";
-import { useRouter } from "next/navigation";
-import ModalOpenLikes from "../../components/modalOpenLikes";
-import ModalOpenComments from "../../components/modalOpenComments";
 import AddPost from "../../components/addPost";
-import { handleClickPicture, handleClickVideo } from "../../utils/cloudinary";
+import getNavigation from "../../navigation";
+import { useRouter } from "next/navigation";
+import Post from "../../components/post";
+import styles from "./index.module.css";
+import { io } from "socket.io-client";
 import {
   handleClickPost,
   addLike,
@@ -29,7 +29,7 @@ interface IFormInputs {
   searchMenu: string;
 }
 const ViewsPage = ({ posts }: any) => {
-  const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([])
+  const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
   const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
   const [pressedButton, setPressedButton] = useState<string>("All");
   const [contentComment, setContentComment] = useState<string>("");
@@ -54,17 +54,17 @@ const ViewsPage = ({ posts }: any) => {
   const socketInitializer = async () => {
     socket = io();
     socket.emit("main");
-    socket.on("posts", (posts) => {
+    socket.on("posts", (posts: PostsType[]) => {
       setAllPosts(posts);
     });
-    socket.on("likes", (post) => {
+    socket.on("likes", (post: PostsType[]) => {
       setAllPosts(post);
     });
-    socket.on("allComments", (posts) => {
+    socket.on("allComments", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
     });
-    socket.on("likeToComment", (posts) => {
+    socket.on("likeToComment", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
     });
