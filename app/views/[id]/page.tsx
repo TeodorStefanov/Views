@@ -61,7 +61,7 @@ export default async function Profile({ params }: any) {
   }
 
   return (
-    <ProfileChecker
+    <ProfileChecker 
       _id={userFind._id}
       backgroundPicture={userFind.backgroundPicture}
       picture={userFind.picture}

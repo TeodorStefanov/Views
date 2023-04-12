@@ -5,11 +5,17 @@ import styles from "./index.module.css";
 import UserContext from "../../context/context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { Notification, UserData } from "../../utils/types";
+import { FriendNotification, Notification, UserData } from "../../utils/types";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
+
+import {
+  handleAcceptRequest,
+  handleRemoveRequest,
+  handleClickNotification,
+} from "../../utils/socket/socketEmits";
 let socket: undefined | Socket;
 const Header = () => {
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
@@ -20,7 +26,6 @@ const Header = () => {
   const router = useRouter();
   const notificationMenuRef = useRef(null);
   const handleClick = async () => {
-    console.log(1);
     if (user) {
       const promise = await fetch(
         "http://localhost:3000/api/userNotificationsChecked",
@@ -40,63 +45,26 @@ const Header = () => {
       }
     }
   };
-  const handleAcceptRequest = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-    friendId: string,
-    notificationId: string
-  ) => {
-    event.stopPropagation();
-    const userId = user?._id;
-    if (socket !== undefined) {
-      socket.emit("acceptFriendRequest", userId, friendId, notificationId);
-    }
-  };
-
-  const handleRemoveRequest = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-    friendId: string,
-    notificationId: string
-  ) => {
-    event.stopPropagation();
-    const userId = user?._id;
-    if (socket !== undefined) {
-      socket.emit("removeFriendRequest", userId, friendId, notificationId);
-    }
-  };
-  const handleClickNotification = async (
-    id: string,
-    content: string,
-    sentById: string
-  ) => {
-    if (socket !== undefined) {
-      socket.emit("userNotificationPressed", user?._id, id);
-    }
-    if (content === "Friend request" || content === "Friend request accepted") {
-      router.push(`/views/${sentById}`);
-    } else if (content === "posted on your wall") {
-      router.push(`/views/${user?._id}`);
-    }
-  };
   const socketInitializer = async () => {
     socket = io();
     socket.emit("login", user?._id);
-    socket.on("friendNotification", (user) => {
+    socket.on("friendNotification", (user: FriendNotification) => {
       logIn(user.friendUser);
     });
-    socket.on("acceptFriendRequest", (user) => {
+    socket.on("acceptFriendRequest", (user: UserData) => {
       logIn(user);
     });
-    socket.on("acceptFriendNotification", (user) => {
+    socket.on("acceptFriendNotification", (user: UserData) => {
       logIn(user);
     });
-    socket.on("removeFriendRequest", (user) => {
+    socket.on("removeFriendRequest", (user: UserData) => {
       logIn(user);
       setNotificationMenu(false);
     });
-    socket.on("removeFriendNotification", (user) => {
+    socket.on("removeFriendNotification", (user: UserData) => {
       logIn(user);
     });
-    socket.on("userNotificationPressed", (user) => {
+    socket.on("userNotificationPressed", (user: UserData) => {
       logIn(user);
     });
   };
@@ -185,9 +153,22 @@ const Header = () => {
                   !el.pressed ? styles.notificationNotPressed : ""
                 }`}
                 key={index}
-                onClick={() =>
-                  handleClickNotification(el._id, el.content, el.sentBy._id)
-                }
+                onClick={() => {
+                  handleClickNotification(
+                    el._id,
+                    el.content,
+                    el.sentBy._id,
+                    user!._id
+                  );
+                  if (
+                    el.content === "Friend request" ||
+                    el.content === "Friend request accepted"
+                  ) {
+                    router.push(`/views/${el.sentBy._id}`);
+                  } else if (el.content === "posted on your wall") {
+                    router.push(`/views/${user?._id}`);
+                  }
+                }}
               >
                 <img
                   src={el.sentBy.picture}
@@ -203,7 +184,12 @@ const Header = () => {
                       <button
                         className={styles.friendRequestButton}
                         onClick={(e) =>
-                          handleAcceptRequest(e, el.sentBy._id, el._id)
+                          handleAcceptRequest(
+                            e,
+                            el.sentBy._id,
+                            el._id,
+                            user!._id
+                          )
                         }
                       >
                         Accept
@@ -211,7 +197,12 @@ const Header = () => {
                       <button
                         className={styles.friendRequestButton}
                         onClick={(e) =>
-                          handleRemoveRequest(e, el.sentBy._id, el._id)
+                          handleRemoveRequest(
+                            e,
+                            el.sentBy._id,
+                            el._id,
+                            user!._id
+                          )
                         }
                       >
                         Remove

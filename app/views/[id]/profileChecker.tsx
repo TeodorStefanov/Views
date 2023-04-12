@@ -1,16 +1,16 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import UserContext from "../../../context/context";
-import styles from "./id.module.css";
-import Post from "../../../components/post";
-import AddPost from "../../../components/addPost";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
-import ModalOpenLikes from "../../../components/modalOpenLikes";
-import ModalOpenComments from "../../../components/modalOpenComments";
 import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
+import ModalOpenComments from "../../../components/modalOpenComments";
+import ModalOpenLikes from "../../../components/modalOpenLikes";
 import { likeExists } from "../../../utils/checkLiked";
-import { useRouter } from "next/navigation";
+import UserContext from "../../../context/context";
+import AddPost from "../../../components/addPost";
 import type { Socket } from "socket.io-client";
+import Post from "../../../components/post";
+import { useRouter } from "next/navigation";
+import styles from "./id.module.css";
 import io from "socket.io-client";
 import {
   handleClickPicture,
@@ -27,7 +27,9 @@ import {
 } from "../../../utils/socket/socketEmits";
 import {
   Comment,
+  FriendNotification,
   Notification,
+  Posts,
   PostsType,
   UserData,
 } from "../../../utils/types";
@@ -72,26 +74,26 @@ const ProfileChecker = ({
     socket = io();
     socket.emit("login", user?._id);
     socket.emit("joinRoom", _id);
-    socket.on("allPosts", (posts) => {
+    socket.on("allPosts", (posts: PostsType[]) => {
       setAllPosts(posts);
     });
-    socket.on("addLike", (post) => {
+    socket.on("addLike", (post: PostsType[]) => {
       setAllPosts(post);
     });
-    socket.on("allComments", (posts) => {
+    socket.on("allComments", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.postsUser);
     });
-    socket.on("sentFriendRequest", (user) => {
+    socket.on("sentFriendRequest", (user: UserData) => {
       logIn(user);
       setSentFriendRequest(true);
     });
-    socket.on("friendNotification", (user) => {
+    socket.on("friendNotification", (user: FriendNotification) => {
       logIn(user.friendUser);
       setReceivedFriendRequest(user.notificationId);
     });
 
-    socket.on("likeToComment", (posts) => {
+    socket.on("likeToComment", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.postsUser);
     });
@@ -268,7 +270,7 @@ const ProfileChecker = ({
               commentOfCommentContent,
               _id
             );
-            setCommentOfCommentContent("")
+            setCommentOfCommentContent("");
           }}
           commentChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setCommentOfCommentContent(e.target.value)
