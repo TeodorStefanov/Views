@@ -46,6 +46,7 @@ export const createCommentUpdatePost = async (
       },
       { path: "likes", model: User },
       { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
     ]);
     const user = await User.findById(roomId).populate({
       path: "posts",
@@ -66,6 +67,7 @@ export const createCommentUpdatePost = async (
         },
         { path: "likes", model: User },
         { path: "createdBy", model: User },
+        { path: "createdTo", model: User },
       ],
     });
     const posts = await Posts.find().populate([
@@ -140,6 +142,7 @@ export const addCommentOfComment = async (
       },
       { path: "likes", model: User },
       { path: "createdBy", model: User },
+      { path: "createdTo", model: User },
     ]);
     const user = await User.findById(roomId).populate({
       path: "posts",
@@ -164,6 +167,7 @@ export const addCommentOfComment = async (
         },
         { path: "likes", model: User },
         { path: "createdBy", model: User },
+        { path: "createdTo", model: User },
       ],
     });
     const posts = await Posts.find().populate([

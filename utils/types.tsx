@@ -45,3 +45,6 @@ export type FriendNotification = {
   friendUser: UserData;
   notificationId: string;
 }
+export type PostType = {
+  posts: PostsType[]
+}
