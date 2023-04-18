@@ -91,7 +91,7 @@ const ModalOpenComments = ({
     if (container.current != null && !commentsToCommentsChanged) {
       container.current.scrollTop = container.current?.scrollHeight;
     }
-    setCommentsToCommentsChanged(false);
+    setCommentsToCommentsChanged(false)
   }, [post]);
 
   return (

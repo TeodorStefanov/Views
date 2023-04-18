@@ -1,7 +1,13 @@
 "use client";
-import React, { useContext, useState, useEffect } from "react";
+import React, { FC, useContext, useState, useEffect } from "react";
 import { handleClickPicture, handleClickVideo } from "../../utils/cloudinary";
-import { Comment, Posts, PostsType, UserData } from "../../utils/types";
+import {
+  Comment,
+  Posts,
+  PostsType,
+  PostType,
+  UserData,
+} from "../../utils/types";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import ModalOpenComments from "../../components/modalOpenComments";
@@ -28,7 +34,7 @@ let socket: undefined | Socket;
 interface IFormInputs {
   searchMenu: string;
 }
-const ViewsPage = ({ posts }: any) => {
+const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const [openLikesPressed, setOpenLikesPressed] = useState<UserData[] | []>([]);
   const [openCommentsPressed, setOpenCommentsPressed] = useState<PostsType>();
   const [pressedButton, setPressedButton] = useState<string>("All");

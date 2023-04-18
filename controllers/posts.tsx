@@ -91,6 +91,7 @@ export const newCart = async (
           ],
         },
         { path: "createdBy", model: User },
+        { path: "createdTo", model: User },
       ],
     });
     const posts = await Posts.find().populate([

@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import ModalProfilePicture from "../../../components/modalProfilePicture";
 import { calculateDateOrTime } from "../../../utils/calculateDateOrTime";
 import ModalOpenComments from "../../../components/modalOpenComments";
@@ -35,7 +35,7 @@ import {
 } from "../../../utils/types";
 let socket: undefined | Socket;
 
-const ProfileChecker = ({
+const ProfileChecker: FC<UserData> = ({
   _id,
   backgroundPicture,
   picture,
