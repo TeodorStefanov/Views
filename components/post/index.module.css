@@ -78,6 +78,9 @@
   color: rgb(119, 115, 115);
   cursor: pointer;
 }
+.likeMark:hover {
+  color: #1d9bf0;
+}
 .unLikeMark {
   width: 20px;
   height: 20px;

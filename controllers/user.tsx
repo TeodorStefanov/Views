@@ -4,7 +4,7 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { serialize } from "cookie";
-import { PostsType, UserData } from "../utils/types"
+import { PostsType, UserData } from "../utils/types";
 import Posts from "../models/posts";
 import Comments from "../models/comments";
 import Notification from "../models/notifications";
@@ -141,8 +141,13 @@ export const loginUser = async (
         {
           path: "notifications",
           model: Notification,
+          populate: [
+            { path: "sentBy", model: User },
+            { path: "sentTo", model: User },
+          ],
         },
         { path: "friendRequests", model: User },
+        { path: "friends", model: User },
       ]);
     if (!user) {
       res.status(401).send({ message: "Wrong username or password" });

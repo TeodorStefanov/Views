@@ -60,6 +60,15 @@
   border-right: solid 1px rgb(232, 225, 225);
   border-bottom: solid 1px rgb(232, 225, 225);
 }
+.friendsCount {
+  margin-bottom: 0;
+}
+.friendPicture {
+  width: 28px;
+  height: 28px;
+  border-radius: 20px;
+  cursor: pointer;
+}
 .follow {
   font-size: 14px;
   font-weight: bold;
