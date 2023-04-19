@@ -33,6 +33,7 @@
 .windowLogin {
   text-decoration: none;
   color: white;
+  cursor: pointer;
 }
 .windowRegister {
   text-decoration: none;
@@ -44,6 +45,7 @@
   align-items: center;
   text-decoration: none;
   color: white;
+  cursor: pointer;
 }
 .bell {
   display: flex;

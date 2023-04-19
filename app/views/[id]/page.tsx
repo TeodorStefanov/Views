@@ -44,6 +44,7 @@ async function getUser(id: string) {
           model: Notification,
           populate: { path: "sentBy", model: User },
         },
+        { path: "friends", model: User },
         { path: "friendRequests", model: User },
       ])
       .lean();
@@ -61,7 +62,7 @@ export default async function Profile({ params }: any) {
   }
 
   return (
-    <ProfileChecker 
+    <ProfileChecker
       _id={userFind._id}
       backgroundPicture={userFind.backgroundPicture}
       picture={userFind.picture}

@@ -71,39 +71,34 @@ export const handleAcceptFriendRequest = async (
   receivedFriendRequest: string
 ) => {
   if (socket !== undefined) {
-    socket.emit("acceptFriendRequest", userId, id, receivedFriendRequest);
+    socket.emit("acceptFriendRequest", userId, receivedFriendRequest, id);
   }
 };
 export const handleAcceptRequest = async (
   event: React.MouseEvent<HTMLButtonElement>,
-  friendId: string,
+  userId: string,
   notificationId: string,
-  userId: string
+  friendId: string
 ) => {
   event.stopPropagation();
   if (socket !== undefined) {
-    socket.emit("acceptFriendRequest", userId, friendId, notificationId);
+    socket.emit("acceptFriendRequest", userId, notificationId, friendId);
   }
 };
 
 export const handleRemoveRequest = async (
   event: React.MouseEvent<HTMLButtonElement>,
-  friendId: string,
+  userId: string,
   notificationId: string,
-  userId: string
+  friendId: string
 ) => {
   event.stopPropagation();
   if (socket !== undefined) {
-    socket.emit("removeFriendRequest", userId, friendId, notificationId);
+    socket.emit("removeFriendRequest", userId, notificationId, friendId);
   }
 };
-export const handleClickNotification = async (
-  id: string,
-  content: string,
-  sentById: string,
-  userId: string
-) => {
+export const handleClickNotification = async (userId: string, id: string) => {
   if (socket !== undefined) {
     socket.emit("userNotificationPressed", userId, id);
   }
-}
+};

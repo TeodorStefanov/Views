@@ -168,9 +168,13 @@ export const userNotificationPressed = async (userId: string, id: string) => {
       {
         path: "notifications",
         model: Notification,
-        populate: { path: "sentBy", model: User },
+        populate: [
+          { path: "sentBy", model: User },
+          { path: "sentTo", model: User },
+        ],
       },
       { path: "friendRequests", model: User },
+      { path: "friends", model: User },
     ]);
     return user;
   } catch (err) {

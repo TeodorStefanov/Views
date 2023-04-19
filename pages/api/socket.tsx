@@ -39,7 +39,7 @@ export default async function handler(
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
-      console.log("server is connected");
+      console.log("server is connected")
       socket.on("main", () => {
         socket.join("main");
       });
@@ -93,7 +93,7 @@ export default async function handler(
       });
       socket.on(
         "acceptFriendRequest",
-        async (userId, friendId, notificationId) => {
+        async (userId, notificationId, friendId) => {
           const user = await acceptFriendRequest(
             userId,
             friendId,
@@ -108,7 +108,7 @@ export default async function handler(
       );
       socket.on(
         "removeFriendRequest",
-        async (userId, friendId, notificationId) => {
+        async (userId, notificationId, friendId) => {
           const user = await removeFriendRequest(
             userId,
             friendId,
@@ -131,6 +131,7 @@ export default async function handler(
         }
       );
       socket.on("userNotificationPressed", async (userId, id) => {
+        console.log(1);
         io.in(`${userId}-room`).emit(
           "userNotificationPressed",
           await userNotificationPressed(userId, id)

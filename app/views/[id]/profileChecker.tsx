@@ -182,7 +182,23 @@ const ProfileChecker: FC<UserData> = ({
           </div>
           <div className={styles.middleDescription}>
             <div>Description</div>
-            <p>{friends.length} Following</p>
+            <p className={styles.friendsCount}>{friends.length} Friends</p>
+            {friends.length > 0
+              ? friends.map((el: UserData, index) => {
+                  if (index >= 5) {
+                    return;
+                  }
+                  return (
+                    <img
+                      className={styles.friendPicture}
+                      src={el.picture}
+                      alt=""
+                      key={index}
+                      onClick={() => router.push(`/views/${el._id}`)}
+                    />
+                  );
+                })
+              : ""}
           </div>
           <div className={styles.content}>
             {isFriend ? (

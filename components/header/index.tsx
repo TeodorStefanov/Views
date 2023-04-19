@@ -74,8 +74,9 @@ const Header = () => {
         setNotificationMenu(false);
       }
     };
+
     socketInitializer();
-  }, []);
+  }, [user]);
   return (
     <div className={styles.container}>
       <Link href="/views" className={styles.logo}>
@@ -134,9 +135,18 @@ const Header = () => {
                 ""
               )}
             </div>
-            <Link href="/" className={styles.windowLogOut} onClick={logOut}>
+            <div
+              className={styles.windowLogOut}
+              onClick={() => {
+                router.push("/")
+                logOut();
+                if (socket != undefined) {
+                  socket.disconnect()
+                }
+              }}
+            >
               Log Out
-            </Link>
+            </div>
           </div>
         )}
       </div>
@@ -154,12 +164,7 @@ const Header = () => {
                 }`}
                 key={index}
                 onClick={() => {
-                  handleClickNotification(
-                    el._id,
-                    el.content,
-                    el.sentBy._id,
-                    user!._id
-                  );
+                  handleClickNotification(user!._id, el._id);
                   if (
                     el.content === "Friend request" ||
                     el.content === "Friend request accepted"
@@ -186,9 +191,9 @@ const Header = () => {
                         onClick={(e) =>
                           handleAcceptRequest(
                             e,
-                            el.sentBy._id,
+                            user!._id,
                             el._id,
-                            user!._id
+                            el.sentBy._id
                           )
                         }
                       >
@@ -199,9 +204,9 @@ const Header = () => {
                         onClick={(e) =>
                           handleRemoveRequest(
                             e,
-                            el.sentBy._id,
+                            user!._id,
                             el._id,
-                            user!._id
+                            el.sentBy._id
                           )
                         }
                       >
