@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import styles from "./id.module.css";
 import io from "socket.io-client";
 import {
+  handleChangeBackgroundPicture,
   handleClickPicture,
   handleClickVideo,
 } from "../../../utils/cloudinary";
@@ -59,6 +60,8 @@ const ProfileChecker: FC<UserData> = ({
     useState<string>("");
   const [receivedFriendRequest, setReceivedFriendRequest] =
     useState<string>("");
+  const [newBackgroundPicture, setNewBackgroundPicture] =
+    useState<string>(backgroundPicture);
   const context = useContext(UserContext);
   const { user, logIn } = context;
   const router = useRouter();
@@ -97,6 +100,10 @@ const ProfileChecker: FC<UserData> = ({
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.postsUser);
     });
+    socket.on("changeBackgroundPicture", (user: UserData) => {
+      logIn(user);
+      setNewBackgroundPicture(user.backgroundPicture);
+    });
     return null;
   };
   useEffect(() => {
@@ -132,12 +139,18 @@ const ProfileChecker: FC<UserData> = ({
           <div className={styles.top}>
             <div
               style={{
-                backgroundImage: `url(${backgroundPicture})`,
+                backgroundImage: `url(${newBackgroundPicture})`,
               }}
-              className={styles.topPicture}
+              className={styles.backgroundPicture}
             >
               {loggedUser ? (
-                <div className={styles.topAddPicture}>Add cover picture</div>
+                <div
+                  className={styles.addBackgroundPicture}
+                  onClick={() => handleChangeBackgroundPicture(user!._id)}
+                >
+                  <div className={styles.backgroundPictureButton}>Change cover picture</div> 
+                  <div className={styles.backgroundPictureOverlay}></div>
+                </div>
               ) : (
                 ""
               )}

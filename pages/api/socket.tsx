@@ -13,6 +13,7 @@ import { newCart } from "../../controllers/posts";
 import {
   acceptFriendRequest,
   removeFriendRequest,
+  userChangeBackgroundPicture,
 } from "../../controllers/user";
 import { likeToComment } from "../../utils/socket/likeToComment";
 
@@ -39,19 +40,25 @@ export default async function handler(
     const io = new Server(res.socket.server);
     res.socket.server.io = io;
     io.on("connection", (socket) => {
-      console.log("server is connected")
+      console.log("server is connected");
       socket.on("main", () => {
         socket.join("main");
       });
-      socket.on("login", (id) => {
+      socket.on("login", (id: string) => {
         socket.join(`${id}-room`);
       });
-      socket.on("joinRoom", (id) => {
+      socket.on("joinRoom", (id: string) => {
         socket.join(id);
       });
       socket.on(
         "allPosts",
-        async (userId, content, imageUrl, videoUrl, createdBy) => {
+        async (
+          userId: string,
+          content: string,
+          imageUrl: string,
+          videoUrl: string,
+          createdBy: string
+        ) => {
           const user = await newCart(
             userId,
             content,
@@ -63,11 +70,19 @@ export default async function handler(
           io.in("main").emit("posts", user?.posts);
         }
       );
-      socket.on("addLike", async (postId, userId, method, roomId) => {
-        const posts = await likes(postId, userId, method, roomId);
-        io.in(roomId).emit("addLike", posts?.postsUser);
-        io.in("main").emit("likes", posts?.posts);
-      });
+      socket.on(
+        "addLike",
+        async (
+          postId: string,
+          userId: string,
+          method: string,
+          roomId: string
+        ) => {
+          const posts = await likes(postId, userId, method, roomId);
+          io.in(roomId).emit("addLike", posts?.postsUser);
+          io.in("main").emit("likes", posts?.posts);
+        }
+      );
       socket.on(
         "allComments",
         async (
@@ -83,17 +98,20 @@ export default async function handler(
           );
         }
       );
-      socket.on("sentFriendRequest", async (userId, friendId) => {
-        const user = await createFriendRequestNotification(userId, friendId);
-        io.in(`${userId}-room`).emit("sentFriendRequest", user?.user);
-        io.in(`${friendId}-room`).emit("friendNotification", {
-          friendUser: user?.friendUser,
-          notificationId: user?.notificationId,
-        });
-      });
+      socket.on(
+        "sentFriendRequest",
+        async (userId: string, friendId: string) => {
+          const user = await createFriendRequestNotification(userId, friendId);
+          io.in(`${userId}-room`).emit("sentFriendRequest", user?.user);
+          io.in(`${friendId}-room`).emit("friendNotification", {
+            friendUser: user?.friendUser,
+            notificationId: user?.notificationId,
+          });
+        }
+      );
       socket.on(
         "acceptFriendRequest",
-        async (userId, notificationId, friendId) => {
+        async (userId: string, notificationId: string, friendId: string) => {
           const user = await acceptFriendRequest(
             userId,
             friendId,
@@ -108,7 +126,7 @@ export default async function handler(
       );
       socket.on(
         "removeFriendRequest",
-        async (userId, notificationId, friendId) => {
+        async (userId: string, notificationId: string, friendId: string) => {
           const user = await removeFriendRequest(
             userId,
             friendId,
@@ -123,20 +141,37 @@ export default async function handler(
       );
       socket.on(
         "likeToComment",
-        async (commentId, userId, postId, id, method) => {
+        async (
+          commentId: string,
+          userId: string,
+          postId: string,
+          id: string,
+          method: string
+        ) => {
           io.in([id, "main"]).emit(
             "likeToComment",
             await likeToComment(commentId, userId, postId, id, method)
           );
         }
       );
-      socket.on("userNotificationPressed", async (userId, id) => {
-        console.log(1);
-        io.in(`${userId}-room`).emit(
-          "userNotificationPressed",
-          await userNotificationPressed(userId, id)
-        );
-      });
+      socket.on(
+        "userNotificationPressed",
+        async (userId: string, id: string) => {
+          io.in(`${userId}-room`).emit(
+            "userNotificationPressed",
+            await userNotificationPressed(userId, id)
+          );
+        }
+      );
+      socket.on(
+        "changeBackgroundPicture",
+        async (userId: string, picture: string) => {
+          io.in(`${userId}-room`).emit(
+            "changeBackgroundPicture",
+            await userChangeBackgroundPicture(userId, picture)
+          );
+        }
+      );
     });
   }
   res.end();

@@ -101,4 +101,9 @@ export const handleClickNotification = async (userId: string, id: string) => {
   if (socket !== undefined) {
     socket.emit("userNotificationPressed", userId, id);
   }
-};
+}
+export const changeBackgroundPicture = async (userId: string, picture: string) => {
+  if (socket !== undefined) {
+    socket.emit("changeBackgroundPicture", userId, picture)
+  }
+}
