@@ -14,6 +14,7 @@ import {
   acceptFriendRequest,
   removeFriendRequest,
   userChangeBackgroundPicture,
+  userChangeProfilePicture,
 } from "../../controllers/user";
 import { likeToComment } from "../../utils/socket/likeToComment";
 
@@ -171,7 +172,16 @@ export default async function handler(
             await userChangeBackgroundPicture(userId, picture)
           );
         }
-      );
+      )
+      socket.on(
+        "changeProfilePicture",
+        async (userId: string, picture: string) => {
+          io.in(`${userId}-room`).emit(
+            "changeProfilePicture",
+            await userChangeProfilePicture(userId, picture)
+          );
+        }
+      )
     });
   }
   res.end();

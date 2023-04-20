@@ -14,6 +14,7 @@ import styles from "./id.module.css";
 import io from "socket.io-client";
 import {
   handleChangeBackgroundPicture,
+  handleChangeProfilePicture,
   handleClickPicture,
   handleClickVideo,
 } from "../../../utils/cloudinary";
@@ -62,6 +63,7 @@ const ProfileChecker: FC<UserData> = ({
     useState<string>("");
   const [newBackgroundPicture, setNewBackgroundPicture] =
     useState<string>(backgroundPicture);
+  const [newPicture, setNewPicture] = useState<string>(picture);
   const context = useContext(UserContext);
   const { user, logIn } = context;
   const router = useRouter();
@@ -104,6 +106,11 @@ const ProfileChecker: FC<UserData> = ({
       logIn(user);
       setNewBackgroundPicture(user.backgroundPicture);
     });
+    socket.on("changeProfilePicture", (user: UserData) => {
+      logIn(user);
+      setNewPicture(user.picture);
+      setAllPosts(user.posts.reverse())
+    })
     return null;
   };
   useEffect(() => {
@@ -148,7 +155,9 @@ const ProfileChecker: FC<UserData> = ({
                   className={styles.addBackgroundPicture}
                   onClick={() => handleChangeBackgroundPicture(user!._id)}
                 >
-                  <div className={styles.backgroundPictureButton}>Change cover picture</div> 
+                  <div className={styles.backgroundPictureButton}>
+                    Change cover picture
+                  </div>
                   <div className={styles.backgroundPictureOverlay}></div>
                 </div>
               ) : (
@@ -156,7 +165,7 @@ const ProfileChecker: FC<UserData> = ({
               )}
             </div>
             <img
-              src={picture}
+              src={newPicture}
               className={styles.picture}
               onClick={() => setProfilePicture(true)}
             ></img>
@@ -195,6 +204,16 @@ const ProfileChecker: FC<UserData> = ({
           </div>
           <div className={styles.middleDescription}>
             <div>Description</div>
+            {user!._id === _id ? (
+              <div
+                className={styles.changeProfilePicture}
+                onClick={() => handleChangeProfilePicture(user!._id)}
+              >
+                Change profile Picture
+              </div>
+            ) : (
+              ""
+            )}
             <p className={styles.friendsCount}>{friends.length} Friends</p>
             {friends.length > 0
               ? friends.map((el: UserData, index) => {
@@ -263,7 +282,7 @@ const ProfileChecker: FC<UserData> = ({
       </div>
       {profilePicture ? (
         <ModalProfilePicture
-          picture={picture}
+          picture={newPicture}
           onClick={() => setProfilePicture(false)}
         />
       ) : (

@@ -1,4 +1,4 @@
-import { changeBackgroundPicture } from "./socket/socketEmits";
+import { changeBackgroundPicture, changeProfilePicture } from "./socket/socketEmits";
 
 export const handleClickPicture = (setImageUrl: any) => {
   const widget = window.cloudinary.createUploadWidget(
@@ -50,4 +50,21 @@ export const handleChangeBackgroundPicture = (userId: string) => {
     }
   )
   widget.open();
-};
+}
+export const handleChangeProfilePicture = (userId: string) => {
+  const widget = window.cloudinary.createUploadWidget(
+    {
+      cloudName: "daqcaszkf",
+      uploadPreset: "softuni",
+    },
+    (error: any, result: any) => {
+      if (error) {
+        console.log("Error:", error);
+      }
+      if (result.event === "success") {
+        changeProfilePicture(userId, result.info.url);
+      }
+    }
+  )
+  widget.open();
+}
