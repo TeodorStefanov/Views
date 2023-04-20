@@ -432,5 +432,53 @@ export const userChangeBackgroundPicture = async (
     { path: "friendRequests", model: User },
     { path: "friends", model: User },
   ]);
-  return user
+  return user;
+};
+export const userChangeProfilePicture = async (
+  userId: string,
+  picture: string
+) => {
+  const user = await User.findOneAndUpdate(
+    { _id: userId },
+    { picture: picture },
+    { new: true }
+  ).populate([
+    {
+      path: "posts",
+      model: Posts,
+      populate: [
+        { path: "likes", model: User },
+        {
+          path: "comments",
+          model: Comments,
+          populate: [
+            { path: "likes", model: User },
+            {
+              path: "comments",
+              model: Comments,
+              populate: [
+                { path: "likes", model: User },
+                { path: "comments", model: Comments },
+                { path: "user", model: User },
+              ],
+            },
+            { path: "user", model: User },
+          ],
+        },
+        { path: "createdBy", model: User },
+        { path: "createdTo", model: User },
+      ],
+    },
+    {
+      path: "notifications",
+      model: Notification,
+      populate: [
+        { path: "sentBy", model: User },
+        { path: "sentTo", model: User },
+      ],
+    },
+    { path: "friendRequests", model: User },
+    { path: "friends", model: User },
+  ]);
+  return user;
 };
