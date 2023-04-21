@@ -12,12 +12,15 @@ import Post from "../../../components/post";
 import { useRouter } from "next/navigation";
 import styles from "./id.module.css";
 import io from "socket.io-client";
+import Image from "next/image";
 import {
   handleChangeBackgroundPicture,
   handleChangeProfilePicture,
   handleClickPicture,
   handleClickVideo,
 } from "../../../utils/cloudinary";
+import imgOne from "../../../images/side/imgOne.png";
+import imgTwo from "../../../images/side/imgTwo.png";
 import {
   handleClickPost,
   addLike,
@@ -109,8 +112,8 @@ const ProfileChecker: FC<UserData> = ({
     socket.on("changeProfilePicture", (user: UserData) => {
       logIn(user);
       setNewPicture(user.picture);
-      setAllPosts(user.posts.reverse())
-    })
+      setAllPosts(user.posts.reverse());
+    });
     return null;
   };
   useEffect(() => {
@@ -278,7 +281,22 @@ const ProfileChecker: FC<UserData> = ({
           </div>
         </div>
         <div className={styles.UserData}></div>
-        <div className={styles.right}></div>
+        <div className={styles.right}>
+          <div className={styles.contacts}>
+            <p className={styles.contactsTitle}>Contacts</p>
+            {friends.map((el: UserData) => {
+              return (
+                <div
+                  className={styles.contactsPictureName}
+                  onClick={() => router.push(`/views/${el._id}`)}
+                >
+                  <img src={el.picture} className={styles.contentPicture} />{" "}
+                  {el.viewsName}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
       {profilePicture ? (
         <ModalProfilePicture
