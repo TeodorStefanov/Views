@@ -213,7 +213,26 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
           ""
         )}
       </div>
-      <div className={styles.right}></div>
+      <div className={styles.right}>
+        <div className={styles.rightAll}>
+          <div className={styles.advertismentOne}>asdasdas</div>
+          <div className={styles.advertismentTwo}>asdasdasd</div>
+          <div className={styles.contacts}>
+            <p className={styles.contactsTitle}>Contacts</p>
+            {user?.friends.map((el: UserData) => {
+              return (
+                <div
+                  className={styles.contactsPictureName}
+                  onClick={() => router.push(`/views/${el._id}`)}
+                >
+                  <img src={el.picture} className={styles.contentPicture} />{" "}
+                  {el.viewsName}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
