@@ -19,10 +19,14 @@ import UserContext from "../../context/context";
 import type { Socket } from "socket.io-client";
 import AddPost from "../../components/addPost";
 import getNavigation from "../../navigation";
+import picOne from "../../images/picOne.jpg";
+import picTwo from "../../images/picTwo.jpg";
+import picThree from "../../images/picThree.png";
 import { useRouter } from "next/navigation";
 import Post from "../../components/post";
 import styles from "./index.module.css";
 import { io } from "socket.io-client";
+import Image from "next/image";
 import {
   handleClickPost,
   addLike,
@@ -87,7 +91,25 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   }, []);
   return (
     <div className={styles.container}>
-      <div className={styles.left}></div>
+      <div className={styles.left}>
+        <div className={styles.leftAll}>
+          <div className={styles.friendsPages}>
+            <p>Friends</p>
+            <p>Pages</p>
+            <p>Recent</p>
+            <p>Groups</p>
+            <p>MarketPlace</p>
+            <p>Watch</p>
+          </div>
+          <div className={styles.advertisment}>
+            <Image
+              src={picThree}
+              alt="pic"
+              className={styles.advertismentPicture}
+            />
+          </div>
+        </div>
+      </div>
       <div className={styles.middle}>
         <div>
           <label htmlFor="searchMenu">
@@ -215,8 +237,20 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
       </div>
       <div className={styles.right}>
         <div className={styles.rightAll}>
-          <div className={styles.advertismentOne}>asdasdas</div>
-          <div className={styles.advertismentTwo}>asdasdasd</div>
+          <div className={styles.advertismentOne}>
+            <Image
+              src={picOne}
+              alt="pic"
+              className={styles.advertismentPictureOne}
+            />
+          </div>
+          <div className={styles.advertismentTwo}>
+            <Image
+              src={picTwo}
+              alt="pic"
+              className={styles.advertismentPictureOne}
+            />
+          </div>
           <div className={styles.contacts}>
             <p className={styles.contactsTitle}>Contacts</p>
             {user?.friends.map((el: UserData) => {
