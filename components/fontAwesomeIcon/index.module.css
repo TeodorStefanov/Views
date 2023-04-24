@@ -1,0 +1,20 @@
+.leftMenuButton {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  text-align: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.leftMenuButton:hover {
+  background-color: rgb(226, 220, 220);
+}
+.leftMenuIcon {
+  width: 40px;
+  height: 40px;
+  color: #1d9bf0;
+}
