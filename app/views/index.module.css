@@ -11,32 +11,6 @@
   width: 20%;
   height: 100vh;
 }
-.leftAll {
-  display: flex;
-  position: fixed;
-  flex-direction: column;
-  width: 20%;
-  height: 100vh;
-  padding: 20px;
-  text-align: left;
-  box-sizing: border-box;
-}
-.friendsPages {
-  width: 100%;
-  height: 47%;
-  border-radius: 20px;
-}
-.advertisment {
-  width: 100%;
-  height: 50%;
-  padding: 10px;
-  border-top: solid 1px rgb(105, 105, 102);
-  box-sizing: border-box;
-}
-.advertismentPicture {
-  width: 100%;
-  height: 90%;
-}
 
 .middle {
   width: 60%;
@@ -97,53 +71,4 @@
   flex-direction: column;
   width: 20%;
   height: 100vh;
-}
-.rightAll {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  width: 20%;
-  height: 100vh;
-}
-.advertismentOne {
-  height: 20%;
-  margin: 10px;
-  box-sizing: border-box;
-}
-.advertismentPictureOne {
-  width: 100%;
-  height: 100%;
-}
-.advertismentTwo {
-  height: 20%;
-  margin: 10px;
-  box-sizing: border-box;
-}
-.contacts {
-  margin: 10px;
-  box-sizing: border-box;
-  background-color: #e8f0f4;
-  text-align: center;
-  align-items: center;
-  border-top: solid 1px rgb(105, 105, 102);
-  padding: 10px;
-}
-.contactsTitle {
-  font-weight: bold;
-  margin: 10px;
-  text-align: left;
-  color: rgb(105, 105, 102);
-}
-.contactsPictureName {
-  display: flex;
-  justify-content: left;
-  text-align: left;
-  margin: 2px;
-  gap: 10px;
-  align-items: center;
-}
-.contentPicture {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
 }
