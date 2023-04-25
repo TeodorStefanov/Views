@@ -2,8 +2,8 @@ import React from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
-import { PostsType } from "../../utils/types"
-
+import { PostsType } from "../../utils/types";
+import Image from "next/image";
 interface fields {
   post: PostsType;
   postTime: string;
@@ -34,10 +34,13 @@ const Post = ({
   return (
     <div className={styles.postContainer}>
       <div className={styles.postContent}>
-        <img
+        <Image
           src={post.createdBy.picture}
           className={styles.postUserPicture}
           onClick={handleClick}
+          width={200}
+          height={200}
+          alt="pic"
         />
         <p>
           <b onClick={handleClick} className={styles.viewsName}>
@@ -53,7 +56,13 @@ const Post = ({
         ""
       )}
       {post.imageUrl ? (
-        <img src={post.imageUrl} className={styles.postImageUrl} />
+        <Image
+          src={post.imageUrl}
+          className={styles.postImageUrl}
+          width={200}
+          height={200}
+          alt="pic"
+        />
       ) : (
         ""
       )}

@@ -28,13 +28,20 @@ const RightMenu = () => {
       </div>
       <div className={styles.contacts}>
         <p className={styles.contactsTitle}>Contacts</p>
-        {user?.friends.map((el: UserData) => {
+        {user?.friends.map((el: UserData, index: number) => {
           return (
             <div
               className={styles.contactsPictureName}
               onClick={() => router.push(`/views/${el._id}`)}
+              key={index}
             >
-              <img src={el.picture} className={styles.contentPicture} />{" "}
+              <Image
+                src={el.picture}
+                className={styles.contentPicture}
+                width={200}
+                height={200}
+                alt="pic"
+              />{" "}
               {el.viewsName}
             </div>
           );

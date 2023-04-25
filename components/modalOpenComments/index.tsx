@@ -9,6 +9,7 @@ import CommentFields from "../commentFields";
 import { likeExists } from "../../utils/checkLiked";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
+import Image from "next/image";
 let socket: undefined | Socket;
 type Fields = {
   post: PostsType | undefined;
@@ -91,7 +92,7 @@ const ModalOpenComments = ({
     if (container.current != null && !commentsToCommentsChanged) {
       container.current.scrollTop = container.current?.scrollHeight;
     }
-    setCommentsToCommentsChanged(false)
+    setCommentsToCommentsChanged(false);
   }, [post]);
 
   return (
@@ -141,9 +142,12 @@ const ModalOpenComments = ({
 
                 {answerPressed === index ? (
                   <div className={styles.postCommentOfComment}>
-                    <img
-                      src={user?.picture}
+                    <Image
+                      src={user!.picture}
                       className={styles.postCommentOfCommentPicture}
+                      width={200}
+                      height={200}
+                      alt="pic"
                     />
                     <input
                       className={styles.addCommentOfComment}
@@ -163,7 +167,13 @@ const ModalOpenComments = ({
           })}
         </div>
         <div className={styles.postComment}>
-          <img src={user?.picture} className={styles.postPicture} />
+          <Image
+            src={user!.picture}
+            className={styles.postPicture}
+            width={200}
+            height={200}
+            alt="pic"
+          />
           <input
             className={styles.addComment}
             onChange={onChange}
