@@ -27,6 +27,7 @@
   align-items: center;
   border-top: solid 1px rgb(105, 105, 102);
   padding: 10px;
+  overflow-y: auto;
 }
 .contactsTitle {
   font-weight: bold;

@@ -1,8 +1,9 @@
 import React from "react";
-import { Comment } from "../../app/views/[id]/profileChecker";
+import { Comment } from "../../utils/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
+import Image from "next/image";
 type Fields = {
   el: Comment;
   answer: boolean;
@@ -27,7 +28,7 @@ const CommentFields = ({
   return (
     <div>
       <div className={styles.content}>
-        <img src={el.user.picture} className={styles.picture} />
+        <Image src={el.user.picture} className={styles.picture} alt='pic'/>
         <div className={styles.nameContent}>
           <b>{el.user.viewsName}</b>
           <div className={styles.contentContent}>{el.content}</div>

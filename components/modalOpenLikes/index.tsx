@@ -2,9 +2,10 @@ import React, { useContext } from "react";
 import styles from "./index.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { UserData } from "../../app/views/[id]/profileChecker";
+import { UserData } from "../../utils/types";
 import UserContext from "../../context/context";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 type Fields = {
   users: UserData[] | [];
   onClick: () => void;
@@ -21,7 +22,7 @@ const ModalOpenLikes = ({ users, onClick, id }: Fields) => {
           return (
             <div className={styles.user} key={index}>
               <div className={styles.userNameAndPicture}>
-                <img
+                <Image
                   src={el.picture}
                   className={styles.picture}
                   onClick={() => {
@@ -30,6 +31,7 @@ const ModalOpenLikes = ({ users, onClick, id }: Fields) => {
                     }
                     router.push(`/views/${el._id}`);
                   }}
+                  alt="pic"
                 />
                 <div
                   className={styles.viewsName}
