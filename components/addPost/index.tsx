@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./index.module.css";
-import Image from "next/image";
 interface fields {
   picture: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,14 +19,15 @@ const AddPost = ({
   return (
     <div className={styles.addSomething}>
       <div className={styles.imageInput}>
-        <Image src={picture} className={styles.addSomethingPicture} alt="pic" />
-
-        <input
-          name="Add something"
-          className={styles.addSomethingField}
-          onChange={onChange}
-          value={value}
-        />
+        <img src={picture} className={styles.addSomethingPicture}></img>
+        
+          <input
+            name="Add something"
+            className={styles.addSomethingField}
+            onChange={onChange}
+            value={value}
+          />
+        
       </div>
       <div className={styles.addSomethingButtons}>
         <button

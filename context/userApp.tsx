@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import UserContext from "./context";
-import User from "../models/user";
 import { UserData } from "../utils/types";
 
 type Props = {

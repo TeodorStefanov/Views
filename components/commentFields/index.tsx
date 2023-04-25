@@ -3,7 +3,6 @@ import { Comment } from "../../utils/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faComment } from "@fortawesome/free-solid-svg-icons";
 import styles from "./index.module.css";
-import Image from "next/image";
 type Fields = {
   el: Comment;
   answer: boolean;
@@ -28,7 +27,7 @@ const CommentFields = ({
   return (
     <div>
       <div className={styles.content}>
-        <Image src={el.user.picture} className={styles.picture} alt='pic'/>
+        <img src={el.user.picture} className={styles.picture} />
         <div className={styles.nameContent}>
           <b>{el.user.viewsName}</b>
           <div className={styles.contentContent}>{el.content}</div>

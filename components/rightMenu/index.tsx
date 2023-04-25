@@ -34,11 +34,7 @@ const RightMenu = () => {
               className={styles.contactsPictureName}
               onClick={() => router.push(`/views/${el._id}`)}
             >
-              <Image
-                src={el.picture}
-                className={styles.contentPicture}
-                alt="pic"
-              />{" "}
+              <img src={el.picture} className={styles.contentPicture} />{" "}
               {el.viewsName}
             </div>
           );

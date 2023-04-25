@@ -19,6 +19,8 @@ import {
   handleClickPicture,
   handleClickVideo,
 } from "../../../utils/cloudinary";
+import imgOne from "../../../images/side/imgOne.png";
+import imgTwo from "../../../images/side/imgTwo.png";
 import {
   handleClickPost,
   addLike,
@@ -165,12 +167,11 @@ const ProfileChecker: FC<UserData> = ({
                 ""
               )}
             </div>
-            <Image
+            <img
               src={newPicture}
               className={styles.picture}
               onClick={() => setProfilePicture(true)}
-              alt="pic"
-            />
+            ></img>
             <p className={styles.viewsName}>{viewsName}</p>
             {!loggedUser && !isFriend ? (
               receivedFriendRequest ? (
@@ -223,7 +224,7 @@ const ProfileChecker: FC<UserData> = ({
                     return;
                   }
                   return (
-                    <Image
+                    <img
                       className={styles.friendPicture}
                       src={el.picture}
                       alt=""
@@ -289,11 +290,7 @@ const ProfileChecker: FC<UserData> = ({
                   className={styles.contactsPictureName}
                   onClick={() => router.push(`/views/${el._id}`)}
                 >
-                  <Image
-                    src={el.picture}
-                    className={styles.contentPicture}
-                    alt="pic"
-                  />{" "}
+                  <img src={el.picture} className={styles.contentPicture} />{" "}
                   {el.viewsName}
                 </div>
               );
