@@ -10,6 +10,7 @@ import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
 import type { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
+import Image from "next/image";
 
 import {
   handleAcceptRequest,
@@ -103,7 +104,7 @@ const Header = () => {
           </div>
         ) : (
           <div className={styles.windowLogged}>
-            <img
+            <Image
               src={
                 user?.picture ||
                 "https://res.cloudinary.com/daqcaszkf/image/upload/v1673947682/blank-profile-picture-973460__340_v3thun.webp"
@@ -138,10 +139,10 @@ const Header = () => {
             <div
               className={styles.windowLogOut}
               onClick={() => {
-                router.push("/")
+                router.push("/");
                 logOut();
                 if (socket != undefined) {
-                  socket.disconnect()
+                  socket.disconnect();
                 }
               }}
             >
@@ -175,9 +176,10 @@ const Header = () => {
                   }
                 }}
               >
-                <img
+                <Image
                   src={el.sentBy.picture}
                   className={styles.notificationPicture}
+                  alt="pic"
                 />
                 <div className={styles.notificationTop}>
                   <div className={styles.viewsNameContent}>

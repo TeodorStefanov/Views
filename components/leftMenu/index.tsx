@@ -22,7 +22,7 @@ const LeftMenu = () => {
           className={styles.menuButton}
           onClick={() => router.push(`/views/${user?._id}`)}
         >
-          <img src={user?.picture} className={styles.userPicture} />
+          <Image src={user!.picture} className={styles.userPicture} alt='pic'/>
           <span>{user?.viewsName}</span>
         </div>
         <FontIcon icon={faUserGroup} title="friends" />
