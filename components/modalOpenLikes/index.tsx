@@ -25,7 +25,8 @@ const ModalOpenLikes = ({ users, onClick, id }: Fields) => {
                 <Image
                   src={el.picture}
                   className={styles.picture}
-                  width={100}
+                  width={200}
+                  height={200}
                   onClick={() => {
                     if (el._id === id) {
                       onClick();
