@@ -28,6 +28,7 @@
   border-top: solid 1px rgb(105, 105, 102);
   padding: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .contactsTitle {
   font-weight: bold;

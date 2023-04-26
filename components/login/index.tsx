@@ -24,7 +24,7 @@ const Login: FC = () => {
     formState: { errors },
   } = useForm<IFormInputs>();
   const socketInitializer = async () => {
-    await fetch(`http://localhost:3000/api/socket`);
+    await fetch(`/api/socket`);
     socket = io();
     socket.on("connect", () => {
       console.log("connected");

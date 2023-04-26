@@ -147,6 +147,7 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
             value={content}
           />
         </div>
+        <div className={styles.middleMiddle}>
         {allPosts.map((post, index) => {
           const postTime = calculateDateOrTime(post.createdAt);
           const liked = likeExists(post, user!._id);
@@ -169,6 +170,7 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
             />
           );
         })}
+        </div>
         {openLikesPressed.length > 0 ? (
           <ModalOpenLikes
             users={openLikesPressed}
