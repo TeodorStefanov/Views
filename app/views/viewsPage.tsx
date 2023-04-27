@@ -50,7 +50,7 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const context = useContext(UserContext);
   const socket = useContext(SocketContext);
   const router = useRouter();
-  const { user } = context;
+  const { loggedIn, user } = context;
   const {
     register,
     handleSubmit,
@@ -74,7 +74,7 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
     socket?.on("likeToComment", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
-    })
+    });
   };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
@@ -82,8 +82,8 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const openComments = async (post: PostsType) => {
     setOpenCommentsPressed(post);
     setPostId(post);
-  }
-  
+  };
+
   useEffect(() => {
     socketInitializer();
   }, []);

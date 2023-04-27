@@ -37,11 +37,9 @@
 }
 .postImageUrl {
   margin-bottom: 20px;
-  width: auto;
-  height: auto;
   max-width: 90%;
-  max-height: 20%;
-}
+  max-height: 70%;
+} 
 .postVideoUrl {
   margin-bottom: 20px;
   max-width: 80%;
