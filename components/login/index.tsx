@@ -23,14 +23,7 @@ const Login: FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInputs>();
-  const socketInitializer = async () => {
-    await fetch(`/api/socket`);
-    socket = io();
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-    return null;
-  }
+
   const handleInput: SubmitHandler<IFormInputs> = async (data: IFormInputs) => {
     const promise = await fetch("/api/loginUser", {
       method: "POST",
@@ -41,8 +34,7 @@ const Login: FC = () => {
     });
 
     if (promise.status === 200) {
-      const result = await promise.json();
-      await socketInitializer();
+      const result = await promise.json()
       logIn(result);
       router.push("/views");
     }

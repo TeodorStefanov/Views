@@ -8,18 +8,18 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FriendNotification, Notification, UserData } from "../../utils/types";
 import { calculateDateOrTime } from "../../utils/calculateDateOrTime";
 import { useRouter } from "next/navigation";
-import type { Socket } from "socket.io-client";
-import { io } from "socket.io-client";
 import Image from "next/image";
 import {
   handleAcceptRequest,
   handleRemoveRequest,
   handleClickNotification,
 } from "../../utils/socket/socketEmits";
-let socket: undefined | Socket;
+import { SocketContext } from "../../context/socketContext";
+
 const Header = () => {
   const [notificationMenu, setNotificationMenu] = useState<boolean>(false);
   const context = useContext(UserContext);
+  const socket = useContext(SocketContext);
   const { loggedIn, user, logIn, logOut, notifications, setNotifications } =
     context;
 
@@ -27,16 +27,13 @@ const Header = () => {
   const notificationMenuRef = useRef(null);
   const handleClick = async () => {
     if (user) {
-      const promise = await fetch(
-        "http://localhost:3000/api/userNotificationsChecked",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: user._id }),
-        }
-      );
+      const promise = await fetch("/api/userNotificationsChecked", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user._id }),
+      });
       if (promise.status === 200) {
         if (!notificationMenu) {
           setNotificationMenu(true);
@@ -46,25 +43,24 @@ const Header = () => {
     }
   };
   const socketInitializer = async () => {
-    socket = io();
-    socket.emit("login", user?._id);
-    socket.on("friendNotification", (user: FriendNotification) => {
+    socket?.emit("login", user?._id);
+    socket?.on("friendNotification", (user: FriendNotification) => {
       logIn(user.friendUser);
     });
-    socket.on("acceptFriendRequest", (user: UserData) => {
+    socket?.on("acceptFriendRequest", (user: UserData) => {
       logIn(user);
     });
-    socket.on("acceptFriendNotification", (user: UserData) => {
+    socket?.on("acceptFriendNotification", (user: UserData) => {
       logIn(user);
     });
-    socket.on("removeFriendRequest", (user: UserData) => {
+    socket?.on("removeFriendRequest", (user: UserData) => {
       logIn(user);
       setNotificationMenu(false);
     });
-    socket.on("removeFriendNotification", (user: UserData) => {
+    socket?.on("removeFriendNotification", (user: UserData) => {
       logIn(user);
     });
-    socket.on("userNotificationPressed", (user: UserData) => {
+    socket?.on("userNotificationPressed", (user: UserData) => {
       logIn(user);
     });
   };
@@ -74,7 +70,6 @@ const Header = () => {
         setNotificationMenu(false);
       }
     };
-
     socketInitializer();
   }, [user]);
   return (

@@ -16,13 +16,11 @@ import ModalOpenLikes from "../../components/modalOpenLikes";
 import { useForm } from "react-hook-form";
 import { likeExists } from "../../utils/checkLiked";
 import UserContext from "../../context/context";
-import type { Socket } from "socket.io-client";
 import AddPost from "../../components/addPost";
 import getNavigation from "../../navigation";
 import { useRouter } from "next/navigation";
 import Post from "../../components/post";
 import styles from "./index.module.css";
-import { io } from "socket.io-client";
 import {
   handleClickPost,
   addLike,
@@ -30,10 +28,10 @@ import {
   handleSubmitComment,
   handleSubmitCommentOfComment,
 } from "../../utils/socket/socketEmits";
-
 import LeftMenu from "../../components/leftMenu";
 import RightMenu from "../../components/rightMenu";
-let socket: undefined | Socket;
+import { SocketContext } from "../../context/socketContext";
+
 interface IFormInputs {
   searchMenu: string;
 }
@@ -50,6 +48,7 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const [commentOfCommentContent, setCommentOfCommentContent] =
     useState<string>("");
   const context = useContext(UserContext);
+  const socket = useContext(SocketContext);
   const router = useRouter();
   const { user } = context;
   const {
@@ -61,22 +60,21 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const handleClick = () => {};
 
   const socketInitializer = async () => {
-    socket = io();
-    socket.emit("main");
-    socket.on("posts", (posts: PostsType[]) => {
+    socket?.emit("main");
+    socket?.on("posts", (posts: PostsType[]) => {
       setAllPosts(posts);
     });
-    socket.on("likes", (post: PostsType[]) => {
+    socket?.on("likes", (post: PostsType[]) => {
       setAllPosts(post);
     });
-    socket.on("allComments", (posts: Posts) => {
+    socket?.on("allComments", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
     });
-    socket.on("likeToComment", (posts: Posts) => {
+    socket?.on("likeToComment", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.posts);
-    });
+    })
   };
   const openLikes = async (post: PostsType | Comment) => {
     setOpenLikesPressed(post.likes);
@@ -84,7 +82,8 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
   const openComments = async (post: PostsType) => {
     setOpenCommentsPressed(post);
     setPostId(post);
-  };
+  }
+  
   useEffect(() => {
     socketInitializer();
   }, []);
@@ -148,28 +147,28 @@ const ViewsPage: FC<PostType> = ({ posts }: PostType) => {
           />
         </div>
         <div className={styles.middleMiddle}>
-        {allPosts.map((post, index) => {
-          const postTime = calculateDateOrTime(post.createdAt);
-          const liked = likeExists(post, user!._id);
-          return (
-            <Post
-              key={index}
-              post={post}
-              postTime={postTime}
-              liked={liked}
-              addLike={() => addLike(user!._id, post._id, post.createdBy._id)}
-              deleteLike={() =>
-                deleteLike(user!._id, post._id, post.createdBy._id)
-              }
-              openLikes={() => openLikes(post)}
-              openComments={() => openComments(post)}
-              handleClick={(e) => {
-                e.preventDefault();
-                router.push(`/views/${post.createdBy._id}`);
-              }}
-            />
-          );
-        })}
+          {allPosts.map((post, index) => {
+            const postTime = calculateDateOrTime(post.createdAt);
+            const liked = likeExists(post, user!._id);
+            return (
+              <Post
+                key={index}
+                post={post}
+                postTime={postTime}
+                liked={liked}
+                addLike={() => addLike(user!._id, post._id, post.createdBy._id)}
+                deleteLike={() =>
+                  deleteLike(user!._id, post._id, post.createdBy._id)
+                }
+                openLikes={() => openLikes(post)}
+                openComments={() => openComments(post)}
+                handleClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/views/${post.createdBy._id}`);
+                }}
+              />
+            );
+          })}
         </div>
         {openLikesPressed.length > 0 ? (
           <ModalOpenLikes

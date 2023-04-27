@@ -7,11 +7,11 @@ import ModalOpenLikes from "../../../components/modalOpenLikes";
 import { likeExists } from "../../../utils/checkLiked";
 import UserContext from "../../../context/context";
 import AddPost from "../../../components/addPost";
-import type { Socket } from "socket.io-client";
+
 import Post from "../../../components/post";
 import { useRouter } from "next/navigation";
 import styles from "./id.module.css";
-import io from "socket.io-client";
+
 import Image from "next/image";
 import {
   handleChangeBackgroundPicture,
@@ -37,7 +37,7 @@ import {
   PostsType,
   UserData,
 } from "../../../utils/types";
-let socket: undefined | Socket;
+import { SocketContext } from "../../../context/socketContext";
 
 const ProfileChecker: FC<UserData> = ({
   _id,
@@ -67,6 +67,7 @@ const ProfileChecker: FC<UserData> = ({
     useState<string>(backgroundPicture);
   const [newPicture, setNewPicture] = useState<string>(picture);
   const context = useContext(UserContext);
+  const socket = useContext(SocketContext);
   const { user, logIn } = context;
   const router = useRouter();
 
@@ -78,37 +79,36 @@ const ProfileChecker: FC<UserData> = ({
     setPostId(post._id);
   };
   const socketInitializer = async () => {
-    socket = io();
-    socket.emit("login", user?._id);
-    socket.emit("joinRoom", _id);
-    socket.on("allPosts", (posts: PostsType[]) => {
+    socket?.emit("login", user?._id);
+    socket?.emit("joinRoom", _id);
+    socket?.on("allPosts", (posts: PostsType[]) => {
       setAllPosts(posts);
     });
-    socket.on("addLike", (post: PostsType[]) => {
+    socket?.on("addLike", (post: PostsType[]) => {
       setAllPosts(post);
     });
-    socket.on("allComments", (posts: Posts) => {
+    socket?.on("allComments", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.postsUser);
     });
-    socket.on("sentFriendRequest", (user: UserData) => {
+    socket?.on("sentFriendRequest", (user: UserData) => {
       logIn(user);
       setSentFriendRequest(true);
     });
-    socket.on("friendNotification", (user: FriendNotification) => {
+    socket?.on("friendNotification", (user: FriendNotification) => {
       logIn(user.friendUser);
       setReceivedFriendRequest(user.notificationId);
     });
 
-    socket.on("likeToComment", (posts: Posts) => {
+    socket?.on("likeToComment", (posts: Posts) => {
       setOpenCommentsPressed(posts.post);
       setAllPosts(posts.postsUser);
     });
-    socket.on("changeBackgroundPicture", (user: UserData) => {
+    socket?.on("changeBackgroundPicture", (user: UserData) => {
       logIn(user);
       setNewBackgroundPicture(user.backgroundPicture);
     });
-    socket.on("changeProfilePicture", (user: UserData) => {
+    socket?.on("changeProfilePicture", (user: UserData) => {
       logIn(user);
       setNewPicture(user.picture);
       setAllPosts(user.posts.reverse());
@@ -288,9 +288,10 @@ const ProfileChecker: FC<UserData> = ({
         <div className={styles.right}>
           <div className={styles.contacts}>
             <p className={styles.contactsTitle}>Contacts</p>
-            {friends.map((el: UserData) => {
+            {friends.map((el: UserData, index: number) => {
               return (
                 <div
+                  key={index}
                   className={styles.contactsPictureName}
                   onClick={() => router.push(`/views/${el._id}`)}
                 >
