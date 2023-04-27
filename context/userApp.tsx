@@ -21,7 +21,6 @@ const UserApp = (props: Props): JSX.Element | null => {
     setLoggedIn(true);
     setUser(user);
   };
-
   const logOut = async () => {
     const res = await fetch("/api/deleteToken");
     if (res.status === 200) {

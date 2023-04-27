@@ -5,6 +5,7 @@ import Login from "../components/login";
 import Registration from "../components/register";
 import UserContext from "../context/context";
 import { useSearchParams } from "next/navigation";
+
 export type userProps = {
   username: string;
   password: string;
@@ -25,6 +26,7 @@ export default function Home() {
       setLoginPress(false);
     }
   };
+
   useEffect(() => {
     getQueryMessage();
   }, [message]);

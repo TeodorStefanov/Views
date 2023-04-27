@@ -9,6 +9,7 @@ import Connect from "../utils/mongoDBMongooseConnection";
 import Posts from "../models/posts";
 import Notification from "../models/notifications";
 import { UserData } from "../utils/types";
+import SocketApp from "../context/socketApp";
 
 export const revalidate = 0;
 async function getToken() {
@@ -57,11 +58,13 @@ export default async function RootLayout({
       <head />
       <body className={styles.body}>
         <UserApp token={token}>
-          <div className={styles.container}>
-            <Header />
-            <main className={styles.main}>{children}</main>
-            <Footer />
-          </div>
+          <SocketApp>
+            <div className={styles.container}>
+              <Header />
+              <main className={styles.main}>{children}</main>
+              <Footer />
+            </div>
+          </SocketApp>
         </UserApp>
         <script
           src="https://upload-widget.cloudinary.com/global/all.js"

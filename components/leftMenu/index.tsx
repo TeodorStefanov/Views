@@ -41,6 +41,7 @@ const LeftMenu = () => {
           src={picThree}
           alt="pic"
           className={styles.advertismentPicture}
+          priority={true}
         />
       </div>
     </div>
