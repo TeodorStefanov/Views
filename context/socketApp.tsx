@@ -5,9 +5,7 @@ type Props = {
   children: JSX.Element;
 };
 const SocketApp = (props: Props): JSX.Element | null => {
-  if (!socket) {
-    return null;
-  }
+    console.log(socket)
   return (
     <SocketContext.Provider value={socket}>
       {props.children}

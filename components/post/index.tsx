@@ -60,7 +60,7 @@ const Post = ({
           src={post.imageUrl}
           className={styles.postImageUrl}
           width={700}
-          height={400}
+          height={500}
           alt="pic"
         />
       ) : (
