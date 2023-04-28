@@ -38,7 +38,7 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
   }, []);
 
   if (!isSocketReady) {
-    return null;
+    return <div>Loading...</div>
   }
 
   return (

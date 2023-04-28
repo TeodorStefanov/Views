@@ -58,13 +58,13 @@ export default async function RootLayout({
       <head />
       <body className={styles.body}>
         <UserApp token={token}>
-          <SocketApp>
+          
             <div className={styles.container}>
               <Header />
               <main className={styles.main}>{children}</main>
               <Footer />
             </div>
-          </SocketApp>
+          
         </UserApp>
         <script
           src="https://upload-widget.cloudinary.com/global/all.js"
