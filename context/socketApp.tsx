@@ -22,9 +22,14 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
         });
 
         socket.on("disconnect", () => {
-          console.log("disconnected");
+            console.log("disconnected");
+            console.log(socket)
           setIsSocketReady(false);
         });
+
+        return () => {
+          socket.disconnect();
+        }
       } catch (error) {
         console.error("Error fetching socket URL:", error);
       }
@@ -34,7 +39,7 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
   }, []);
 
   if (!isSocketReady) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
