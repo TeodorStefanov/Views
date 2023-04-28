@@ -13,7 +13,7 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
   useEffect(() => {
     const fetchSocketUrl = async () => {
       try {
-        await fetch("http://localhost:3000/api/socket");
+        await fetch("/api/socket");
         const socket = io();
 
         socket.on("connect", () => {
