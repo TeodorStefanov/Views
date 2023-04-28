@@ -21,25 +21,21 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
           setIsSocketReady(true);
         });
 
-        socket.on("disconnect", () => {
-            console.log("disconnected");
-            console.log(socket)
-          setIsSocketReady(false);
-        });
+        
 
         return () => {
           socket.disconnect();
-        }
+        };
       } catch (error) {
         console.error("Error fetching socket URL:", error);
       }
     };
 
-    fetchSocketUrl();
+    fetchSocketUrl()
   }, []);
 
   if (!isSocketReady) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   return (
