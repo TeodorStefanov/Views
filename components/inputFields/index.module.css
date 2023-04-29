@@ -4,6 +4,7 @@
   text-align: center;
   margin-top: 28px;
   margin-bottom: 20px;
+  border-color: rgb(34, 100, 200);
 }
 .field {
   font-size: 14px;
@@ -12,7 +13,7 @@
   border: solid 1px;
   border-radius: 10px;
 }
-.errorMessage{
+.errorMessage {
   margin: 4px;
   font-size: 12px;
   color: rgb(255, 0, 0);

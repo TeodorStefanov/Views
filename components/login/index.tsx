@@ -9,6 +9,7 @@ import Link from "next/link";
 import React, { FC, useContext, useEffect, useState } from "react";
 import UserContext from "../../context/context";
 import type { Socket } from "socket.io-client";
+import Button from "@mui/material/Button";
 import { io } from "socket.io-client";
 let socket: undefined | Socket;
 interface IFormInputs {
@@ -34,7 +35,7 @@ const Login: FC = () => {
     });
 
     if (promise.status === 200) {
-      const result = await promise.json()
+      const result = await promise.json();
       logIn(result);
       router.push("/views");
     }

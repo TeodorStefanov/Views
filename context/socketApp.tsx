@@ -21,7 +21,10 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
           setIsSocketReady(true);
         });
 
-        
+        socket.on("disconnect", () => {
+          console.log("disconnected");
+          setIsSocketReady(false);
+        });
 
         return () => {
           socket.disconnect();
@@ -31,7 +34,7 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
       }
     };
 
-    fetchSocketUrl()
+    fetchSocketUrl();
   }, []);
 
   if (!isSocketReady) {
