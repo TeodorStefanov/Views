@@ -28,7 +28,7 @@
 }
 .searchMenu:focus {
   outline: none;
-  border: solid 1px #1d9bf0;
+  border: solid 1px #5b38cf;
   background-color: rgb(255, 255, 255);
 }
 .searchButton {

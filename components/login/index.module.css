@@ -10,12 +10,13 @@
   border: solid 1px rgb(34, 100, 200);
   z-index: 10;
   text-align: center;
+
   background-image: url("../../images/backgroundPic2.jpg");
   background-repeat: no-repeat;
-  background-size: 100% 100%
+  background-size: 100% 100%;
 }
 .name {
-  color: rgb(255, 255, 255);
+  color: rgb(255, 255, 255)
 }
 .markButton {
   width: 20px;
@@ -24,7 +25,7 @@
   top: 2%;
   left: 2%;
   padding: 8px;
-  color: rgb(0, 56, 153);
+  color: rgb(0, 56, 153)
 }
 .markButton:hover {
   background-color: rgb(199, 162, 222);
@@ -40,11 +41,11 @@
   border: solid 1px;
   border-radius: 10px;
   color: white;
-  background-color: rgb(34, 100, 200);
+  background-color: rgb(34, 100, 200)
 }
 .submitButton:hover {
   color: white;
-  background-color: rgb(93, 130, 187);
+  background-color: rgb(93, 130, 187)
 }
 .forgotYourPassword {
   margin-top: 20px;
@@ -66,7 +67,7 @@
 .registrationButton {
   border: solid 1px;
   border-radius: 10px;
-  color: rgb(34, 100, 200);
+  color: rgb(34, 100, 200)
 }
 .registerAccount {
   display: inline-block;

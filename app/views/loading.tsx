@@ -1,5 +1,6 @@
 "use client";
-import styles from "./loading.module.css";
+import LoadingLoader from "../../components/loading";
+
 export default function Loading() {
-  return <div className={styles.container}>Page is Loading...</div>;
+  return <LoadingLoader/>
 }

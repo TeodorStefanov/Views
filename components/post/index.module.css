@@ -4,14 +4,11 @@
   width: 100%;
   margin-bottom: 8px;
   background-color: white;
-  border: solid 1px rgb(34, 100, 200);
+  border: solid 1px white;
   border-radius: 20px;
   align-items: center;
   text-align: center;
   box-sizing: border-box;
-  background-image: url("../../images/backgroundPic2.jpg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
 }
 .postContent {
   display: flex;
@@ -26,7 +23,6 @@
 }
 .viewsName {
   cursor: pointer;
-  color: rgb(23, 22, 22);
 }
 .postTime {
   color: rgb(120, 119, 119);
@@ -38,12 +34,11 @@
   width: 100%;
   text-align: left;
   word-break: break-word;
-  color: rgb(23, 22, 22);
 }
 .postImageUrl {
   margin-bottom: 20px;
   max-width: 90%;
-  max-height: 70%;
+  max-height: 20%;
 }
 .postVideoUrl {
   margin-bottom: 20px;
@@ -85,16 +80,13 @@
   cursor: pointer;
 }
 .likeMark:hover {
-  color: #341de1;
+  color: #5b38cf;
 }
 .unLikeMark {
   width: 20px;
   height: 20px;
   padding-right: 4px;
-  color: #341de1;
-}
-.unLikeMark:hover {
-  color: rgb(119, 115, 115);
+  color: #5b38cf;
 }
 .buttonLike {
   display: flex;
@@ -105,16 +97,15 @@
   width: 150px;
   height: 28px;
   cursor: pointer;
-  color: rgb(119, 115, 115);
 }
 .buttonLike:hover {
-  background-color: #e8f0f4;
+  background-color: rgb(226, 220, 220);
 }
 .buttonUnLike {
   display: flex;
   justify-content: center;
   gap: 4px;
-  color: #341de1;
+  color: #5b38cf;
   text-align: center;
   align-items: center;
   width: 150px;
@@ -122,7 +113,7 @@
   cursor: pointer;
 }
 .buttonUnLike:hover {
-  background-color: #e8f0f4;
+  background-color: rgb(226, 220, 220);
 }
 .buttonComment {
   display: flex;
@@ -133,8 +124,7 @@
   width: 150px;
   height: 28px;
   cursor: pointer;
-  color: rgb(119, 115, 115);
 }
 .buttonComment:hover {
-  background-color: #e8f0f4;
+  background-color: rgb(226, 220, 220);
 }
