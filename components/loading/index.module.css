@@ -1,8 +1,7 @@
 .container {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
+  position: absolute;
+  left: 45%;
+  bottom: 70%;
 }
 
 .loader {

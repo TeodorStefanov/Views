@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { SocketContext } from "./socketContext";
 import io from "socket.io-client";
+import LoadingLoader from "../components/loading";
 
 type Props = {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ const SocketApp = ({ children }: Props): JSX.Element | null => {
   }, []);
 
   if (!isSocketReady) {
-    return <div>Loading...</div>;
+    return <LoadingLoader />;
   }
 
   return (

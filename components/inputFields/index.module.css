@@ -12,6 +12,9 @@
   height: 32px;
   border: solid 1px;
   border-radius: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  
 }
 .errorMessage {
   margin: 4px;
