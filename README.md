@@ -1,5 +1,6 @@
-Views is built using Next.js, the latest version of the React-based JavaScript web framework, and is written in TypeScript. It is a social network that is similar to Facebook and Instagram, allowing users to create profiles, post content, comment on posts, and interact with one another. The website has an intuitive user interface that allows users to easily access their profile, create posts, view other posts, and interact with other users. Additionally, users can set their privacy settings to control who can view their posts and who can comment on them. 
-
+Views is social media project is built using the latest version of Next.js and TypeScript, and utilizes sockets for connection. users can create their own accounts and make posts on their own walls, as well as on their friends' walls. They can like posts and comments, and also comment on posts and comments themselves. Views allows users to customize their profiles by changing their profile picture and the picture of their wall.
+In addition to these features, Views also includes a friend request system that enables users to connect with others who share similar interests and hobbies. Users can receive notifications for friend requests, making it easy to stay up-to-date on their connections.
+The database used in Views is mongodb.
 
 ## Getting Started
 
